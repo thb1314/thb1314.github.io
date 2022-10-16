@@ -1,0 +1,884 @@
+
+
+
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="复制">
+      
+        <meta name="lang:clipboard.copied" content="已复制">
+      
+        <meta name="lang:search.language" content="ja">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="没有找到符合条件的结果">
+      
+        <meta name="lang:search.result.one" content="找到 1 个符合条件的结果">
+      
+        <meta name="lang:search.result.other" content="# 个符合条件的结果">
+      
+        <meta name="lang:search.tokenizer" content="[\uff0c\u3002]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-4.6.3">
+    
+    
+      
+        <title>python与C/C++数据交互的陷阱：numpy/torch中的视图 - 海滨的Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#pythonccnumpytorch" tabindex="0" class="md-skip">
+        跳转至
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="海滨的Blog" aria-label="海滨的Blog" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              海滨的Blog
+            </span>
+            <span class="md-header-nav__topic">
+              
+                python与C/C++数据交互的陷阱：numpy/torch中的视图
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            键入以开始搜索
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="海滨的Blog" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    海滨的Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Index" class="md-nav__link">
+      Index
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      DL框架原理与技巧
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        DL框架原理与技巧
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" title="Pytorch下的多卡间变量同步操作" class="md-nav__link">
+      Pytorch下的多卡间变量同步操作
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8807%E6%97%A5%2020%E6%97%B633%E5%88%8650%E7%A7%92/" title="自动微分autograd原理-简单demo" class="md-nav__link">
+      自动微分autograd原理-简单demo
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8811%E6%97%A5%2015%E6%97%B614%E5%88%8655%E7%A7%92/" title="TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换" class="md-nav__link">
+      TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" title="再谈自动微分：自动微分中的前向模式与反向模式" class="md-nav__link">
+      再谈自动微分：自动微分中的前向模式与反向模式
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      OCR相关
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        OCR相关
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../OCR%E7%9B%B8%E5%85%B3/2022%E5%B9%B403%E6%9C%8829%E6%97%A5%2022%E6%97%B651%E5%88%8611%E7%A7%92/" title="Pytorch中CTC Loss源码解析" class="md-nav__link">
+      Pytorch中CTC Loss源码解析
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      Cuda相关
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        Cuda相关
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B406%E6%9C%8812%E6%97%A5%2021%E6%97%B613%E5%88%8644%E7%A7%92/" title="cublas中矩阵乘及其广播机制的实现与单元测试" class="md-nav__link">
+      cublas中矩阵乘及其广播机制的实现与单元测试
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B407%E6%9C%8823%E6%97%A5%2023%E6%97%B617%E5%88%8614%E7%A7%92/" title="cuDNN API的使用与测试-以二维卷积+Relu激活函数为例" class="md-nav__link">
+      cuDNN API的使用与测试-以二维卷积+Relu激活函数为例
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5" checked>
+    
+    <label class="md-nav__link" for="nav-5">
+      python&C++
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        python&C++
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        python与C/C++数据交互的陷阱：numpy/torch中的视图
+      </label>
+    
+    <a href="./" title="python与C/C++数据交互的陷阱：numpy/torch中的视图" class="md-nav__link md-nav__link--active">
+      python与C/C++数据交互的陷阱：numpy/torch中的视图
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">目录</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    前言
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    视图
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bug" class="md-nav__link">
+    bug复现
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    小结
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6">
+    
+    <label class="md-nav__link" for="nav-6">
+      模型轻量化
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        模型轻量化
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2021%E5%B9%B412%E6%9C%8825%E6%97%A5%2016%E6%97%B604%E5%88%8649%E7%A7%92/" title="Network Slimming-神经网络剪枝的精细控制实现" class="md-nav__link">
+      Network Slimming-神经网络剪枝的精细控制实现
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B401%E6%9C%8817%E6%97%A5%2010%E6%97%B647%E5%88%8629%E7%A7%92/" title="模型压缩框架nncf模型量化中QAT量化参数的梯度推导" class="md-nav__link">
+      模型压缩框架nncf模型量化中QAT量化参数的梯度推导
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8805%E6%97%A5%2016%E6%97%B630%E5%88%8647%E7%A7%92/" title="对模型量化框架mqbench添加openvino推理格式支持" class="md-nav__link">
+      对模型量化框架mqbench添加openvino推理格式支持
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8821%E6%97%A5%2012%E6%97%B619%E5%88%8614%E7%A7%92/" title="一文总结TensorRT下两种量化方式QAT和PTQ的部署" class="md-nav__link">
+      一文总结TensorRT下两种量化方式QAT和PTQ的部署
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7">
+    
+    <label class="md-nav__link" for="nav-7">
+      模型部署
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        模型部署
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2021%E5%B9%B412%E6%9C%8816%E6%97%A5%2014%E6%97%B626%E5%88%8600%E7%A7%92/" title="FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案" class="md-nav__link">
+      FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8806%E6%97%A5%2022%E6%97%B621%E5%88%8616%E7%A7%92/" title="生产者消费者模式在多batch推理下的应用(延时队列)" class="md-nav__link">
+      生产者消费者模式在多batch推理下的应用(延时队列)
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8811%E6%97%A5%2023%E6%97%B612%E5%88%8655%E7%A7%92/" title="pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例" class="md-nav__link">
+      pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B405%E6%9C%8828%E6%97%A5%2017%E6%97%B623%E5%88%8651%E7%A7%92/" title="计算图的优化-以onnx表示形式为例" class="md-nav__link">
+      计算图的优化-以onnx表示形式为例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B408%E6%9C%8802%E6%97%A5%2023%E6%97%B628%E5%88%8628%E7%A7%92/" title="TensorRT Plugin的实现、调试与验证：以实现Layernorm为例" class="md-nav__link">
+      TensorRT Plugin的实现、调试与验证：以实现Layernorm为例
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-8" type="checkbox" id="nav-8">
+    
+    <label class="md-nav__link" for="nav-8">
+      论文解读
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-8">
+        论文解读
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/convnext/" title="关于ConvNext若干细节的解读与讨论" class="md-nav__link">
+      关于ConvNext若干细节的解读与讨论
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">目录</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    前言
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    视图
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bug" class="md-nav__link">
+    bug复现
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    小结
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="pythonccnumpytorch">python与C/C++数据交互的陷阱：numpy/torch中的视图</h1>
+<h2 id="_1">前言</h2>
+<p>最近碰到了一个bug，调试了两天。最后发现是数据存储排列方式的问题，由此忽然想到pytorch或者numpy中tensor(或者ndarray)里面视图的概念。</p>
+<h2 id="_2">视图</h2>
+<ul>
+<li>视图是数据的一个别称或引用，通过该别称或引用亦便可访问、操作原有数据，但原有数据不会产生拷贝。如果我们对视图进行修改，它会影响到原始数据，物理内存在同一位置。</li>
+<li>副本是一个数据的完整的拷贝，如果我们对副本进行修改，它不会影响到原始数据，物理内存不在同一位置。</li>
+</ul>
+<p>视图一般发生在：</p>
+<ol>
+<li>numpy的切片操作返回原数据的视图。</li>
+<li>调用 ndarray 的 <code>view()</code> 函数产生一个视图。</li>
+<li>调用 <code>transpose</code>, <code>.T</code></li>
+<li>调用 <code>np.split</code></li>
+<li>调用其他不会发生内存copy的函数</li>
+</ol>
+<p>特别的，如果对于 contiguous = False 的数据，直接对其<code>.shape</code>赋值会报错，调用<code>reshape</code>操作会发生copy操作。
+副本一般发生在：</p>
+<ol>
+<li>Python 序列的切片操作，调用deepCopy()函数。</li>
+<li>调用 ndarray 的 copy() 函数产生一个副本。</li>
+</ol>
+<h2 id="bug">bug复现</h2>
+<p>既然创建视图不会发生内存复制，那对于所有拥有不同视图却拥有相同数据存储地址的ndarray或者tensor来说，指向的空间是一样的，这样python中数据传入c/c++时读取的实际上还是原数据。
+比如针对于tensor A，现在想把A.T利用ctypes或者cython传给c程序，直接传入<code>A.T</code>就会产生bug，而且不易查找。
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>import numpy as np
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a>A = np.random.rand(1,9,2)
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a>B = A.T
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a>np.savez(&#39;testB.npz&#39;, b = B)
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a>C = np.load(&#39;testB.npz&#39;)
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a>newB = C[&#39;b&#39;]
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a>print(newB)
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a>print(A)
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a># 按照内存排列方式查看数据
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a>print(newB.ravel(order=&#39;K&#39;))
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a>print(A.ravel(order=&#39;K&#39;))
+</code></pre></div></td></tr></table></div>
+正如上面code所示，如果直接看A或者newB，恰好可以看到newB恰好是A的转置，即使反序列化以后也是一样，但是按照内存排列方式打印A和newB就可以看到他们的数据排列是一样的。</p>
+<blockquote>
+<p>这里ravel函数的order参数解释如下
+order{‘C’,’F’, ‘A’, ‘K’}, optional
+The elements of a are read using this index order. ‘C’ means to index the elements in row-major, C-style order, with the last axis index changing fastest, back to the first axis index changing slowest. ‘F’ means to index the elements in column-major, Fortran-style order, with the first index changing fastest, and the last index changing slowest. Note that the ‘C’ and ‘F’ options take no account of the memory layout of the underlying array, and only refer to the order of axis indexing. ‘A’ means to read the elements in Fortran-like index order if a is Fortran contiguous in memory, C-like order otherwise. ‘K’ means to read the elements in the order they occur in memory, except for reversing the data when strides are negative. By default, ‘C’ index order is used.
+所以尽管我们的目的是想给C/C++函数传入A的转置，但传入的依然是A。<code>A.T</code>仅仅是创建了一个新的视图，并且其数据也不再是<code>contiguous</code>，另外打印<code>A.T.flags</code>会发现
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span>
+<span class="normal"><a href="#__codelineno-1-5">5</a></span>
+<span class="normal"><a href="#__codelineno-1-6">6</a></span>
+<span class="normal"><a href="#__codelineno-1-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>C_CONTIGUOUS : False
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a>F_CONTIGUOUS : True
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a>OWNDATA : False
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a>WRITEABLE : True
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a>ALIGNED : True
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a>WRITEBACKIFCOPY : False
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a>UPDATEIFCOPY : False
+</code></pre></div></td></tr></table></div>
+新的视图变成了列连续。（C代表C语言格式存储,行优先，F代表Fortran 表示列优先）
+那么该如何解决呢？
+实际上解决思路很简单，那就是将按照数据的视图重新复制一遍数据，将其变为<code>contiguous</code>的。即传入A的转置时调用<code>np.ascontiguous(A.T)</code>即可将其数据copy一边并设置为行优先存储。</p>
+</blockquote>
+<h2 id="_3">小结</h2>
+<p>这个bug实在隐蔽，我对计算图的某个模块一层一层的打印和校对才找到，解决问题后分析原因写下这篇文章避免以后再出错。</p>
+                
+                  
+                
+                
+                  
+                  <hr>
+                  <div class="md-source-date">
+                    <small>
+                      
+                        最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 16, 2022</span>
+                      
+                    </small>
+                  </div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B407%E6%9C%8823%E6%97%A5%2023%E6%97%B617%E5%88%8614%E7%A7%92/" title="cuDNN API的使用与测试-以二维卷积+Relu激活函数为例" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  上一页
+                </span>
+                cuDNN API的使用与测试-以二维卷积+Relu激活函数为例
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2021%E5%B9%B412%E6%9C%8825%E6%97%A5%2016%E6%97%B604%E5%88%8649%E7%A7%92/" title="Network Slimming-神经网络剪枝的精细控制实现" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  下一页
+                </span>
+                Network Slimming-神经网络剪枝的精细控制实现
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
+    
+      <a href="mailto:haibintian@foxmail.com" target="_blank" rel="noopener" title="" class="md-footer-social__link fa fa-"></a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
+      
+        
+        
+          
+          <script src="../../assets/javascripts/lunr/lunr.stemmer.support.js"></script>
+          
+            
+              
+                <script src="../../assets/javascripts/lunr/tinyseg.js"></script>
+              
+              
+                <script src="../../assets/javascripts/lunr/lunr.ja.js"></script>
+              
+            
+          
+          
+        
+      
+      <script>app.initialize({version:"1.3.1",url:{base:"../.."}})</script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+      
+        <script src="../../javascripts/social_share.js"></script>
+      
+    
+  </body>
+</html>

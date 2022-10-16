@@ -1,0 +1,1277 @@
+
+
+
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="复制">
+      
+        <meta name="lang:clipboard.copied" content="已复制">
+      
+        <meta name="lang:search.language" content="ja">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="没有找到符合条件的结果">
+      
+        <meta name="lang:search.result.one" content="找到 1 个符合条件的结果">
+      
+        <meta name="lang:search.result.other" content="# 个符合条件的结果">
+      
+        <meta name="lang:search.tokenizer" content="[\uff0c\u3002]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-4.6.3">
+    
+    
+      
+        <title>生产者消费者模式在多batch推理下的应用(延时队列) - 海滨的Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#batch" tabindex="0" class="md-skip">
+        跳转至
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="海滨的Blog" aria-label="海滨的Blog" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              海滨的Blog
+            </span>
+            <span class="md-header-nav__topic">
+              
+                生产者消费者模式在多batch推理下的应用(延时队列)
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            键入以开始搜索
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="海滨的Blog" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    海滨的Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Index" class="md-nav__link">
+      Index
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      DL框架原理与技巧
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        DL框架原理与技巧
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" title="Pytorch下的多卡间变量同步操作" class="md-nav__link">
+      Pytorch下的多卡间变量同步操作
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8807%E6%97%A5%2020%E6%97%B633%E5%88%8650%E7%A7%92/" title="自动微分autograd原理-简单demo" class="md-nav__link">
+      自动微分autograd原理-简单demo
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8811%E6%97%A5%2015%E6%97%B614%E5%88%8655%E7%A7%92/" title="TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换" class="md-nav__link">
+      TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" title="再谈自动微分：自动微分中的前向模式与反向模式" class="md-nav__link">
+      再谈自动微分：自动微分中的前向模式与反向模式
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      OCR相关
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        OCR相关
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../OCR%E7%9B%B8%E5%85%B3/2022%E5%B9%B403%E6%9C%8829%E6%97%A5%2022%E6%97%B651%E5%88%8611%E7%A7%92/" title="Pytorch中CTC Loss源码解析" class="md-nav__link">
+      Pytorch中CTC Loss源码解析
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      Cuda相关
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        Cuda相关
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B406%E6%9C%8812%E6%97%A5%2021%E6%97%B613%E5%88%8644%E7%A7%92/" title="cublas中矩阵乘及其广播机制的实现与单元测试" class="md-nav__link">
+      cublas中矩阵乘及其广播机制的实现与单元测试
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B407%E6%9C%8823%E6%97%A5%2023%E6%97%B617%E5%88%8614%E7%A7%92/" title="cuDNN API的使用与测试-以二维卷积+Relu激活函数为例" class="md-nav__link">
+      cuDNN API的使用与测试-以二维卷积+Relu激活函数为例
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      python&C++
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        python&C++
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../python%26C%2B%2B/2022%E5%B9%B406%E6%9C%8807%E6%97%A5%2015%E6%97%B650%E5%88%8636%E7%A7%92/" title="python与C/C++数据交互的陷阱：numpy/torch中的视图" class="md-nav__link">
+      python与C/C++数据交互的陷阱：numpy/torch中的视图
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6">
+    
+    <label class="md-nav__link" for="nav-6">
+      模型轻量化
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        模型轻量化
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2021%E5%B9%B412%E6%9C%8825%E6%97%A5%2016%E6%97%B604%E5%88%8649%E7%A7%92/" title="Network Slimming-神经网络剪枝的精细控制实现" class="md-nav__link">
+      Network Slimming-神经网络剪枝的精细控制实现
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B401%E6%9C%8817%E6%97%A5%2010%E6%97%B647%E5%88%8629%E7%A7%92/" title="模型压缩框架nncf模型量化中QAT量化参数的梯度推导" class="md-nav__link">
+      模型压缩框架nncf模型量化中QAT量化参数的梯度推导
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8805%E6%97%A5%2016%E6%97%B630%E5%88%8647%E7%A7%92/" title="对模型量化框架mqbench添加openvino推理格式支持" class="md-nav__link">
+      对模型量化框架mqbench添加openvino推理格式支持
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8821%E6%97%A5%2012%E6%97%B619%E5%88%8614%E7%A7%92/" title="一文总结TensorRT下两种量化方式QAT和PTQ的部署" class="md-nav__link">
+      一文总结TensorRT下两种量化方式QAT和PTQ的部署
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7" checked>
+    
+    <label class="md-nav__link" for="nav-7">
+      模型部署
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        模型部署
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2021%E5%B9%B412%E6%9C%8816%E6%97%A5%2014%E6%97%B626%E5%88%8600%E7%A7%92/" title="FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案" class="md-nav__link">
+      FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        生产者消费者模式在多batch推理下的应用(延时队列)
+      </label>
+    
+    <a href="./" title="生产者消费者模式在多batch推理下的应用(延时队列)" class="md-nav__link md-nav__link--active">
+      生产者消费者模式在多batch推理下的应用(延时队列)
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">目录</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    需求
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    设计分析
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    代码模拟实现
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    总结
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2022%E5%B9%B404%E6%9C%8811%E6%97%A5%2023%E6%97%B612%E5%88%8655%E7%A7%92/" title="pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例" class="md-nav__link">
+      pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2022%E5%B9%B405%E6%9C%8828%E6%97%A5%2017%E6%97%B623%E5%88%8651%E7%A7%92/" title="计算图的优化-以onnx表示形式为例" class="md-nav__link">
+      计算图的优化-以onnx表示形式为例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2022%E5%B9%B408%E6%9C%8802%E6%97%A5%2023%E6%97%B628%E5%88%8628%E7%A7%92/" title="TensorRT Plugin的实现、调试与验证：以实现Layernorm为例" class="md-nav__link">
+      TensorRT Plugin的实现、调试与验证：以实现Layernorm为例
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-8" type="checkbox" id="nav-8">
+    
+    <label class="md-nav__link" for="nav-8">
+      论文解读
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-8">
+        论文解读
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/convnext/" title="关于ConvNext若干细节的解读与讨论" class="md-nav__link">
+      关于ConvNext若干细节的解读与讨论
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">目录</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    需求
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    设计分析
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    代码模拟实现
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    总结
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="batch">生产者消费者模式在多batch推理下的应用(延时队列)</h1>
+<h2 id="_1">需求</h2>
+<blockquote>
+<p>本文代码框架参考自 trtpy: https://zhuanlan.zhihu.com/p/462980738
+创建一种生产者消费者模式，实现多线程资源处理，加速模型推理。
+需要满足一下几点：</p>
+</blockquote>
+<ol>
+<li>生产者生产提交资源，消费者负责处理，并将处理结果返回给生产者。</li>
+<li>资源队列不是有限的，因为显存是有限的。</li>
+<li>为了多batch加速，允许生产者生产资源间隔在一定范围内，比如50ms内的资源都可以放到一个batch当给消费者处理</li>
+<li>保证资源哪里分配哪里释放，哪里使用，这样可以使得程序足够简单。</li>
+<li>接口模式保证RAII，不暴露内部接口。</li>
+</ol>
+<h2 id="_2">设计分析</h2>
+<ol>
+<li>生产者消费者经典框架-需要一个线程安全的队列来储存资源，需要使用<code>promise</code>和<code>future</code>来完成对结果的返回。</li>
+<li>需要对队列的大小加以控制，并且暴露控制大小的接口</li>
+<li>需要设置一种延时机制，来控制消费者线程在收集资源时可以等待一段时间用于判断后续还有没有数据传入，此时可以使用<code>condition_variable</code>的<code>wait_for</code>函数。</li>
+<li>资源的分配和释放都放到消费者线程中，中间结果的消息传递可以采用使用<code>promise</code>和<code>future</code>。</li>
+<li>在C++中，一般采用抽象类来代替接口，再设置一个构造方法通过多态完成封装。</li>
+</ol>
+<h2 id="_3">代码模拟实现</h2>
+<ol>
+<li>文件 <code>Infer.hpp</code>, 接口声明文件</li>
+</ol>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span>
+<span class="normal"><a href="#__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="cp">#ifndef INFER_HPP</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="cp">#define INFER_HPP</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span><span class="cp"></span>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;map&gt;</span><span class="cp"></span>
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;future&gt;</span><span class="cp"></span>
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">Infer</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="k">using</span><span class="w"> </span><span class="n">Tensor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="k">using</span><span class="w"> </span><span class="n">RET_TYPE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">Tensor</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="k">class</span><span class="w"> </span><span class="nc">InferInterface</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
+<a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="w">  </span><span class="c1">// pic_tensor 表示输入给生产者的tensor, timeout 表示超时时间</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">  </span><span class="c1">// wait_timeout 表示当队列满了的情况下，愿意最多等待 wait_timeout ms 来等待</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_future</span><span class="o">&lt;</span><span class="n">RET_TYPE</span><span class="o">&gt;</span><span class="w"> </span><span class="n">forward</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Tensor</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pic_tensor</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">wait_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_timeout</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">timeout</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_max_queue_num</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">max_queue_num</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">InferInterface</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">InferInterface</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="w"> </span><span class="k">protected</span><span class="o">:</span><span class="w"></span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="w">  </span><span class="n">InferInterface</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">InferInterface</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="w">  </span><span class="n">InferInterface</span><span class="p">(</span><span class="n">InferInterface</span><span class="o">&amp;&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="w">  </span><span class="n">InferInterface</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">InferInterface</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="p">};</span><span class="w"></span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">InferInterface</span><span class="o">&gt;</span><span class="w"> </span><span class="n">create_infer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filepath</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">max_bactch_size</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="cp">#endif </span><span class="c1">// INFER_HPP</span>
+</code></pre></div></td></tr></table></div>
+<ol>
+<li>文件<code>Infer.cpp</code>，分析需求中的具体实现</li>
+</ol>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">  1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">  2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">  3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">  4</a></span>
+<span class="normal"><a href="#__codelineno-1-5">  5</a></span>
+<span class="normal"><a href="#__codelineno-1-6">  6</a></span>
+<span class="normal"><a href="#__codelineno-1-7">  7</a></span>
+<span class="normal"><a href="#__codelineno-1-8">  8</a></span>
+<span class="normal"><a href="#__codelineno-1-9">  9</a></span>
+<span class="normal"><a href="#__codelineno-1-10"> 10</a></span>
+<span class="normal"><a href="#__codelineno-1-11"> 11</a></span>
+<span class="normal"><a href="#__codelineno-1-12"> 12</a></span>
+<span class="normal"><a href="#__codelineno-1-13"> 13</a></span>
+<span class="normal"><a href="#__codelineno-1-14"> 14</a></span>
+<span class="normal"><a href="#__codelineno-1-15"> 15</a></span>
+<span class="normal"><a href="#__codelineno-1-16"> 16</a></span>
+<span class="normal"><a href="#__codelineno-1-17"> 17</a></span>
+<span class="normal"><a href="#__codelineno-1-18"> 18</a></span>
+<span class="normal"><a href="#__codelineno-1-19"> 19</a></span>
+<span class="normal"><a href="#__codelineno-1-20"> 20</a></span>
+<span class="normal"><a href="#__codelineno-1-21"> 21</a></span>
+<span class="normal"><a href="#__codelineno-1-22"> 22</a></span>
+<span class="normal"><a href="#__codelineno-1-23"> 23</a></span>
+<span class="normal"><a href="#__codelineno-1-24"> 24</a></span>
+<span class="normal"><a href="#__codelineno-1-25"> 25</a></span>
+<span class="normal"><a href="#__codelineno-1-26"> 26</a></span>
+<span class="normal"><a href="#__codelineno-1-27"> 27</a></span>
+<span class="normal"><a href="#__codelineno-1-28"> 28</a></span>
+<span class="normal"><a href="#__codelineno-1-29"> 29</a></span>
+<span class="normal"><a href="#__codelineno-1-30"> 30</a></span>
+<span class="normal"><a href="#__codelineno-1-31"> 31</a></span>
+<span class="normal"><a href="#__codelineno-1-32"> 32</a></span>
+<span class="normal"><a href="#__codelineno-1-33"> 33</a></span>
+<span class="normal"><a href="#__codelineno-1-34"> 34</a></span>
+<span class="normal"><a href="#__codelineno-1-35"> 35</a></span>
+<span class="normal"><a href="#__codelineno-1-36"> 36</a></span>
+<span class="normal"><a href="#__codelineno-1-37"> 37</a></span>
+<span class="normal"><a href="#__codelineno-1-38"> 38</a></span>
+<span class="normal"><a href="#__codelineno-1-39"> 39</a></span>
+<span class="normal"><a href="#__codelineno-1-40"> 40</a></span>
+<span class="normal"><a href="#__codelineno-1-41"> 41</a></span>
+<span class="normal"><a href="#__codelineno-1-42"> 42</a></span>
+<span class="normal"><a href="#__codelineno-1-43"> 43</a></span>
+<span class="normal"><a href="#__codelineno-1-44"> 44</a></span>
+<span class="normal"><a href="#__codelineno-1-45"> 45</a></span>
+<span class="normal"><a href="#__codelineno-1-46"> 46</a></span>
+<span class="normal"><a href="#__codelineno-1-47"> 47</a></span>
+<span class="normal"><a href="#__codelineno-1-48"> 48</a></span>
+<span class="normal"><a href="#__codelineno-1-49"> 49</a></span>
+<span class="normal"><a href="#__codelineno-1-50"> 50</a></span>
+<span class="normal"><a href="#__codelineno-1-51"> 51</a></span>
+<span class="normal"><a href="#__codelineno-1-52"> 52</a></span>
+<span class="normal"><a href="#__codelineno-1-53"> 53</a></span>
+<span class="normal"><a href="#__codelineno-1-54"> 54</a></span>
+<span class="normal"><a href="#__codelineno-1-55"> 55</a></span>
+<span class="normal"><a href="#__codelineno-1-56"> 56</a></span>
+<span class="normal"><a href="#__codelineno-1-57"> 57</a></span>
+<span class="normal"><a href="#__codelineno-1-58"> 58</a></span>
+<span class="normal"><a href="#__codelineno-1-59"> 59</a></span>
+<span class="normal"><a href="#__codelineno-1-60"> 60</a></span>
+<span class="normal"><a href="#__codelineno-1-61"> 61</a></span>
+<span class="normal"><a href="#__codelineno-1-62"> 62</a></span>
+<span class="normal"><a href="#__codelineno-1-63"> 63</a></span>
+<span class="normal"><a href="#__codelineno-1-64"> 64</a></span>
+<span class="normal"><a href="#__codelineno-1-65"> 65</a></span>
+<span class="normal"><a href="#__codelineno-1-66"> 66</a></span>
+<span class="normal"><a href="#__codelineno-1-67"> 67</a></span>
+<span class="normal"><a href="#__codelineno-1-68"> 68</a></span>
+<span class="normal"><a href="#__codelineno-1-69"> 69</a></span>
+<span class="normal"><a href="#__codelineno-1-70"> 70</a></span>
+<span class="normal"><a href="#__codelineno-1-71"> 71</a></span>
+<span class="normal"><a href="#__codelineno-1-72"> 72</a></span>
+<span class="normal"><a href="#__codelineno-1-73"> 73</a></span>
+<span class="normal"><a href="#__codelineno-1-74"> 74</a></span>
+<span class="normal"><a href="#__codelineno-1-75"> 75</a></span>
+<span class="normal"><a href="#__codelineno-1-76"> 76</a></span>
+<span class="normal"><a href="#__codelineno-1-77"> 77</a></span>
+<span class="normal"><a href="#__codelineno-1-78"> 78</a></span>
+<span class="normal"><a href="#__codelineno-1-79"> 79</a></span>
+<span class="normal"><a href="#__codelineno-1-80"> 80</a></span>
+<span class="normal"><a href="#__codelineno-1-81"> 81</a></span>
+<span class="normal"><a href="#__codelineno-1-82"> 82</a></span>
+<span class="normal"><a href="#__codelineno-1-83"> 83</a></span>
+<span class="normal"><a href="#__codelineno-1-84"> 84</a></span>
+<span class="normal"><a href="#__codelineno-1-85"> 85</a></span>
+<span class="normal"><a href="#__codelineno-1-86"> 86</a></span>
+<span class="normal"><a href="#__codelineno-1-87"> 87</a></span>
+<span class="normal"><a href="#__codelineno-1-88"> 88</a></span>
+<span class="normal"><a href="#__codelineno-1-89"> 89</a></span>
+<span class="normal"><a href="#__codelineno-1-90"> 90</a></span>
+<span class="normal"><a href="#__codelineno-1-91"> 91</a></span>
+<span class="normal"><a href="#__codelineno-1-92"> 92</a></span>
+<span class="normal"><a href="#__codelineno-1-93"> 93</a></span>
+<span class="normal"><a href="#__codelineno-1-94"> 94</a></span>
+<span class="normal"><a href="#__codelineno-1-95"> 95</a></span>
+<span class="normal"><a href="#__codelineno-1-96"> 96</a></span>
+<span class="normal"><a href="#__codelineno-1-97"> 97</a></span>
+<span class="normal"><a href="#__codelineno-1-98"> 98</a></span>
+<span class="normal"><a href="#__codelineno-1-99"> 99</a></span>
+<span class="normal"><a href="#__codelineno-1-100">100</a></span>
+<span class="normal"><a href="#__codelineno-1-101">101</a></span>
+<span class="normal"><a href="#__codelineno-1-102">102</a></span>
+<span class="normal"><a href="#__codelineno-1-103">103</a></span>
+<span class="normal"><a href="#__codelineno-1-104">104</a></span>
+<span class="normal"><a href="#__codelineno-1-105">105</a></span>
+<span class="normal"><a href="#__codelineno-1-106">106</a></span>
+<span class="normal"><a href="#__codelineno-1-107">107</a></span>
+<span class="normal"><a href="#__codelineno-1-108">108</a></span>
+<span class="normal"><a href="#__codelineno-1-109">109</a></span>
+<span class="normal"><a href="#__codelineno-1-110">110</a></span>
+<span class="normal"><a href="#__codelineno-1-111">111</a></span>
+<span class="normal"><a href="#__codelineno-1-112">112</a></span>
+<span class="normal"><a href="#__codelineno-1-113">113</a></span>
+<span class="normal"><a href="#__codelineno-1-114">114</a></span>
+<span class="normal"><a href="#__codelineno-1-115">115</a></span>
+<span class="normal"><a href="#__codelineno-1-116">116</a></span>
+<span class="normal"><a href="#__codelineno-1-117">117</a></span>
+<span class="normal"><a href="#__codelineno-1-118">118</a></span>
+<span class="normal"><a href="#__codelineno-1-119">119</a></span>
+<span class="normal"><a href="#__codelineno-1-120">120</a></span>
+<span class="normal"><a href="#__codelineno-1-121">121</a></span>
+<span class="normal"><a href="#__codelineno-1-122">122</a></span>
+<span class="normal"><a href="#__codelineno-1-123">123</a></span>
+<span class="normal"><a href="#__codelineno-1-124">124</a></span>
+<span class="normal"><a href="#__codelineno-1-125">125</a></span>
+<span class="normal"><a href="#__codelineno-1-126">126</a></span>
+<span class="normal"><a href="#__codelineno-1-127">127</a></span>
+<span class="normal"><a href="#__codelineno-1-128">128</a></span>
+<span class="normal"><a href="#__codelineno-1-129">129</a></span>
+<span class="normal"><a href="#__codelineno-1-130">130</a></span>
+<span class="normal"><a href="#__codelineno-1-131">131</a></span>
+<span class="normal"><a href="#__codelineno-1-132">132</a></span>
+<span class="normal"><a href="#__codelineno-1-133">133</a></span>
+<span class="normal"><a href="#__codelineno-1-134">134</a></span>
+<span class="normal"><a href="#__codelineno-1-135">135</a></span>
+<span class="normal"><a href="#__codelineno-1-136">136</a></span>
+<span class="normal"><a href="#__codelineno-1-137">137</a></span>
+<span class="normal"><a href="#__codelineno-1-138">138</a></span>
+<span class="normal"><a href="#__codelineno-1-139">139</a></span>
+<span class="normal"><a href="#__codelineno-1-140">140</a></span>
+<span class="normal"><a href="#__codelineno-1-141">141</a></span>
+<span class="normal"><a href="#__codelineno-1-142">142</a></span>
+<span class="normal"><a href="#__codelineno-1-143">143</a></span>
+<span class="normal"><a href="#__codelineno-1-144">144</a></span>
+<span class="normal"><a href="#__codelineno-1-145">145</a></span>
+<span class="normal"><a href="#__codelineno-1-146">146</a></span>
+<span class="normal"><a href="#__codelineno-1-147">147</a></span>
+<span class="normal"><a href="#__codelineno-1-148">148</a></span>
+<span class="normal"><a href="#__codelineno-1-149">149</a></span>
+<span class="normal"><a href="#__codelineno-1-150">150</a></span>
+<span class="normal"><a href="#__codelineno-1-151">151</a></span>
+<span class="normal"><a href="#__codelineno-1-152">152</a></span>
+<span class="normal"><a href="#__codelineno-1-153">153</a></span>
+<span class="normal"><a href="#__codelineno-1-154">154</a></span>
+<span class="normal"><a href="#__codelineno-1-155">155</a></span>
+<span class="normal"><a href="#__codelineno-1-156">156</a></span>
+<span class="normal"><a href="#__codelineno-1-157">157</a></span>
+<span class="normal"><a href="#__codelineno-1-158">158</a></span>
+<span class="normal"><a href="#__codelineno-1-159">159</a></span>
+<span class="normal"><a href="#__codelineno-1-160">160</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;thread&gt;</span><span class="cp"></span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;future&gt;</span><span class="cp"></span>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;queue&gt;</span><span class="cp"></span>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;map&gt;</span><span class="cp"></span>
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;infer.hpp&quot;</span><span class="cp"></span>
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">Infer</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="k">using</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="k">using</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="kr">thread</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="k">using</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">promise</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="k">using</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">future</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="k">using</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-13" name="__codelineno-1-13"></a><span class="k">using</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">queue</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-14" name="__codelineno-1-14"></a><span class="k">using</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="k">using</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-16" name="__codelineno-1-16"></a><span class="k">class</span><span class="w"> </span><span class="nc">InferImpl</span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">InferInterface</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="w"> </span><span class="k">protected</span><span class="o">:</span><span class="w"></span>
+<a id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="w">  </span><span class="c1">// 定义队列中单个任务结果</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">RET_RPOMISE_PTR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">promise</span><span class="o">&lt;</span><span class="n">RET_TYPE</span><span class="o">&gt;&gt;</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-20" name="__codelineno-1-20"></a><span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">Job</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="w">   </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
+<a id="__codelineno-1-22" name="__codelineno-1-22"></a><span class="w">    </span><span class="c1">// 输入图像矩阵</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="w">    </span><span class="n">Tensor</span><span class="w"> </span><span class="n">pic</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-24" name="__codelineno-1-24"></a><span class="w">    </span><span class="c1">// 对输入图像矩阵处理后返回的结果</span>
+<a id="__codelineno-1-25" name="__codelineno-1-25"></a><span class="w">    </span><span class="n">RET_RPOMISE_PTR</span><span class="w"> </span><span class="n">ret_promise</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-26" name="__codelineno-1-26"></a><span class="w">  </span><span class="p">};</span><span class="w"></span>
+<a id="__codelineno-1-27" name="__codelineno-1-27"></a><span class="w">  </span><span class="c1">// 这里假设是打开文件后的上下文</span>
+<a id="__codelineno-1-28" name="__codelineno-1-28"></a><span class="w">  </span><span class="n">string</span><span class="w"> </span><span class="n">context_</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-29" name="__codelineno-1-29"></a><span class="w">  </span><span class="kr">thread</span><span class="w"> </span><span class="n">thread_</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-30" name="__codelineno-1-30"></a><span class="w">  </span><span class="n">queue</span><span class="o">&lt;</span><span class="n">Job</span><span class="o">&gt;</span><span class="w"> </span><span class="n">queue_</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-31" name="__codelineno-1-31"></a><span class="w">  </span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">running_</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-32" name="__codelineno-1-32"></a><span class="w">  </span><span class="n">mutex</span><span class="w"> </span><span class="n">lock_</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-33" name="__codelineno-1-33"></a><span class="w">  </span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">max_batchsize_</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-34" name="__codelineno-1-34"></a><span class="w">  </span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">timeout_</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-35" name="__codelineno-1-35"></a><span class="w">  </span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">max_queue_num_</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-36" name="__codelineno-1-36"></a><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">condition_variable</span><span class="w"> </span><span class="n">cond_var_</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-37" name="__codelineno-1-37"></a><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">condition_variable</span><span class="w"> </span><span class="n">cond_queue_overflow_</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-38" name="__codelineno-1-38"></a><span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
+<a id="__codelineno-1-39" name="__codelineno-1-39"></a><span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">InferImpl</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-40" name="__codelineno-1-40"></a><span class="w">    </span><span class="n">running_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-41" name="__codelineno-1-41"></a><span class="w">    </span><span class="n">max_batchsize_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-42" name="__codelineno-1-42"></a><span class="w">    </span><span class="n">timeout_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-43" name="__codelineno-1-43"></a><span class="w">    </span><span class="n">max_queue_num_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-44" name="__codelineno-1-44"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-45" name="__codelineno-1-45"></a><span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">load_model</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filepath</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-46" name="__codelineno-1-46"></a><span class="w">    </span><span class="n">promise</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">init_promise</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-47" name="__codelineno-1-47"></a><span class="w">    </span><span class="n">thread_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kr">thread</span><span class="p">(</span><span class="o">&amp;</span><span class="n">InferImpl</span><span class="o">::</span><span class="n">worker</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">filepath</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">ref</span><span class="p">(</span><span class="n">init_promise</span><span class="p">));</span><span class="w"></span>
+<a id="__codelineno-1-48" name="__codelineno-1-48"></a><span class="w">    </span><span class="n">running_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-49" name="__codelineno-1-49"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">init_promise</span><span class="p">.</span><span class="n">get_future</span><span class="p">().</span><span class="n">get</span><span class="p">();</span><span class="w"></span>
+<a id="__codelineno-1-50" name="__codelineno-1-50"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-51" name="__codelineno-1-51"></a><span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">max_batchsize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="k">return</span><span class="w"> </span><span class="n">max_batchsize_</span><span class="p">;}</span><span class="w"></span>
+<a id="__codelineno-1-52" name="__codelineno-1-52"></a><span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">set_max_batchsize</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">max_batchsize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-53" name="__codelineno-1-53"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">max_batchsize</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"></span>
+<a id="__codelineno-1-54" name="__codelineno-1-54"></a><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-55" name="__codelineno-1-55"></a><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">max_batchsize_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">max_batchsize</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-56" name="__codelineno-1-56"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-57" name="__codelineno-1-57"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-58" name="__codelineno-1-58"></a><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_timeout</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">timeout</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-59" name="__codelineno-1-59"></a><span class="w">    </span><span class="n">timeout_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">timeout</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-60" name="__codelineno-1-60"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-61" name="__codelineno-1-61"></a><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_max_queue_num</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">max_queue_num</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-62" name="__codelineno-1-62"></a><span class="w">    </span><span class="n">max_queue_num_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">max_queue_num</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-63" name="__codelineno-1-63"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-64" name="__codelineno-1-64"></a><span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_future</span><span class="o">&lt;</span><span class="n">RET_TYPE</span><span class="o">&gt;</span><span class="w"> </span><span class="n">forward</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Tensor</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pic_tensor</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">wait_timeout</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-65" name="__codelineno-1-65"></a><span class="w">    </span><span class="c1">// 给队列提交输入并将处理结果返回</span>
+<a id="__codelineno-1-66" name="__codelineno-1-66"></a><span class="w">    </span><span class="n">Job</span><span class="w"> </span><span class="n">job</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-67" name="__codelineno-1-67"></a><span class="w">    </span><span class="n">job</span><span class="p">.</span><span class="n">pic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pic_tensor</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-68" name="__codelineno-1-68"></a><span class="w">    </span><span class="n">job</span><span class="p">.</span><span class="n">ret_promise</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RET_RPOMISE_PTR</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">promise</span><span class="o">&lt;</span><span class="n">RET_TYPE</span><span class="o">&gt;</span><span class="p">());</span><span class="w"></span>
+<a id="__codelineno-1-69" name="__codelineno-1-69"></a><span class="w">    </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-70" name="__codelineno-1-70"></a><span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">unique_lock</span><span class="o">&lt;</span><span class="n">mutex</span><span class="o">&gt;</span><span class="w"> </span><span class="n">l</span><span class="p">(</span><span class="n">lock_</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-1-71" name="__codelineno-1-71"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">queue_</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">max_queue_num_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-72" name="__codelineno-1-72"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">wait_timeout</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-73" name="__codelineno-1-73"></a><span class="w">          </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&quot;exhausted resource&quot;</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-1-74" name="__codelineno-1-74"></a><span class="w">        </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-75" name="__codelineno-1-75"></a><span class="w">        </span><span class="n">cond_queue_overflow_</span><span class="p">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">milliseconds</span><span class="p">(</span><span class="n">wait_timeout</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-76" name="__codelineno-1-76"></a><span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">queue_</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">max_queue_num_</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-77" name="__codelineno-1-77"></a><span class="w">        </span><span class="p">});</span><span class="w"></span>
+<a id="__codelineno-1-78" name="__codelineno-1-78"></a><span class="w">      </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-79" name="__codelineno-1-79"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">queue_</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">max_queue_num_</span><span class="p">)</span><span class="w"></span>
+<a id="__codelineno-1-80" name="__codelineno-1-80"></a><span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&quot;exhausted resource&quot;</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-1-81" name="__codelineno-1-81"></a><span class="w">      </span><span class="c1">// 此处不可以无限提交</span>
+<a id="__codelineno-1-82" name="__codelineno-1-82"></a><span class="w">      </span><span class="n">queue_</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">job</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-1-83" name="__codelineno-1-83"></a><span class="w">    </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-84" name="__codelineno-1-84"></a><span class="w">    </span><span class="n">cond_var_</span><span class="p">.</span><span class="n">notify_one</span><span class="p">();</span><span class="w"></span>
+<a id="__codelineno-1-85" name="__codelineno-1-85"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">job</span><span class="p">.</span><span class="n">ret_promise</span><span class="o">-&gt;</span><span class="n">get_future</span><span class="p">();</span><span class="w"></span>
+<a id="__codelineno-1-86" name="__codelineno-1-86"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-87" name="__codelineno-1-87"></a><span class="w">  </span><span class="o">~</span><span class="n">InferImpl</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-88" name="__codelineno-1-88"></a><span class="w">    </span><span class="n">running_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-89" name="__codelineno-1-89"></a><span class="w">    </span><span class="n">cond_var_</span><span class="p">.</span><span class="n">notify_one</span><span class="p">();</span><span class="w"></span>
+<a id="__codelineno-1-90" name="__codelineno-1-90"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">thread_</span><span class="p">.</span><span class="n">joinable</span><span class="p">())</span><span class="w"></span>
+<a id="__codelineno-1-91" name="__codelineno-1-91"></a><span class="w">      </span><span class="n">thread_</span><span class="p">.</span><span class="n">join</span><span class="p">();</span><span class="w"></span>
+<a id="__codelineno-1-92" name="__codelineno-1-92"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-93" name="__codelineno-1-93"></a><span class="w"> </span><span class="k">protected</span><span class="o">:</span><span class="w"></span>
+<a id="__codelineno-1-94" name="__codelineno-1-94"></a><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">worker</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filepath</span><span class="p">,</span><span class="w"> </span><span class="n">promise</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">init_promise</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-95" name="__codelineno-1-95"></a><span class="w">    </span><span class="c1">// 初始化模型上下文</span>
+<a id="__codelineno-1-96" name="__codelineno-1-96"></a><span class="w">    </span><span class="n">context_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filepath</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-97" name="__codelineno-1-97"></a><span class="w">    </span><span class="c1">// 假设此处为模型加载失败</span>
+<a id="__codelineno-1-98" name="__codelineno-1-98"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">context_</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-99" name="__codelineno-1-99"></a><span class="w">      </span><span class="n">context_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filepath</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-100" name="__codelineno-1-100"></a><span class="w">      </span><span class="n">init_promise</span><span class="p">.</span><span class="n">set_value</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-1-101" name="__codelineno-1-101"></a><span class="w">      </span><span class="k">return</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-102" name="__codelineno-1-102"></a><span class="w">    </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-103" name="__codelineno-1-103"></a><span class="w">    </span><span class="c1">// 若干初始化上下文代码</span>
+<a id="__codelineno-1-104" name="__codelineno-1-104"></a><span class="w">    </span><span class="c1">// 上下文初始化成功</span>
+<a id="__codelineno-1-105" name="__codelineno-1-105"></a><span class="w">    </span><span class="n">init_promise</span><span class="p">.</span><span class="n">set_value</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-1-106" name="__codelineno-1-106"></a><span class="w">    </span><span class="c1">// 检查资源队列中是否有任务</span>
+<a id="__codelineno-1-107" name="__codelineno-1-107"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Job</span><span class="o">&gt;</span><span class="w"> </span><span class="n">jobs</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-108" name="__codelineno-1-108"></a><span class="w">    </span><span class="c1">// 此处用于模拟</span>
+<a id="__codelineno-1-109" name="__codelineno-1-109"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">batch_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-110" name="__codelineno-1-110"></a><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">running_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-111" name="__codelineno-1-111"></a><span class="w">      </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-112" name="__codelineno-1-112"></a><span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">unique_lock</span><span class="o">&lt;</span><span class="n">mutex</span><span class="o">&gt;</span><span class="w"> </span><span class="n">l</span><span class="p">(</span><span class="n">lock_</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-1-113" name="__codelineno-1-113"></a><span class="w">        </span><span class="n">cond_var_</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-114" name="__codelineno-1-114"></a><span class="w">          </span><span class="c1">// return true 表示 退出等待</span>
+<a id="__codelineno-1-115" name="__codelineno-1-115"></a><span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="o">!</span><span class="n">queue_</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">running_</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-116" name="__codelineno-1-116"></a><span class="w">        </span><span class="p">});</span><span class="w"></span>
+<a id="__codelineno-1-117" name="__codelineno-1-117"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">running_</span><span class="p">)</span><span class="w"></span>
+<a id="__codelineno-1-118" name="__codelineno-1-118"></a><span class="w">          </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-119" name="__codelineno-1-119"></a><span class="w">        </span><span class="c1">// 表示当前线程等待的最长时间</span>
+<a id="__codelineno-1-120" name="__codelineno-1-120"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">timeout_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-121" name="__codelineno-1-121"></a><span class="w">          </span><span class="n">cond_var_</span><span class="p">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">milliseconds</span><span class="p">(</span><span class="n">timeout_</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-122" name="__codelineno-1-122"></a><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">queue_</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">max_batchsize_</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-123" name="__codelineno-1-123"></a><span class="w">          </span><span class="p">});</span><span class="w"></span>
+<a id="__codelineno-1-124" name="__codelineno-1-124"></a><span class="w">        </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-125" name="__codelineno-1-125"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="o">!</span><span class="n">queue_</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">max_batchsize_</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-126" name="__codelineno-1-126"></a><span class="w">          </span><span class="n">jobs</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">queue_</span><span class="p">.</span><span class="n">front</span><span class="p">());</span><span class="w"></span>
+<a id="__codelineno-1-127" name="__codelineno-1-127"></a><span class="w">          </span><span class="n">queue_</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span><span class="w"></span>
+<a id="__codelineno-1-128" name="__codelineno-1-128"></a><span class="w">        </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-129" name="__codelineno-1-129"></a><span class="w">      </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-130" name="__codelineno-1-130"></a><span class="w">      </span><span class="c1">// job inference 此处初始jobs所有数据 这里模拟一下</span>
+<a id="__codelineno-1-131" name="__codelineno-1-131"></a><span class="w">      </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jobs</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+<a id="__codelineno-1-132" name="__codelineno-1-132"></a><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">job</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">jobs</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-133" name="__codelineno-1-133"></a><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">bbox</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">job</span><span class="p">.</span><span class="n">pic</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;_handled&quot;</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-134" name="__codelineno-1-134"></a><span class="w">        </span><span class="n">RET_TYPE</span><span class="w"> </span><span class="n">handled_result</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-135" name="__codelineno-1-135"></a><span class="w">        </span><span class="n">handled_result</span><span class="p">[</span><span class="s">&quot;bbox&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bbox</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-136" name="__codelineno-1-136"></a><span class="w">        </span><span class="n">job</span><span class="p">.</span><span class="n">ret_promise</span><span class="o">-&gt;</span><span class="n">set_value</span><span class="p">(</span><span class="n">handled_result</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-1-137" name="__codelineno-1-137"></a><span class="w">      </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-138" name="__codelineno-1-138"></a><span class="w">      </span><span class="n">jobs</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span><span class="w"></span>
+<a id="__codelineno-1-139" name="__codelineno-1-139"></a><span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">sleep_for</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">milliseconds</span><span class="p">(</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">size</span><span class="p">));</span><span class="w"></span>
+<a id="__codelineno-1-140" name="__codelineno-1-140"></a><span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;batch_id = %d, job size=%d </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">batch_id</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-1-141" name="__codelineno-1-141"></a><span class="w">      </span><span class="c1">// 通知生产者 消费者这边已消费一次</span>
+<a id="__codelineno-1-142" name="__codelineno-1-142"></a><span class="w">      </span><span class="n">cond_queue_overflow_</span><span class="p">.</span><span class="n">notify_one</span><span class="p">();</span><span class="w"></span>
+<a id="__codelineno-1-143" name="__codelineno-1-143"></a><span class="w">      </span><span class="o">++</span><span class="n">batch_id</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-144" name="__codelineno-1-144"></a><span class="w">    </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-145" name="__codelineno-1-145"></a><span class="w">    </span><span class="c1">// 销毁申请的资源</span>
+<a id="__codelineno-1-146" name="__codelineno-1-146"></a><span class="w">    </span><span class="n">context_</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span><span class="w"></span>
+<a id="__codelineno-1-147" name="__codelineno-1-147"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;context_ has cleared&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-148" name="__codelineno-1-148"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Workder done!&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-149" name="__codelineno-1-149"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-150" name="__codelineno-1-150"></a><span class="p">};</span><span class="w"></span>
+<a id="__codelineno-1-151" name="__codelineno-1-151"></a><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">InferInterface</span><span class="o">&gt;</span><span class="w"> </span><span class="n">create_infer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filepath</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">max_bactch_size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-152" name="__codelineno-1-152"></a><span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">infer_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">InferImpl</span><span class="p">();</span><span class="w"></span>
+<a id="__codelineno-1-153" name="__codelineno-1-153"></a><span class="w">  </span><span class="n">infer_ptr</span><span class="o">-&gt;</span><span class="n">set_max_batchsize</span><span class="p">(</span><span class="n">max_bactch_size</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-1-154" name="__codelineno-1-154"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">infer_ptr</span><span class="o">-&gt;</span><span class="n">load_model</span><span class="p">(</span><span class="n">filepath</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-1-155" name="__codelineno-1-155"></a><span class="w">    </span><span class="k">delete</span><span class="w"> </span><span class="n">infer_ptr</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-156" name="__codelineno-1-156"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-1-157" name="__codelineno-1-157"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-158" name="__codelineno-1-158"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">InferInterface</span><span class="o">&gt;</span><span class="p">(</span><span class="n">infer_ptr</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-1-159" name="__codelineno-1-159"></a><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-1-160" name="__codelineno-1-160"></a><span class="p">}</span><span class="w"> </span><span class="c1">// namespace Infer END</span>
+</code></pre></div></td></tr></table></div>
+<ol>
+<li>文件<code>main.cpp</code> 测试功能</li>
+</ol>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-2-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-2-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-2-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-2-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-2-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-2-10">10</a></span>
+<span class="normal"><a href="#__codelineno-2-11">11</a></span>
+<span class="normal"><a href="#__codelineno-2-12">12</a></span>
+<span class="normal"><a href="#__codelineno-2-13">13</a></span>
+<span class="normal"><a href="#__codelineno-2-14">14</a></span>
+<span class="normal"><a href="#__codelineno-2-15">15</a></span>
+<span class="normal"><a href="#__codelineno-2-16">16</a></span>
+<span class="normal"><a href="#__codelineno-2-17">17</a></span>
+<span class="normal"><a href="#__codelineno-2-18">18</a></span>
+<span class="normal"><a href="#__codelineno-2-19">19</a></span>
+<span class="normal"><a href="#__codelineno-2-20">20</a></span>
+<span class="normal"><a href="#__codelineno-2-21">21</a></span>
+<span class="normal"><a href="#__codelineno-2-22">22</a></span>
+<span class="normal"><a href="#__codelineno-2-23">23</a></span>
+<span class="normal"><a href="#__codelineno-2-24">24</a></span>
+<span class="normal"><a href="#__codelineno-2-25">25</a></span>
+<span class="normal"><a href="#__codelineno-2-26">26</a></span>
+<span class="normal"><a href="#__codelineno-2-27">27</a></span>
+<span class="normal"><a href="#__codelineno-2-28">28</a></span>
+<span class="normal"><a href="#__codelineno-2-29">29</a></span>
+<span class="normal"><a href="#__codelineno-2-30">30</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;infer.hpp&quot;</span><span class="cp"></span>
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="k">using</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="k">using</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="k">using</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="k">using</span><span class="w"> </span><span class="n">RET_FUTRUE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_future</span><span class="o">&lt;</span><span class="n">Infer</span><span class="o">::</span><span class="n">RET_TYPE</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Infer</span><span class="o">::</span><span class="n">InferInterface</span><span class="o">&gt;</span><span class="w"> </span><span class="n">infer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Infer</span><span class="o">::</span><span class="n">create_infer</span><span class="p">(</span><span class="s">&quot;/xxx/some.engine&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infer</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-2-11" name="__codelineno-2-11"></a><span class="w">    </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;create infer engine error&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-12" name="__codelineno-2-12"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-13" name="__codelineno-2-13"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-2-14" name="__codelineno-2-14"></a><span class="w">  </span><span class="c1">// 允许最多等待5ms延迟收集一组数据</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15"></a><span class="w">  </span><span class="n">infer</span><span class="o">-&gt;</span><span class="n">set_timeout</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-2-16" name="__codelineno-2-16"></a><span class="w">  </span><span class="c1">// 设置队列中元素的最大个数</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17"></a><span class="w">  </span><span class="n">infer</span><span class="o">-&gt;</span><span class="n">set_max_queue_num</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-2-18" name="__codelineno-2-18"></a><span class="w">  </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;create infer engine success&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-19" name="__codelineno-2-19"></a><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">RET_FUTRUE</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shared_ptrs</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-20" name="__codelineno-2-20"></a><span class="w">  </span><span class="kt">char</span><span class="w"> </span><span class="n">buffer</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span><span class="w"></span>
+<a id="__codelineno-2-21" name="__codelineno-2-21"></a><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">24</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-2-22" name="__codelineno-2-22"></a><span class="w">    </span><span class="n">sprintf</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;%d.tensor&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-2-23" name="__codelineno-2-23"></a><span class="w">    </span><span class="c1">// 1000 表示在队列满的情况下 生产者愿意等待1000ms，超时会抛出异常</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24"></a><span class="w">    </span><span class="n">shared_ptrs</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">infer</span><span class="o">-&gt;</span><span class="n">forward</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="p">));</span><span class="w"></span>
+<a id="__codelineno-2-25" name="__codelineno-2-25"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-2-26" name="__codelineno-2-26"></a><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">shared_ptr</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">shared_ptrs</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-2-27" name="__codelineno-2-27"></a><span class="w">    </span><span class="n">shared_ptr</span><span class="p">.</span><span class="n">get</span><span class="p">();</span><span class="w"></span>
+<a id="__codelineno-2-28" name="__codelineno-2-28"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-2-29" name="__codelineno-2-29"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-30" name="__codelineno-2-30"></a><span class="p">}</span><span class="w"></span>
+</code></pre></div></td></tr></table></div>
+<h2 id="_4">总结</h2>
+<p>一直想着如何优雅的来去利用多线程加速模型的推理，trtpy给了我答案。回过头在看自己曾经的实现，发现一个好的接口设计比对接口的具体实现更为重要。</p>
+                
+                  
+                
+                
+                  
+                  <hr>
+                  <div class="md-source-date">
+                    <small>
+                      
+                        最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 16, 2022</span>
+                      
+                    </small>
+                  </div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../2021%E5%B9%B412%E6%9C%8816%E6%97%A5%2014%E6%97%B626%E5%88%8600%E7%A7%92/" title="FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  上一页
+                </span>
+                FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../2022%E5%B9%B404%E6%9C%8811%E6%97%A5%2023%E6%97%B612%E5%88%8655%E7%A7%92/" title="pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  下一页
+                </span>
+                pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
+    
+      <a href="mailto:haibintian@foxmail.com" target="_blank" rel="noopener" title="" class="md-footer-social__link fa fa-"></a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
+      
+        
+        
+          
+          <script src="../../assets/javascripts/lunr/lunr.stemmer.support.js"></script>
+          
+            
+              
+                <script src="../../assets/javascripts/lunr/tinyseg.js"></script>
+              
+              
+                <script src="../../assets/javascripts/lunr/lunr.ja.js"></script>
+              
+            
+          
+          
+        
+      
+      <script>app.initialize({version:"1.3.1",url:{base:"../.."}})</script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+      
+        <script src="../../javascripts/social_share.js"></script>
+      
+    
+  </body>
+</html>

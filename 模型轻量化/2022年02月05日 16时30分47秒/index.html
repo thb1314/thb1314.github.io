@@ -1,0 +1,1153 @@
+
+
+
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="复制">
+      
+        <meta name="lang:clipboard.copied" content="已复制">
+      
+        <meta name="lang:search.language" content="ja">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="没有找到符合条件的结果">
+      
+        <meta name="lang:search.result.one" content="找到 1 个符合条件的结果">
+      
+        <meta name="lang:search.result.other" content="# 个符合条件的结果">
+      
+        <meta name="lang:search.tokenizer" content="[\uff0c\u3002]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-4.6.3">
+    
+    
+      
+        <title>对模型量化框架mqbench添加openvino推理格式支持 - 海滨的Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#mqbenchopenvino" tabindex="0" class="md-skip">
+        跳转至
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="海滨的Blog" aria-label="海滨的Blog" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              海滨的Blog
+            </span>
+            <span class="md-header-nav__topic">
+              
+                对模型量化框架mqbench添加openvino推理格式支持
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            键入以开始搜索
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="海滨的Blog" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    海滨的Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Index" class="md-nav__link">
+      Index
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      DL框架原理与技巧
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        DL框架原理与技巧
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" title="Pytorch下的多卡间变量同步操作" class="md-nav__link">
+      Pytorch下的多卡间变量同步操作
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8807%E6%97%A5%2020%E6%97%B633%E5%88%8650%E7%A7%92/" title="自动微分autograd原理-简单demo" class="md-nav__link">
+      自动微分autograd原理-简单demo
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8811%E6%97%A5%2015%E6%97%B614%E5%88%8655%E7%A7%92/" title="TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换" class="md-nav__link">
+      TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" title="再谈自动微分：自动微分中的前向模式与反向模式" class="md-nav__link">
+      再谈自动微分：自动微分中的前向模式与反向模式
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      OCR相关
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        OCR相关
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../OCR%E7%9B%B8%E5%85%B3/2022%E5%B9%B403%E6%9C%8829%E6%97%A5%2022%E6%97%B651%E5%88%8611%E7%A7%92/" title="Pytorch中CTC Loss源码解析" class="md-nav__link">
+      Pytorch中CTC Loss源码解析
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      Cuda相关
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        Cuda相关
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B406%E6%9C%8812%E6%97%A5%2021%E6%97%B613%E5%88%8644%E7%A7%92/" title="cublas中矩阵乘及其广播机制的实现与单元测试" class="md-nav__link">
+      cublas中矩阵乘及其广播机制的实现与单元测试
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B407%E6%9C%8823%E6%97%A5%2023%E6%97%B617%E5%88%8614%E7%A7%92/" title="cuDNN API的使用与测试-以二维卷积+Relu激活函数为例" class="md-nav__link">
+      cuDNN API的使用与测试-以二维卷积+Relu激活函数为例
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      python&C++
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        python&C++
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../python%26C%2B%2B/2022%E5%B9%B406%E6%9C%8807%E6%97%A5%2015%E6%97%B650%E5%88%8636%E7%A7%92/" title="python与C/C++数据交互的陷阱：numpy/torch中的视图" class="md-nav__link">
+      python与C/C++数据交互的陷阱：numpy/torch中的视图
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6" checked>
+    
+    <label class="md-nav__link" for="nav-6">
+      模型轻量化
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        模型轻量化
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2021%E5%B9%B412%E6%9C%8825%E6%97%A5%2016%E6%97%B604%E5%88%8649%E7%A7%92/" title="Network Slimming-神经网络剪枝的精细控制实现" class="md-nav__link">
+      Network Slimming-神经网络剪枝的精细控制实现
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2022%E5%B9%B401%E6%9C%8817%E6%97%A5%2010%E6%97%B647%E5%88%8629%E7%A7%92/" title="模型压缩框架nncf模型量化中QAT量化参数的梯度推导" class="md-nav__link">
+      模型压缩框架nncf模型量化中QAT量化参数的梯度推导
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        对模型量化框架mqbench添加openvino推理格式支持
+      </label>
+    
+    <a href="./" title="对模型量化框架mqbench添加openvino推理格式支持" class="md-nav__link md-nav__link--active">
+      对模型量化框架mqbench添加openvino推理格式支持
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">目录</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#openvino" class="md-nav__link">
+    openvino 推理格式的对齐
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mqbench-onnx" class="md-nav__link">
+    对mqbench onnx算子的替换
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reluunsigned-activation" class="md-nav__link">
+    Relu等unsigned activation在对称量化时的特殊操作
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#weight-7bit" class="md-nav__link">
+    weight 的 7bit量化
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    写在最后
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2022%E5%B9%B402%E6%9C%8821%E6%97%A5%2012%E6%97%B619%E5%88%8614%E7%A7%92/" title="一文总结TensorRT下两种量化方式QAT和PTQ的部署" class="md-nav__link">
+      一文总结TensorRT下两种量化方式QAT和PTQ的部署
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7">
+    
+    <label class="md-nav__link" for="nav-7">
+      模型部署
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        模型部署
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2021%E5%B9%B412%E6%9C%8816%E6%97%A5%2014%E6%97%B626%E5%88%8600%E7%A7%92/" title="FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案" class="md-nav__link">
+      FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8806%E6%97%A5%2022%E6%97%B621%E5%88%8616%E7%A7%92/" title="生产者消费者模式在多batch推理下的应用(延时队列)" class="md-nav__link">
+      生产者消费者模式在多batch推理下的应用(延时队列)
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8811%E6%97%A5%2023%E6%97%B612%E5%88%8655%E7%A7%92/" title="pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例" class="md-nav__link">
+      pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B405%E6%9C%8828%E6%97%A5%2017%E6%97%B623%E5%88%8651%E7%A7%92/" title="计算图的优化-以onnx表示形式为例" class="md-nav__link">
+      计算图的优化-以onnx表示形式为例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B408%E6%9C%8802%E6%97%A5%2023%E6%97%B628%E5%88%8628%E7%A7%92/" title="TensorRT Plugin的实现、调试与验证：以实现Layernorm为例" class="md-nav__link">
+      TensorRT Plugin的实现、调试与验证：以实现Layernorm为例
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-8" type="checkbox" id="nav-8">
+    
+    <label class="md-nav__link" for="nav-8">
+      论文解读
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-8">
+        论文解读
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/convnext/" title="关于ConvNext若干细节的解读与讨论" class="md-nav__link">
+      关于ConvNext若干细节的解读与讨论
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">目录</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#openvino" class="md-nav__link">
+    openvino 推理格式的对齐
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mqbench-onnx" class="md-nav__link">
+    对mqbench onnx算子的替换
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reluunsigned-activation" class="md-nav__link">
+    Relu等unsigned activation在对称量化时的特殊操作
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#weight-7bit" class="md-nav__link">
+    weight 的 7bit量化
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    写在最后
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="mqbenchopenvino">对模型量化框架mqbench添加openvino推理格式支持</h1>
+<p>商汤开源的量化框架<a href="http://mqbench.tech/" title="mqbench">mqbench</a>支持QAT算法以及对多种推理框架（NNIE、TensorRT等）的部署支持，可能由于商汤内部在Intel CPU这种通用硬件下的场景不多，缺少对Intel 部署框架openvino的支持，本文将介绍采用mqbenc量化后的模型如何采用openvino去部署。
+完整代码见 <a href="https://github.com/ModelTC/MQBench" title="https://github.com/ModelTC/MQBench">https://github.com/ModelTC/MQBench</a> (没错，相关代码进过PR已经merge进官方github)</p>
+<h2 id="openvino">openvino 推理格式的对齐</h2>
+<p>openvino官方实际上是有官方模型压缩框架的，叫nncf，我之前还写过一篇文章专门介绍nncf下的量化。这里给出nncf量化的文档地址：<a href="https://github.com/openvinotoolkit/nncf/blob/1e5f506a54908a0a4256e592b2d4c881106236b2/docs/compression_algorithms/Quantization.md" title="Readme">Readme</a>。给出的文档和源码是对不上的，不推荐去看，但是用起来在显存占用上nncf的模型优于基于torch.fx的mqbench，主要原因在于nncf量化不对batchnorm进行合并。此外，由于其参数就是完全和<code>FakeQuantize</code>中的参数完全对应的，因此其和openvino的推理结果是完全对齐的。
+openvino中的量化模型采用onnx，新添了一个<code>FakeQuantize</code>的op来表示<code>FakeQuantize</code>的输出所对应的算子需要在低比特下去运算。<code>FakeQuantize</code>的算子如下图所示：  </p>
+<p><img alt="" src="../upload/2022/02/202202051515214056490.png" />
+可以看到<code>FakeQuantize</code>一共五个输入，一个<code>levels</code>的属性。这里需要明确输入和属性的各个含义，需要参考nncf中的导出onnx时候的源码。
+地址：<code>nncf/torch/quantization/quantize_functions.py</code>
+参考源码：</p>
+<p><div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="k">class</span> <span class="nc">ExportQuantizeToFakeQuantize</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a>    <span class="nd">@staticmethod</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a>    <span class="k">def</span> <span class="nf">symbolic</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">levels</span><span class="p">,</span> <span class="n">input_low</span><span class="p">,</span> <span class="n">input_high</span><span class="p">,</span> <span class="n">output_low</span><span class="p">,</span> <span class="n">output_high</span><span class="p">):</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a>        <span class="k">return</span> <span class="n">g</span><span class="o">.</span><span class="n">op</span><span class="p">(</span><span class="n">add_domain</span><span class="p">(</span><span class="s2">&quot;FakeQuantize&quot;</span><span class="p">),</span> <span class="n">input_</span><span class="p">,</span> <span class="n">input_low</span><span class="p">,</span> <span class="n">input_high</span><span class="p">,</span> <span class="n">output_low</span><span class="p">,</span> <span class="n">output_high</span><span class="p">,</span> <span class="n">levels_i</span><span class="o">=</span><span class="n">levels</span><span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a>    <span class="nd">@staticmethod</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">levels</span><span class="p">,</span> <span class="n">input_low</span><span class="p">,</span> <span class="n">input_high</span><span class="p">,</span> <span class="n">output_low</span><span class="p">,</span> <span class="n">output_high</span><span class="p">):</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a>        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">input_</span><span class="p">)</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a>    <span class="nd">@staticmethod</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a>    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">grad_output</span><span class="p">):</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a>        <span class="c1"># backward is not used during export</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a>        <span class="k">return</span> <span class="n">grad_output</span>
+</code></pre></div></td></tr></table></div>
+搜索<code>ExportQuantizeToFakeQuantize</code> 得到layer定义<br />
+地址<code>nncf/torch/quantization/layers.py</code> Line 249</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="k">def</span> <span class="nf">run_export_quantization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_export_mode</span> <span class="o">==</span> <span class="n">QuantizerExportMode</span><span class="o">.</span><span class="n">FAKE_QUANTIZE</span><span class="p">:</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a>            <span class="n">x</span><span class="p">,</span> <span class="n">levels</span><span class="p">,</span> <span class="n">input_low</span><span class="p">,</span> <span class="n">input_high</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_fq_export_quantization</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a>            <span class="k">return</span> <span class="n">ExportQuantizeToFakeQuantize</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">levels</span><span class="p">,</span> <span class="n">input_low</span><span class="p">,</span> <span class="n">input_high</span><span class="p">,</span> <span class="n">input_low</span><span class="p">,</span> <span class="n">input_high</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<blockquote>
+<p>从这里可以看出
+output_low = input_low
+output_high = input_high
+追溯<code>_prepare_fq_export_quantization</code>方法
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
+<span class="normal"><a href="#__codelineno-2-2">2</a></span>
+<span class="normal"><a href="#__codelineno-2-3">3</a></span>
+<span class="normal"><a href="#__codelineno-2-4">4</a></span>
+<span class="normal"><a href="#__codelineno-2-5">5</a></span>
+<span class="normal"><a href="#__codelineno-2-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="k">def</span> <span class="nf">_prepare_fq_export_quantization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a>        <span class="n">x</span><span class="p">,</span> <span class="n">level_high</span><span class="p">,</span> <span class="n">level_low</span><span class="p">,</span> <span class="n">input_low</span><span class="p">,</span> <span class="n">input_high</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_export_quantization</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a>        <span class="k">with</span> <span class="n">no_jit_trace</span><span class="p">():</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a>            <span class="n">levels</span> <span class="o">=</span> <span class="n">level_high</span> <span class="o">-</span> <span class="n">level_low</span> <span class="o">+</span> <span class="mi">1</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a>        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">levels</span><span class="p">,</span> <span class="n">input_low</span><span class="p">,</span> <span class="n">input_high</span>
+</code></pre></div></td></tr></table></div>
+追溯<code>_prepare_export_quantization</code>方法，这里以对称量化为例
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-3-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-3-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-3-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-3-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-3-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-3-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-3-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-3-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-3-10">10</a></span>
+<span class="normal"><a href="#__codelineno-3-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="k">def</span> <span class="nf">_prepare_export_quantization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a>        <span class="k">with</span> <span class="n">no_jit_trace</span><span class="p">():</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a>            <span class="n">input_low</span><span class="p">,</span> <span class="n">input_high</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_input_low_input_high</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">level_low</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">level_high</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a>            <span class="n">level_low</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">level_low</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a>            <span class="n">level_high</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">level_high</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_half_range</span><span class="p">:</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a>                <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">input_low</span><span class="p">),</span> <span class="n">input_high</span><span class="p">)</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8"></a>                <span class="n">level_low</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">level_low</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9"></a>                <span class="n">level_high</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">level_high</span> <span class="o">+</span> <span class="mi">1</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10"></a>                <span class="n">input_low</span><span class="p">,</span> <span class="n">input_high</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_input_low_input_high</span><span class="p">(</span><span class="n">level_high</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">level_high</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span><span class="n">level_low</span><span class="p">,</span><span class="n">level_high</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11"></a>        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">level_high</span><span class="p">,</span> <span class="n">level_low</span><span class="p">,</span> <span class="n">input_low</span><span class="p">,</span> <span class="n">input_high</span>
+</code></pre></div></td></tr></table></div>
+继续追溯<code>self.level_low</code>
+找到<code>calculate_level_ranges</code>方法，这里不再贴代码，直接说结论
+<code>self.level_low</code>和<code>self.level_high</code>分别表示量化区间的最小值和最大值，跟量化到有符号数还是无符号数和量化的位数有关。
+综合<a href="{#ZC_BLOG_HOST#}?id=6" title="《模型压缩框架nncf模型量化中QAT量化参数的梯度推导》">《模型压缩框架nncf模型量化中QAT量化参数的梯度推导》</a>这一篇文章的公式，总结各个变量含义</p>
+</blockquote>
+<div class="arithmatex">\[
+s=\frac{level_{high}-level_{low}}{q_{range}}
+\]</div>
+<div class="arithmatex">\[
+q_{high} = q_{low} + q_{range}
+\]</div>
+<div class="arithmatex">\[
+\operatorname{fakequantize}( x,q_{low},q_{range} ) = \frac{round(s \cdot (\operatorname{clip}(x, q_{low}, q_{high}) - q_{low}))}{s} + q_{low}
+\]</div>
+<p>公式中的<span class="arithmatex">\(q_{low},q_{high}\)</span>即对应源码中的<code>input_low</code>、<code>input_high</code>
+<strong>然而，mqbench中采用的是量化的标准公式，如何对应呢？或者说两种公式如何转换呢？</strong>
+首先给出量化的标准公式</p>
+<div class="arithmatex">\[
+\operatorname{fakequantize}( x,scale,zeropoint) = scale * (clip(round(\frac{x}{scale} + zeropoint),level_{low},level_{high}) - zeropoint)
+\]</div>
+<p>也就是需要找到<span class="arithmatex">\(q_{low},q_{high}\)</span>与<span class="arithmatex">\(scale,zeropoint\)</span>的对应关系
+对openvino中<code>FakeQuantize</code>的表示公式进行变换</p>
+<div class="arithmatex">\[
+sinv := \frac{1}{s}
+\]</div>
+<div class="arithmatex">\[
+\begin{align}
+\operatorname{fakequantize}( x,q_{low},q_{range} ) &amp;= \frac{round(s \cdot (\operatorname{clip}(x, q_{low}, q_{high}) - q_{low}))}{s} + q_{low} \\ &amp;= sinv \cdot round( (\operatorname{clip}(\frac{x - q_{low}}{sinv}, 0, \frac{q_{range}}{sinv}))) + q_{low} \\ &amp;= sinv  \cdot [round( \operatorname{clip}(\frac{x - q_{low}}{sinv}, 0, \frac{q_{range}}{sinv})) + \frac{q_{low}}{sinv}] \\ &amp;= sinv  \cdot [\operatorname{clip}(round(\frac{x - q_{low}}{sinv}), 0,level_{high}-level_{low}) + \frac{q_{low}}{sinv}] \\ &amp;= sinv  \cdot [\operatorname{clip}(round(\frac{x}{sinv} + ( level_{low} - \frac{q_{low}}{sinv})), level_{low},level_{high}) - (level_{low}-\frac{q_{low}}{sinv})]
+\end{align}
+\]</div>
+<p>对比公式可以得到</p>
+<div class="arithmatex">\[
+s=\frac{level_{high}-level_{low}}{q_{range}}
+\]</div>
+<div class="arithmatex">\[
+q_{high} = q_{low} + q_{range}
+\]</div>
+<div class="arithmatex">\[
+ scale=1/s 
+\]</div>
+<div class="arithmatex">\[
+ zeropoint=level_{low}-s \cdot q_{low} 
+\]</div>
+<p>通过以上化简可以得到一个二元一次方程组，解出来既可以得到两种表示方法的转换关系
+下面给出转换代码
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span>
+<span class="normal"><a href="#__codelineno-4-3">3</a></span>
+<span class="normal"><a href="#__codelineno-4-4">4</a></span>
+<span class="normal"><a href="#__codelineno-4-5">5</a></span>
+<span class="normal"><a href="#__codelineno-4-6">6</a></span>
+<span class="normal"><a href="#__codelineno-4-7">7</a></span>
+<span class="normal"><a href="#__codelineno-4-8">8</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="n">zero_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">zero_point</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="n">level_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">level_high</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">level_low</span><span class="p">)</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a>
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="n">input_range</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">level_range</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="n">input_high</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">level_high</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="o">-</span> <span class="n">zero_point</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">*</span> <span class="n">input_range</span> <span class="o">/</span> <span class="n">level_range</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7"></a>
+<a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="n">input_low</span> <span class="o">=</span> <span class="n">input_high</span> <span class="o">-</span> <span class="n">input_range</span>
+</code></pre></div></td></tr></table></div></p>
+<p><strong>这里需要注意的是，zero_point 要求是一个定点数，且位于量化区间内。scale要求为大于0的值。</strong>
+zero_point的处理在mqbench的处理中也可以看到</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a>zero_point = (zero_point.round() - zero_point).detach() + zero_point
+</code></pre></div></td></tr></table></div>
+<p>下面顺便给出<code>qmin</code>,<code>qmax</code>到<code>scale</code>、<code>zeropoint</code>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
+<span class="normal"><a href="#__codelineno-6-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="n">y_scale</span> <span class="o">=</span> <span class="p">(</span><span class="n">input_high</span> <span class="o">-</span> <span class="n">input_low</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">level_high</span> <span class="o">-</span> <span class="n">level_low</span><span class="p">)</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="n">y_zero_point</span> <span class="o">=</span> <span class="p">(</span><span class="n">level_low</span> <span class="o">*</span> <span class="n">input_high</span> <span class="o">-</span> <span class="n">level_high</span> <span class="o">*</span> <span class="n">input_low</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">input_high</span> <span class="o">-</span> <span class="n">input_low</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div></p>
+<h2 id="mqbench-onnx">对mqbench onnx算子的替换</h2>
+<p>主要是将mqbench自定义的伪量化算子全部转换为<code>FakeQuantize</code>
+公式上个小结已经讨论过，下面直接给出onnx节点的替换代码
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-7-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-7-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-7-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-7-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-7-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-7-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-7-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-7-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-7-10">10</a></span>
+<span class="normal"><a href="#__codelineno-7-11">11</a></span>
+<span class="normal"><a href="#__codelineno-7-12">12</a></span>
+<span class="normal"><a href="#__codelineno-7-13">13</a></span>
+<span class="normal"><a href="#__codelineno-7-14">14</a></span>
+<span class="normal"><a href="#__codelineno-7-15">15</a></span>
+<span class="normal"><a href="#__codelineno-7-16">16</a></span>
+<span class="normal"><a href="#__codelineno-7-17">17</a></span>
+<span class="normal"><a href="#__codelineno-7-18">18</a></span>
+<span class="normal"><a href="#__codelineno-7-19">19</a></span>
+<span class="normal"><a href="#__codelineno-7-20">20</a></span>
+<span class="normal"><a href="#__codelineno-7-21">21</a></span>
+<span class="normal"><a href="#__codelineno-7-22">22</a></span>
+<span class="normal"><a href="#__codelineno-7-23">23</a></span>
+<span class="normal"><a href="#__codelineno-7-24">24</a></span>
+<span class="normal"><a href="#__codelineno-7-25">25</a></span>
+<span class="normal"><a href="#__codelineno-7-26">26</a></span>
+<span class="normal"><a href="#__codelineno-7-27">27</a></span>
+<span class="normal"><a href="#__codelineno-7-28">28</a></span>
+<span class="normal"><a href="#__codelineno-7-29">29</a></span>
+<span class="normal"><a href="#__codelineno-7-30">30</a></span>
+<span class="normal"><a href="#__codelineno-7-31">31</a></span>
+<span class="normal"><a href="#__codelineno-7-32">32</a></span>
+<span class="normal"><a href="#__codelineno-7-33">33</a></span>
+<span class="normal"><a href="#__codelineno-7-34">34</a></span>
+<span class="normal"><a href="#__codelineno-7-35">35</a></span>
+<span class="normal"><a href="#__codelineno-7-36">36</a></span>
+<span class="normal"><a href="#__codelineno-7-37">37</a></span>
+<span class="normal"><a href="#__codelineno-7-38">38</a></span>
+<span class="normal"><a href="#__codelineno-7-39">39</a></span>
+<span class="normal"><a href="#__codelineno-7-40">40</a></span>
+<span class="normal"><a href="#__codelineno-7-41">41</a></span>
+<span class="normal"><a href="#__codelineno-7-42">42</a></span>
+<span class="normal"><a href="#__codelineno-7-43">43</a></span>
+<span class="normal"><a href="#__codelineno-7-44">44</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">node</span><span class="p">:</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a>    <span class="c1"># code ...</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3"></a>    <span class="c1"># Create a node (NodeProto)</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4"></a>    <span class="n">fakeq_inputnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="o">%</span> <span class="n">tensor_name</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;input_min_</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;input_max_</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;output_min_</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;output_max_</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">]]</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5"></a>    <span class="n">node_def</span> <span class="o">=</span> <span class="n">helper</span><span class="o">.</span><span class="n">make_node</span><span class="p">(</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6"></a>    <span class="s1">&#39;FakeQuantize&#39;</span><span class="p">,</span> <span class="c1"># node name</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7"></a>    <span class="p">[</span><span class="n">tensor_name</span><span class="p">,</span> <span class="o">*</span><span class="n">fakeq_inputnames</span><span class="p">],</span> <span class="c1"># inputs</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8"></a>    <span class="p">[</span><span class="n">output_name</span><span class="p">],</span> <span class="c1"># outputs</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9"></a>    <span class="n">levels</span><span class="o">=</span><span class="n">levels</span><span class="p">,</span> <span class="c1"># Attributes</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10"></a>    <span class="n">domain</span><span class="o">=</span><span class="s2">&quot;org.openvinotoolkit&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11"></a>    <span class="n">name</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">name</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12"></a>    <span class="p">)</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13"></a>    <span class="n">node_defs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_def</span><span class="p">)</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14"></a>    <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15"></a>    <span class="n">zero_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">zero_point</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">a_min</span><span class="o">=</span><span class="n">qmin</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=</span><span class="n">qmax</span><span class="p">)</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16"></a>    <span class="n">qrange</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">qmax</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">qmin</span><span class="p">)</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17"></a>
+<a id="__codelineno-7-18" name="__codelineno-7-18"></a>    <span class="n">input_range</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">qrange</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19"></a>    <span class="n">input_high</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">qmax</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="o">-</span> <span class="n">zero_point</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">*</span> <span class="n">input_range</span> <span class="o">/</span> <span class="n">qrange</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20"></a>
+<a id="__codelineno-7-21" name="__codelineno-7-21"></a>    <span class="n">input_low</span> <span class="o">=</span> <span class="n">input_high</span> <span class="o">-</span> <span class="n">input_range</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22"></a>
+<a id="__codelineno-7-23" name="__codelineno-7-23"></a>    <span class="n">input_low_size</span> <span class="o">=</span> <span class="n">input_low</span><span class="o">.</span><span class="n">size</span>
+<a id="__codelineno-7-24" name="__codelineno-7-24"></a>    <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-7-25" name="__codelineno-7-25"></a>        <span class="n">next_node</span> <span class="o">=</span> <span class="n">inp2node</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-7-26" name="__codelineno-7-26"></a>        <span class="n">fake_node</span> <span class="o">=</span> <span class="n">out2node</span><span class="p">[</span><span class="n">next_node</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+<a id="__codelineno-7-27" name="__codelineno-7-27"></a>        <span class="n">tensor</span> <span class="o">=</span> <span class="n">name2data</span><span class="p">[</span><span class="n">fake_node</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+<a id="__codelineno-7-28" name="__codelineno-7-28"></a>        <span class="n">shape_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<a id="__codelineno-7-29" name="__codelineno-7-29"></a>        <span class="n">new_shape</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">,]</span> <span class="o">*</span> <span class="p">(</span><span class="n">shape_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-7-30" name="__codelineno-7-30"></a>
+<a id="__codelineno-7-31" name="__codelineno-7-31"></a>    <span class="k">except</span><span class="p">:</span>
+<a id="__codelineno-7-32" name="__codelineno-7-32"></a>        <span class="n">new_shape</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">]</span>
+<a id="__codelineno-7-33" name="__codelineno-7-33"></a>    <span class="k">if</span> <span class="n">input_low_size</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-7-34" name="__codelineno-7-34"></a>        <span class="n">input_low</span> <span class="o">=</span> <span class="n">input_low</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">new_shape</span><span class="p">)</span>
+<a id="__codelineno-7-35" name="__codelineno-7-35"></a>        <span class="n">input_high</span> <span class="o">=</span> <span class="n">input_high</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">new_shape</span><span class="p">)</span>
+<a id="__codelineno-7-36" name="__codelineno-7-36"></a>    <span class="n">input_low</span> <span class="o">=</span> <span class="n">input_low</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<a id="__codelineno-7-37" name="__codelineno-7-37"></a>    <span class="n">input_high</span> <span class="o">=</span> <span class="n">input_high</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<a id="__codelineno-7-38" name="__codelineno-7-38"></a>    <span class="k">for</span> <span class="n">initializer_name</span><span class="p">,</span><span class="n">value_tensor</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fakeq_inputnames</span><span class="p">,[</span><span class="n">input_low</span><span class="p">,</span> <span class="n">input_high</span><span class="p">,</span> <span class="n">input_low</span><span class="p">,</span> <span class="n">input_high</span><span class="p">]):</span>
+<a id="__codelineno-7-39" name="__codelineno-7-39"></a>        <span class="k">if</span> <span class="n">initializer_name</span> <span class="ow">in</span> <span class="n">insert_initializer_names</span><span class="p">:</span>
+<a id="__codelineno-7-40" name="__codelineno-7-40"></a>            <span class="k">continue</span>
+<a id="__codelineno-7-41" name="__codelineno-7-41"></a>        <span class="n">initializer</span> <span class="o">=</span> <span class="n">numpy_helper</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">value_tensor</span><span class="p">)</span>
+<a id="__codelineno-7-42" name="__codelineno-7-42"></a>        <span class="n">initializer</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">initializer_name</span>
+<a id="__codelineno-7-43" name="__codelineno-7-43"></a>        <span class="n">insert_initializer_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">initializer_name</span><span class="p">)</span>
+<a id="__codelineno-7-44" name="__codelineno-7-44"></a>        <span class="n">graph</span><span class="o">.</span><span class="n">initializer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">initializer</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+此处代码的<code>qmax,qmin</code>表示<code>level_low</code>,<code>level_high</code>。
+删除这些节点以后，需要对整个onnx模型执行一遍拓扑排序，删除无用的<code>initializer</code></p>
+<h2 id="reluunsigned-activation">Relu等unsigned activation在对称量化时的特殊操作</h2>
+<p>设置量化方式为对称量化时，为了充分利用量化区间，nncf的setting是将量化区间调整为</p>
+<div class="arithmatex">\[
+[0, 2^{numbits} - 1]
+\]</div>
+<p>对应操作代码为
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-8-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-8-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-8-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-8-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-8-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-8-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-8-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-8-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-8-10">10</a></span>
+<span class="normal"><a href="#__codelineno-8-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="n">aqconfig_8bit</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">qconfig</span><span class="o">.</span><span class="n">activation</span><span class="p">)</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="n">aq_symmetry</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">is_symmetric_quant</span><span class="p">(</span><span class="n">qconfig</span><span class="o">.</span><span class="n">activation</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;qscheme&#39;</span><span class="p">])</span> <span class="k">else</span> <span class="kc">False</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3"></a><span class="n">aqconfig_8bit</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;quant_min&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4"></a><span class="n">aqconfig_8bit</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;quant_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">8</span> <span class="o">-</span> <span class="mi">1</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5"></a>
+<a id="__codelineno-8-6" name="__codelineno-8-6"></a><span class="n">aqconfig_8bit</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;factory_kwargs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;not_calc_quant_min_max&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">}</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7"></a><span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">node_to_quantize_output</span><span class="p">:</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8"></a>    <span class="k">if</span> <span class="n">aq_symmetry</span><span class="p">:</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9"></a>        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;call_module&quot;</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">modules</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">target</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_type_to_quant_unsigned</span><span class="p">):</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10"></a>            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Set </span><span class="si">{}</span><span class="s2"> post act quantize to 8 bit unsigned type.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11"></a>            <span class="n">fake_quantizer</span> <span class="o">=</span> <span class="n">aqconfig_8bit</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+其实，这里还涉及到更为复杂的处理逻辑，比如upsample的的输入是Relu后的结果的话，upsample后面的FQ算子依然是unsigned类型的，这里我采用bfs层序遍历获得输入层的输出结果是否是unsigned的，如果有一个不是unsigned，那么当前层的FQ就是signed的。
+如果输入层没有找到，那么就收集所有输入层的所有输入层，以此类推。</p>
+<h2 id="weight-7bit">weight 的 7bit量化</h2>
+<p>为了解决在AVX2 and AVX-512指令集下的8bit计算<code>overflow</code>问题，nncf中weight全部采用7bit量化。这里如果不进行处理，确实会造成openvino推理结果与torch输出结果的不一致。因此需要在量化时对weight的量化过程做特殊
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-9-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-9-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-9-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-9-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-9-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-9-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-9-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-9-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-9-10">10</a></span>
+<span class="normal"><a href="#__codelineno-9-11">11</a></span>
+<span class="normal"><a href="#__codelineno-9-12">12</a></span>
+<span class="normal"><a href="#__codelineno-9-13">13</a></span>
+<span class="normal"><a href="#__codelineno-9-14">14</a></span>
+<span class="normal"><a href="#__codelineno-9-15">15</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="k">def</span> <span class="nf">_weight_quant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">GraphModule</span><span class="p">,</span> <span class="n">qconfig</span><span class="p">):</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2"></a>    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Replace module to qat module.&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3"></a>    <span class="n">wqconfig_8bit</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">qconfig</span><span class="p">)</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4"></a>    <span class="n">wq_symmetry</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">is_symmetric_quant</span><span class="p">(</span><span class="n">qconfig</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;qscheme&#39;</span><span class="p">])</span> <span class="k">else</span> <span class="kc">False</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5"></a>    <span class="n">numbits</span> <span class="o">=</span> <span class="mi">8</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6"></a>    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Now all weight quantizers will effectively use only 7 bits out of 8 bits. This resolves the overflow issue problem on AVX2 and AVX-512 machines.&#39;</span><span class="p">)</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7"></a>    <span class="n">wqconfig_8bit</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;quant_min&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">numbits</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">wq_symmetry</span> <span class="k">else</span> <span class="mi">0</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8"></a>
+<a id="__codelineno-9-9" name="__codelineno-9-9"></a>    <span class="n">wqconfig_8bit</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;quant_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">numbits</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">wq_symmetry</span> <span class="k">else</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">numbits</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10"></a>
+<a id="__codelineno-9-11" name="__codelineno-9-11"></a>    <span class="n">wqconfig_8bit</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;factory_kwargs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;not_calc_quant_min_max&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">}</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12"></a>    <span class="n">flattened_qconfig_dict</span> <span class="o">=</span> <span class="n">get_flattened_qconfig_dict</span><span class="p">({</span><span class="s1">&#39;&#39;</span><span class="p">:</span> <span class="n">wqconfig_8bit</span><span class="p">})</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13"></a>    <span class="n">propagate_qconfig_</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">flattened_qconfig_dict</span><span class="p">)</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_qat_swap_modules</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">additional_qat_module_mapping</span><span class="p">)</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15"></a>    <span class="k">return</span> <span class="n">model</span>
+</code></pre></div></td></tr></table></div>
+还需要在ObserverBase代码中增加一点逻辑
+在<code>__init__</code>初始化方法中添加
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span>
+<span class="normal"><a href="#__codelineno-10-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a>factory_kwargs = deepcopy(factory_kwargs)
+<a id="__codelineno-10-2" name="__codelineno-10-2"></a>self.not_calc_quant_min_max = factory_kwargs.pop(&#39;not_calc_quant_min_max&#39;, False) if isinstance(factory_kwargs,dict) else False
+</code></pre></div></td></tr></table></div>
+修改<code>_calculate_qmin_qmax</code>方法
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span>
+<span class="normal"><a href="#__codelineno-11-2">2</a></span>
+<span class="normal"><a href="#__codelineno-11-3">3</a></span>
+<span class="normal"><a href="#__codelineno-11-4">4</a></span>
+<span class="normal"><a href="#__codelineno-11-5">5</a></span>
+<span class="normal"><a href="#__codelineno-11-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="nd">@torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">export</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2"></a><span class="k">def</span> <span class="nf">_calculate_qmin_qmax</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_customized_qrange</span><span class="p">:</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4"></a>            <span class="c1"># some code ...</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5"></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_calc_quant_min_max</span><span class="p">:</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6"></a>                <span class="n">quant_min</span><span class="p">,</span> <span class="n">quant_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">quant_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">quant_max</span>
+</code></pre></div></td></tr></table></div></p>
+<h2 id="_1">写在最后</h2>
+<p>该项目好比机械行业的逆向工程，不过难度相对小一些。通过对nncf的分析，使得一般的训练框架都可以按照以上的setting实现到openvino下的转换，也算对mqbench做了点贡献。</p>
+                
+                  
+                
+                
+                  
+                  <hr>
+                  <div class="md-source-date">
+                    <small>
+                      
+                        最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 16, 2022</span>
+                      
+                    </small>
+                  </div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../2022%E5%B9%B401%E6%9C%8817%E6%97%A5%2010%E6%97%B647%E5%88%8629%E7%A7%92/" title="模型压缩框架nncf模型量化中QAT量化参数的梯度推导" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  上一页
+                </span>
+                模型压缩框架nncf模型量化中QAT量化参数的梯度推导
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../2022%E5%B9%B402%E6%9C%8821%E6%97%A5%2012%E6%97%B619%E5%88%8614%E7%A7%92/" title="一文总结TensorRT下两种量化方式QAT和PTQ的部署" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  下一页
+                </span>
+                一文总结TensorRT下两种量化方式QAT和PTQ的部署
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
+    
+      <a href="mailto:haibintian@foxmail.com" target="_blank" rel="noopener" title="" class="md-footer-social__link fa fa-"></a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
+      
+        
+        
+          
+          <script src="../../assets/javascripts/lunr/lunr.stemmer.support.js"></script>
+          
+            
+              
+                <script src="../../assets/javascripts/lunr/tinyseg.js"></script>
+              
+              
+                <script src="../../assets/javascripts/lunr/lunr.ja.js"></script>
+              
+            
+          
+          
+        
+      
+      <script>app.initialize({version:"1.3.1",url:{base:"../.."}})</script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+      
+        <script src="../../javascripts/social_share.js"></script>
+      
+    
+  </body>
+</html>

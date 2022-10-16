@@ -1,0 +1,1273 @@
+
+
+
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="复制">
+      
+        <meta name="lang:clipboard.copied" content="已复制">
+      
+        <meta name="lang:search.language" content="ja">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="没有找到符合条件的结果">
+      
+        <meta name="lang:search.result.one" content="找到 1 个符合条件的结果">
+      
+        <meta name="lang:search.result.other" content="# 个符合条件的结果">
+      
+        <meta name="lang:search.tokenizer" content="[\uff0c\u3002]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-4.6.3">
+    
+    
+      
+        <title>TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换 - 海滨的Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#tensorflowckptfrozen-modelkerasonnx" tabindex="0" class="md-skip">
+        跳转至
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="海滨的Blog" aria-label="海滨的Blog" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              海滨的Blog
+            </span>
+            <span class="md-header-nav__topic">
+              
+                TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            键入以开始搜索
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="海滨的Blog" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    海滨的Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Index" class="md-nav__link">
+      Index
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      DL框架原理与技巧
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        DL框架原理与技巧
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" title="Pytorch下的多卡间变量同步操作" class="md-nav__link">
+      Pytorch下的多卡间变量同步操作
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2022%E5%B9%B403%E6%9C%8807%E6%97%A5%2020%E6%97%B633%E5%88%8650%E7%A7%92/" title="自动微分autograd原理-简单demo" class="md-nav__link">
+      自动微分autograd原理-简单demo
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
+      </label>
+    
+    <a href="./" title="TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换" class="md-nav__link md-nav__link--active">
+      TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">目录</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tf" class="md-nav__link">
+    tf下的三种存储格式
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-keras-onnx-frozen-graph" class="md-nav__link">
+    1 keras 转 onnx 或 frozen graph
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-keras-model-onnx" class="md-nav__link">
+    1.1 keras model 转 onnx
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-keras-model-frozen-graph" class="md-nav__link">
+    1.2 keras model 转 frozen graph
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ckptonnxfrozen-model" class="md-nav__link">
+    2 ckpt转onnx或frozen model
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-ckptonnx" class="md-nav__link">
+    2.1 ckpt转onnx
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-ckptfrozen-model" class="md-nav__link">
+    2.2 ckpt转frozen model
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    3 总结
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" title="再谈自动微分：自动微分中的前向模式与反向模式" class="md-nav__link">
+      再谈自动微分：自动微分中的前向模式与反向模式
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      OCR相关
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        OCR相关
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../OCR%E7%9B%B8%E5%85%B3/2022%E5%B9%B403%E6%9C%8829%E6%97%A5%2022%E6%97%B651%E5%88%8611%E7%A7%92/" title="Pytorch中CTC Loss源码解析" class="md-nav__link">
+      Pytorch中CTC Loss源码解析
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      Cuda相关
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        Cuda相关
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B406%E6%9C%8812%E6%97%A5%2021%E6%97%B613%E5%88%8644%E7%A7%92/" title="cublas中矩阵乘及其广播机制的实现与单元测试" class="md-nav__link">
+      cublas中矩阵乘及其广播机制的实现与单元测试
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B407%E6%9C%8823%E6%97%A5%2023%E6%97%B617%E5%88%8614%E7%A7%92/" title="cuDNN API的使用与测试-以二维卷积+Relu激活函数为例" class="md-nav__link">
+      cuDNN API的使用与测试-以二维卷积+Relu激活函数为例
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      python&C++
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        python&C++
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../python%26C%2B%2B/2022%E5%B9%B406%E6%9C%8807%E6%97%A5%2015%E6%97%B650%E5%88%8636%E7%A7%92/" title="python与C/C++数据交互的陷阱：numpy/torch中的视图" class="md-nav__link">
+      python与C/C++数据交互的陷阱：numpy/torch中的视图
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6">
+    
+    <label class="md-nav__link" for="nav-6">
+      模型轻量化
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        模型轻量化
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2021%E5%B9%B412%E6%9C%8825%E6%97%A5%2016%E6%97%B604%E5%88%8649%E7%A7%92/" title="Network Slimming-神经网络剪枝的精细控制实现" class="md-nav__link">
+      Network Slimming-神经网络剪枝的精细控制实现
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B401%E6%9C%8817%E6%97%A5%2010%E6%97%B647%E5%88%8629%E7%A7%92/" title="模型压缩框架nncf模型量化中QAT量化参数的梯度推导" class="md-nav__link">
+      模型压缩框架nncf模型量化中QAT量化参数的梯度推导
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8805%E6%97%A5%2016%E6%97%B630%E5%88%8647%E7%A7%92/" title="对模型量化框架mqbench添加openvino推理格式支持" class="md-nav__link">
+      对模型量化框架mqbench添加openvino推理格式支持
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8821%E6%97%A5%2012%E6%97%B619%E5%88%8614%E7%A7%92/" title="一文总结TensorRT下两种量化方式QAT和PTQ的部署" class="md-nav__link">
+      一文总结TensorRT下两种量化方式QAT和PTQ的部署
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7">
+    
+    <label class="md-nav__link" for="nav-7">
+      模型部署
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        模型部署
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2021%E5%B9%B412%E6%9C%8816%E6%97%A5%2014%E6%97%B626%E5%88%8600%E7%A7%92/" title="FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案" class="md-nav__link">
+      FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8806%E6%97%A5%2022%E6%97%B621%E5%88%8616%E7%A7%92/" title="生产者消费者模式在多batch推理下的应用(延时队列)" class="md-nav__link">
+      生产者消费者模式在多batch推理下的应用(延时队列)
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8811%E6%97%A5%2023%E6%97%B612%E5%88%8655%E7%A7%92/" title="pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例" class="md-nav__link">
+      pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B405%E6%9C%8828%E6%97%A5%2017%E6%97%B623%E5%88%8651%E7%A7%92/" title="计算图的优化-以onnx表示形式为例" class="md-nav__link">
+      计算图的优化-以onnx表示形式为例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B408%E6%9C%8802%E6%97%A5%2023%E6%97%B628%E5%88%8628%E7%A7%92/" title="TensorRT Plugin的实现、调试与验证：以实现Layernorm为例" class="md-nav__link">
+      TensorRT Plugin的实现、调试与验证：以实现Layernorm为例
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-8" type="checkbox" id="nav-8">
+    
+    <label class="md-nav__link" for="nav-8">
+      论文解读
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-8">
+        论文解读
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/convnext/" title="关于ConvNext若干细节的解读与讨论" class="md-nav__link">
+      关于ConvNext若干细节的解读与讨论
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">目录</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tf" class="md-nav__link">
+    tf下的三种存储格式
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-keras-onnx-frozen-graph" class="md-nav__link">
+    1 keras 转 onnx 或 frozen graph
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-keras-model-onnx" class="md-nav__link">
+    1.1 keras model 转 onnx
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-keras-model-frozen-graph" class="md-nav__link">
+    1.2 keras model 转 frozen graph
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ckptonnxfrozen-model" class="md-nav__link">
+    2 ckpt转onnx或frozen model
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-ckptonnx" class="md-nav__link">
+    2.1 ckpt转onnx
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-ckptfrozen-model" class="md-nav__link">
+    2.2 ckpt转frozen model
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    3 总结
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="tensorflowckptfrozen-modelkerasonnx">TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换</h1>
+<h2 id="tf">tf下的三种存储格式</h2>
+<p>TensorFlow中有三种模型和数据存储格式</p>
+<ul>
+<li>saved model格式。在tf2.x版本中经常使用，tf2下原生api和keras封装以后的api都支持导出该类格式。saved model格式对应一个文件夹，里面分别存储模型的结构信息和参数信息。</li>
+<li>frozen graph格式。在tf1.x版本中经常使用，tf1下定义的graph可以直接导出。frozen graph格式仅包含单个pb文件，里面有模型的所有信息，一般为了方便推理会把training相关信息去除。</li>
+<li>ckpt格式。用于保存模型的训练时的计算图和权重信息，keras训练时默认会导出这种格式。</li>
+</ul>
+<p>一般的推理框架过去都会对frozen model格式进行支持，新的版本会逐渐向onnx这种通用格式迁移。
+这时，ckpt格式的存储方法仅仅当做checkpoint来用，不再具备部署的属性。</p>
+<h2 id="1-keras-onnx-frozen-graph">1 keras 转 onnx 或 frozen graph</h2>
+<h3 id="11-keras-model-onnx">1.1 keras model 转 onnx</h3>
+<p>对于keras模型，可以使用以下工具转成onnx格式</p>
+<ul>
+<li>tf2onnx 链接：https://github.com/onnx/tensorflow-onnx</li>
+</ul>
+<blockquote>
+<p>这里可能涉及到算子对齐的问题，建议仔细看下onnx的官方文档，注意onnx的opset version。重点关注resize算子的参数是否与keras中的对齐。如果是tf1版本需要重点关注resize算子参数中是否包含了针对tf1旧版本的特殊设置。</p>
+</blockquote>
+<h3 id="12-keras-model-frozen-graph">1.2 keras model 转 frozen graph</h3>
+<p>keras model 转 frozen graph有两种方法。第一个保存为saved model或者ckpt格式，然后加载通过tf2onnx转为onnx。
+第二种方法更为直接，代码如下，这里直接给出多输出多输出下的转换代码，在<code>tf2.3</code>版本测试通过。主要原理是通过<code>tf.function</code>再封装一层
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">  1</a></span>
+<span class="normal"><a href="#__codelineno-0-2">  2</a></span>
+<span class="normal"><a href="#__codelineno-0-3">  3</a></span>
+<span class="normal"><a href="#__codelineno-0-4">  4</a></span>
+<span class="normal"><a href="#__codelineno-0-5">  5</a></span>
+<span class="normal"><a href="#__codelineno-0-6">  6</a></span>
+<span class="normal"><a href="#__codelineno-0-7">  7</a></span>
+<span class="normal"><a href="#__codelineno-0-8">  8</a></span>
+<span class="normal"><a href="#__codelineno-0-9">  9</a></span>
+<span class="normal"><a href="#__codelineno-0-10"> 10</a></span>
+<span class="normal"><a href="#__codelineno-0-11"> 11</a></span>
+<span class="normal"><a href="#__codelineno-0-12"> 12</a></span>
+<span class="normal"><a href="#__codelineno-0-13"> 13</a></span>
+<span class="normal"><a href="#__codelineno-0-14"> 14</a></span>
+<span class="normal"><a href="#__codelineno-0-15"> 15</a></span>
+<span class="normal"><a href="#__codelineno-0-16"> 16</a></span>
+<span class="normal"><a href="#__codelineno-0-17"> 17</a></span>
+<span class="normal"><a href="#__codelineno-0-18"> 18</a></span>
+<span class="normal"><a href="#__codelineno-0-19"> 19</a></span>
+<span class="normal"><a href="#__codelineno-0-20"> 20</a></span>
+<span class="normal"><a href="#__codelineno-0-21"> 21</a></span>
+<span class="normal"><a href="#__codelineno-0-22"> 22</a></span>
+<span class="normal"><a href="#__codelineno-0-23"> 23</a></span>
+<span class="normal"><a href="#__codelineno-0-24"> 24</a></span>
+<span class="normal"><a href="#__codelineno-0-25"> 25</a></span>
+<span class="normal"><a href="#__codelineno-0-26"> 26</a></span>
+<span class="normal"><a href="#__codelineno-0-27"> 27</a></span>
+<span class="normal"><a href="#__codelineno-0-28"> 28</a></span>
+<span class="normal"><a href="#__codelineno-0-29"> 29</a></span>
+<span class="normal"><a href="#__codelineno-0-30"> 30</a></span>
+<span class="normal"><a href="#__codelineno-0-31"> 31</a></span>
+<span class="normal"><a href="#__codelineno-0-32"> 32</a></span>
+<span class="normal"><a href="#__codelineno-0-33"> 33</a></span>
+<span class="normal"><a href="#__codelineno-0-34"> 34</a></span>
+<span class="normal"><a href="#__codelineno-0-35"> 35</a></span>
+<span class="normal"><a href="#__codelineno-0-36"> 36</a></span>
+<span class="normal"><a href="#__codelineno-0-37"> 37</a></span>
+<span class="normal"><a href="#__codelineno-0-38"> 38</a></span>
+<span class="normal"><a href="#__codelineno-0-39"> 39</a></span>
+<span class="normal"><a href="#__codelineno-0-40"> 40</a></span>
+<span class="normal"><a href="#__codelineno-0-41"> 41</a></span>
+<span class="normal"><a href="#__codelineno-0-42"> 42</a></span>
+<span class="normal"><a href="#__codelineno-0-43"> 43</a></span>
+<span class="normal"><a href="#__codelineno-0-44"> 44</a></span>
+<span class="normal"><a href="#__codelineno-0-45"> 45</a></span>
+<span class="normal"><a href="#__codelineno-0-46"> 46</a></span>
+<span class="normal"><a href="#__codelineno-0-47"> 47</a></span>
+<span class="normal"><a href="#__codelineno-0-48"> 48</a></span>
+<span class="normal"><a href="#__codelineno-0-49"> 49</a></span>
+<span class="normal"><a href="#__codelineno-0-50"> 50</a></span>
+<span class="normal"><a href="#__codelineno-0-51"> 51</a></span>
+<span class="normal"><a href="#__codelineno-0-52"> 52</a></span>
+<span class="normal"><a href="#__codelineno-0-53"> 53</a></span>
+<span class="normal"><a href="#__codelineno-0-54"> 54</a></span>
+<span class="normal"><a href="#__codelineno-0-55"> 55</a></span>
+<span class="normal"><a href="#__codelineno-0-56"> 56</a></span>
+<span class="normal"><a href="#__codelineno-0-57"> 57</a></span>
+<span class="normal"><a href="#__codelineno-0-58"> 58</a></span>
+<span class="normal"><a href="#__codelineno-0-59"> 59</a></span>
+<span class="normal"><a href="#__codelineno-0-60"> 60</a></span>
+<span class="normal"><a href="#__codelineno-0-61"> 61</a></span>
+<span class="normal"><a href="#__codelineno-0-62"> 62</a></span>
+<span class="normal"><a href="#__codelineno-0-63"> 63</a></span>
+<span class="normal"><a href="#__codelineno-0-64"> 64</a></span>
+<span class="normal"><a href="#__codelineno-0-65"> 65</a></span>
+<span class="normal"><a href="#__codelineno-0-66"> 66</a></span>
+<span class="normal"><a href="#__codelineno-0-67"> 67</a></span>
+<span class="normal"><a href="#__codelineno-0-68"> 68</a></span>
+<span class="normal"><a href="#__codelineno-0-69"> 69</a></span>
+<span class="normal"><a href="#__codelineno-0-70"> 70</a></span>
+<span class="normal"><a href="#__codelineno-0-71"> 71</a></span>
+<span class="normal"><a href="#__codelineno-0-72"> 72</a></span>
+<span class="normal"><a href="#__codelineno-0-73"> 73</a></span>
+<span class="normal"><a href="#__codelineno-0-74"> 74</a></span>
+<span class="normal"><a href="#__codelineno-0-75"> 75</a></span>
+<span class="normal"><a href="#__codelineno-0-76"> 76</a></span>
+<span class="normal"><a href="#__codelineno-0-77"> 77</a></span>
+<span class="normal"><a href="#__codelineno-0-78"> 78</a></span>
+<span class="normal"><a href="#__codelineno-0-79"> 79</a></span>
+<span class="normal"><a href="#__codelineno-0-80"> 80</a></span>
+<span class="normal"><a href="#__codelineno-0-81"> 81</a></span>
+<span class="normal"><a href="#__codelineno-0-82"> 82</a></span>
+<span class="normal"><a href="#__codelineno-0-83"> 83</a></span>
+<span class="normal"><a href="#__codelineno-0-84"> 84</a></span>
+<span class="normal"><a href="#__codelineno-0-85"> 85</a></span>
+<span class="normal"><a href="#__codelineno-0-86"> 86</a></span>
+<span class="normal"><a href="#__codelineno-0-87"> 87</a></span>
+<span class="normal"><a href="#__codelineno-0-88"> 88</a></span>
+<span class="normal"><a href="#__codelineno-0-89"> 89</a></span>
+<span class="normal"><a href="#__codelineno-0-90"> 90</a></span>
+<span class="normal"><a href="#__codelineno-0-91"> 91</a></span>
+<span class="normal"><a href="#__codelineno-0-92"> 92</a></span>
+<span class="normal"><a href="#__codelineno-0-93"> 93</a></span>
+<span class="normal"><a href="#__codelineno-0-94"> 94</a></span>
+<span class="normal"><a href="#__codelineno-0-95"> 95</a></span>
+<span class="normal"><a href="#__codelineno-0-96"> 96</a></span>
+<span class="normal"><a href="#__codelineno-0-97"> 97</a></span>
+<span class="normal"><a href="#__codelineno-0-98"> 98</a></span>
+<span class="normal"><a href="#__codelineno-0-99"> 99</a></span>
+<span class="normal"><a href="#__codelineno-0-100">100</a></span>
+<span class="normal"><a href="#__codelineno-0-101">101</a></span>
+<span class="normal"><a href="#__codelineno-0-102">102</a></span>
+<span class="normal"><a href="#__codelineno-0-103">103</a></span>
+<span class="normal"><a href="#__codelineno-0-104">104</a></span>
+<span class="normal"><a href="#__codelineno-0-105">105</a></span>
+<span class="normal"><a href="#__codelineno-0-106">106</a></span>
+<span class="normal"><a href="#__codelineno-0-107">107</a></span>
+<span class="normal"><a href="#__codelineno-0-108">108</a></span>
+<span class="normal"><a href="#__codelineno-0-109">109</a></span>
+<span class="normal"><a href="#__codelineno-0-110">110</a></span>
+<span class="normal"><a href="#__codelineno-0-111">111</a></span>
+<span class="normal"><a href="#__codelineno-0-112">112</a></span>
+<span class="normal"><a href="#__codelineno-0-113">113</a></span>
+<span class="normal"><a href="#__codelineno-0-114">114</a></span>
+<span class="normal"><a href="#__codelineno-0-115">115</a></span>
+<span class="normal"><a href="#__codelineno-0-116">116</a></span>
+<span class="normal"><a href="#__codelineno-0-117">117</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="c1"># convert model to pb</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">tensorflow.python.framework.convert_to_constants</span> <span class="kn">import</span> <span class="n">convert_variables_to_constants_v2</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="kn">import</span> <span class="nn">os</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="kn">from</span> <span class="nn">tensorflow.python.framework</span> <span class="kn">import</span> <span class="n">importer</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="k">def</span> <span class="nf">freeze_keras_model2pb</span><span class="p">(</span><span class="n">keras_model</span><span class="p">,</span> <span class="n">pb_filepath</span><span class="p">,</span> <span class="n">input_vaiablename_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_vaiablename_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="sd">    karas 模型转pb</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="sd">    :param keras_model:</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="sd">    :param pb_filepath:</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="sd">    :param input_vaiablename_list:</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="sd">    :param output_vaiablename_list:</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="sd">    :return:</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a>    <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">keras_model</span><span class="p">,</span><span class="s1">&#39;inputs&#39;</span><span class="p">),</span> <span class="s2">&quot;the keras model must be built with functional api or sequential&quot;</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a>    <span class="c1"># save pb</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a>    <span class="k">if</span> <span class="n">input_vaiablename_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>        <span class="n">input_vaiablename_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>    <span class="k">if</span> <span class="n">output_vaiablename_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>        <span class="n">output_vaiablename_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_vaiablename_list</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">keras_model</span><span class="o">.</span><span class="n">inputs</span><span class="p">):</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>        <span class="n">input_vaiable_list</span> <span class="o">=</span> <span class="n">input_vaiablename_list</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a>        <span class="n">input_vaiable_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">keras_model</span><span class="o">.</span><span class="n">inputs</span><span class="p">))]</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a>    <span class="n">input_funcsignature_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">TensorSpec</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a>                                <span class="nb">zip</span><span class="p">(</span><span class="n">input_vaiable_list</span><span class="p">,</span> <span class="n">keras_model</span><span class="o">.</span><span class="n">inputs</span><span class="p">)]</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="n">full_model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="k">lambda</span> <span class="o">*</span><span class="n">x</span><span class="p">:</span> <span class="n">keras_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">training</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="c1"># To obtain an individual graph, use the get_concrete_function method of the callable created by tf.function.</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a>    <span class="c1"># It can be called with the same arguments as func and returns a special tf.Graph object</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a>    <span class="n">concrete_func</span> <span class="o">=</span> <span class="n">full_model</span><span class="o">.</span><span class="n">get_concrete_function</span><span class="p">(</span><span class="n">input_funcsignature_list</span><span class="p">)</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>    <span class="c1"># Get frozen ConcreteFunction</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>    <span class="n">frozen_graph</span> <span class="o">=</span> <span class="n">convert_variables_to_constants_v2</span><span class="p">(</span><span class="n">concrete_func</span><span class="p">)</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="n">graph_def</span> <span class="o">=</span> <span class="n">frozen_graph</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">as_graph_def</span><span class="p">()</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>    <span class="n">out_idx</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a>    <span class="c1">#  and len(output_vaiablename_list) &gt; out_idx</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a>    <span class="c1"># node.name = output_vaiablename_list[out_idx]</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph_def</span><span class="o">.</span><span class="n">node</span><span class="p">:</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>        <span class="n">node</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a>        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Identity&#39;</span><span class="p">):</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>            <span class="n">out_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_vaiablename_list</span><span class="p">)</span> <span class="o">==</span> <span class="n">out_idx</span><span class="p">:</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a>        <span class="n">ouput_vaiable_list</span> <span class="o">=</span> <span class="n">output_vaiablename_list</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a>        <span class="n">ouput_vaiable_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;y</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">out_idx</span><span class="p">)]</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>    <span class="n">out_idx</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a>    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph_def</span><span class="o">.</span><span class="n">node</span><span class="p">:</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>        <span class="n">node</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Identity&#39;</span><span class="p">):</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a>            <span class="n">node</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">ouput_vaiable_list</span><span class="p">[</span><span class="n">out_idx</span><span class="p">]</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a>            <span class="n">out_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a>    <span class="n">new_graph</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a>    <span class="k">with</span> <span class="n">new_graph</span><span class="o">.</span><span class="n">as_default</span><span class="p">():</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a>        <span class="n">importer</span><span class="o">.</span><span class="n">import_graph_def</span><span class="p">(</span><span class="n">graph_def</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="c1">#     output_graph_def = tf.compat.v1.graph_util.remove_training_nodes(new_graph.as_graph_def())</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">write_graph</span><span class="p">(</span><span class="n">graph_or_graph_def</span><span class="o">=</span><span class="n">new_graph</span><span class="p">,</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>                             <span class="n">logdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">pb_filepath</span><span class="p">),</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>                             <span class="n">name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">pb_filepath</span><span class="p">),</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>                             <span class="n">as_text</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">input_vaiable_list</span><span class="p">,</span> <span class="n">ouput_vaiable_list</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="c1"># test pb file</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="k">def</span> <span class="nf">wrap_frozen_graph</span><span class="p">(</span><span class="n">graph_def</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">print_graph</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>    <span class="n">graph</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>    <span class="k">def</span> <span class="nf">_imports_graph_def</span><span class="p">():</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>        <span class="n">tf</span><span class="o">.</span><span class="n">graph_util</span><span class="o">.</span><span class="n">import_graph_def</span><span class="p">(</span><span class="n">graph_def</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>    <span class="k">with</span> <span class="n">graph</span><span class="o">.</span><span class="n">as_default</span><span class="p">():</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>        <span class="n">wrapped_import</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">wrap_function</span><span class="p">(</span><span class="n">_imports_graph_def</span><span class="p">,</span> <span class="p">[])</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="n">import_graph</span> <span class="o">=</span> <span class="n">wrapped_import</span><span class="o">.</span><span class="n">graph</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="k">if</span> <span class="n">print_graph</span><span class="p">:</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Frozen model layers: &quot;</span><span class="p">)</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>        <span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">import_graph</span><span class="o">.</span><span class="n">get_operations</span><span class="p">()]</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">layers</span><span class="p">:</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>            <span class="nb">print</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a>    <span class="k">return</span> <span class="n">wrapped_import</span><span class="o">.</span><span class="n">prune</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">nest</span><span class="o">.</span><span class="n">map_structure</span><span class="p">(</span><span class="n">import_graph</span><span class="o">.</span><span class="n">as_graph_element</span><span class="p">,</span> <span class="n">inputs</span><span class="p">),</span><span class="n">tf</span><span class="o">.</span><span class="n">nest</span><span class="o">.</span><span class="n">map_structure</span><span class="p">(</span><span class="n">import_graph</span><span class="o">.</span><span class="n">as_graph_element</span><span class="p">,</span> <span class="n">outputs</span><span class="p">))</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a><span class="k">def</span> <span class="nf">pbfile2concrete_function</span><span class="p">(</span><span class="n">pbfile</span><span class="p">,</span><span class="n">inputs</span><span class="p">,</span><span class="n">outputs</span><span class="p">,</span><span class="n">print_graph</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>    <span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="sd">    pbfile 转 concrete function</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a><span class="sd">    :param pbfile:</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a><span class="sd">    :param inputs:</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a><span class="sd">    :param outputs:</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a><span class="sd">    :param print_graph:</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="sd">    :return:</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">gfile</span><span class="o">.</span><span class="n">GFile</span><span class="p">(</span><span class="n">pbfile</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a>        <span class="n">graph_def</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">GraphDef</span><span class="p">()</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a>        <span class="n">graph_def</span><span class="o">.</span><span class="n">ParseFromString</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a>        <span class="n">frozen_func</span> <span class="o">=</span> <span class="n">wrap_frozen_graph</span><span class="p">(</span><span class="n">graph_def</span><span class="o">=</span><span class="n">graph_def</span><span class="p">,</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>                                        <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a>                                        <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a>                                        <span class="n">print_graph</span><span class="o">=</span><span class="n">print_graph</span><span class="p">)</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>        <span class="k">return</span> <span class="n">graph_def</span><span class="p">,</span> <span class="n">frozen_func</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="n">model1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>        <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Input</span><span class="p">([</span><span class="mi">128</span><span class="p">]),</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a>        <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">),</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a>        <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">),</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a>        <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">activation</span><span class="o">=</span><span class="s2">&quot;softmax&quot;</span><span class="p">),</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a>    <span class="p">])</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a>    <span class="n">model2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a>        <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Input</span><span class="p">([</span><span class="mi">128</span><span class="p">]),</span>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a>        <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">),</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a>        <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">),</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a>        <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;softmax&quot;</span><span class="p">),</span>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>    <span class="p">])</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>    <span class="n">x1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Input</span><span class="p">([</span><span class="mi">128</span><span class="p">])</span>
+<a id="__codelineno-0-106" name="__codelineno-0-106"></a>    <span class="n">x2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Input</span><span class="p">([</span><span class="mi">128</span><span class="p">])</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>    <span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">],</span> <span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="n">model1</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="n">model2</span><span class="p">(</span><span class="n">x2</span><span class="p">)])</span>
+<a id="__codelineno-0-108" name="__codelineno-0-108"></a>    <span class="n">_</span><span class="p">,</span> <span class="n">input_vaiable_list</span><span class="p">,</span> <span class="n">ouput_vaiable_list</span> <span class="o">=</span> <span class="n">freeze_keras_model2pb</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="s2">&quot;test.pb&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-109" name="__codelineno-0-109"></a>    <span class="n">input_vaiable_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="s1">&#39;:0&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">input_vaiable_list</span><span class="p">]</span>
+<a id="__codelineno-0-110" name="__codelineno-0-110"></a>    <span class="n">ouput_vaiable_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">+</span><span class="s1">&#39;:0&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ouput_vaiable_list</span><span class="p">]</span>
+<a id="__codelineno-0-111" name="__codelineno-0-111"></a>    <span class="n">concrete_func_frompb</span> <span class="o">=</span> <span class="n">pbfile2concrete_function</span><span class="p">(</span><span class="s2">&quot;test.pb&quot;</span><span class="p">,</span><span class="n">input_vaiable_list</span><span class="p">,</span><span class="n">ouput_vaiable_list</span><span class="p">)</span>
+<a id="__codelineno-0-112" name="__codelineno-0-112"></a>    <span class="n">x0</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">128</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-0-113" name="__codelineno-0-113"></a>    <span class="n">x1</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">128</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-0-114" name="__codelineno-0-114"></a>    <span class="n">predictions</span> <span class="o">=</span> <span class="n">concrete_func_frompb</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span><span class="n">x1</span><span class="p">)</span>
+<a id="__codelineno-0-115" name="__codelineno-0-115"></a>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">((</span><span class="n">x0</span><span class="p">,</span><span class="n">x1</span><span class="p">))</span>
+<a id="__codelineno-0-116" name="__codelineno-0-116"></a>    <span class="k">for</span> <span class="n">item1</span><span class="p">,</span><span class="n">item2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
+<a id="__codelineno-0-117" name="__codelineno-0-117"></a>        <span class="nb">print</span><span class="p">(</span><span class="n">item1</span><span class="p">,</span> <span class="n">item2</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div></p>
+<h2 id="2-ckptonnxfrozen-model">2 ckpt转onnx或frozen model</h2>
+<h3 id="21-ckptonnx">2.1 ckpt转onnx</h3>
+<p>直接使用tf2onnx可以转换</p>
+<h3 id="22-ckptfrozen-model">2.2 ckpt转frozen model</h3>
+<p><div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-1-10">10</a></span>
+<span class="normal"><a href="#__codelineno-1-11">11</a></span>
+<span class="normal"><a href="#__codelineno-1-12">12</a></span>
+<span class="normal"><a href="#__codelineno-1-13">13</a></span>
+<span class="normal"><a href="#__codelineno-1-14">14</a></span>
+<span class="normal"><a href="#__codelineno-1-15">15</a></span>
+<span class="normal"><a href="#__codelineno-1-16">16</a></span>
+<span class="normal"><a href="#__codelineno-1-17">17</a></span>
+<span class="normal"><a href="#__codelineno-1-18">18</a></span>
+<span class="normal"><a href="#__codelineno-1-19">19</a></span>
+<span class="normal"><a href="#__codelineno-1-20">20</a></span>
+<span class="normal"><a href="#__codelineno-1-21">21</a></span>
+<span class="normal"><a href="#__codelineno-1-22">22</a></span>
+<span class="normal"><a href="#__codelineno-1-23">23</a></span>
+<span class="normal"><a href="#__codelineno-1-24">24</a></span>
+<span class="normal"><a href="#__codelineno-1-25">25</a></span>
+<span class="normal"><a href="#__codelineno-1-26">26</a></span>
+<span class="normal"><a href="#__codelineno-1-27">27</a></span>
+<span class="normal"><a href="#__codelineno-1-28">28</a></span>
+<span class="normal"><a href="#__codelineno-1-29">29</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="kn">from</span> <span class="nn">tensorflow</span> <span class="kn">import</span> <span class="n">keras</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="kn">from</span> <span class="nn">tensorflow.python.tools</span> <span class="kn">import</span> <span class="n">freeze_graph</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="k">def</span> <span class="nf">freeze_graph</span><span class="p">(</span><span class="n">input_checkpoint</span><span class="p">,</span> <span class="n">output_graph</span><span class="p">,</span> <span class="n">output_node_names</span> <span class="o">=</span> <span class="s2">&quot;Tanh&quot;</span><span class="p">):</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a>    <span class="sd">&#39;&#39;&#39;</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="sd">    :param input_checkpoint:</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="sd">    :param output_graph: PB模型保存路径</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="sd">    :output_node_names: 多输出使用使用逗号隔开</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="sd">    :return:</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="sd">    &#39;&#39;&#39;</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11"></a>    <span class="c1"># checkpoint = tf.train.get_checkpoint_state(model_folder) #检查目录下ckpt文件状态是否可用</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12"></a>    <span class="c1"># input_checkpoint = checkpoint.model_checkpoint_path #得ckpt文件路径</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13"></a>    <span class="c1"># 指定输出的节点名称,该节点名称必须是原模型中存在的节点</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14"></a>    <span class="n">g</span><span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span> <span class="c1"># 获得默认的图</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15"></a>    <span class="k">with</span> <span class="n">g</span><span class="o">.</span><span class="n">as_default</span><span class="p">():</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16"></a>        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">g</span><span class="p">)</span> <span class="k">as</span> <span class="n">sess</span><span class="p">:</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17"></a>            <span class="n">saver</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">import_meta_graph</span><span class="p">(</span><span class="n">input_checkpoint</span> <span class="o">+</span> <span class="s1">&#39;.meta&#39;</span><span class="p">,</span> <span class="n">clear_devices</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18"></a>            <span class="n">saver</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">sess</span><span class="p">,</span> <span class="n">input_checkpoint</span><span class="p">)</span> <span class="c1">#恢复图并得到数据</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="c1">#             input_graph_def = g.as_graph_def()  # 返回一个序列化的图代表当前的图</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20"></a>            <span class="n">output_graph_def</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">graph_util</span><span class="o">.</span><span class="n">convert_variables_to_constants</span><span class="p">(</span>  <span class="c1"># 模型持久化，将变量值固定</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21"></a>                <span class="n">sess</span><span class="o">=</span><span class="n">sess</span><span class="p">,</span>
+<a id="__codelineno-1-22" name="__codelineno-1-22"></a>                <span class="n">input_graph_def</span><span class="o">=</span><span class="n">sess</span><span class="o">.</span><span class="n">graph_def</span><span class="p">,</span><span class="c1"># 等于:sess.graph_def</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23"></a>                <span class="n">output_node_names</span><span class="o">=</span><span class="n">output_node_names</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span><span class="c1"># 如果有多个输出节点，以逗号隔开</span>
+<a id="__codelineno-1-24" name="__codelineno-1-24"></a>            <span class="n">output_graph_def</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">graph_util</span><span class="o">.</span><span class="n">remove_training_nodes</span><span class="p">(</span><span class="n">output_graph_def</span><span class="p">)</span>
+<a id="__codelineno-1-25" name="__codelineno-1-25"></a>            <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">gfile</span><span class="o">.</span><span class="n">GFile</span><span class="p">(</span><span class="n">output_graph</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span> <span class="c1">#保存模型</span>
+<a id="__codelineno-1-26" name="__codelineno-1-26"></a>                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output_graph_def</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">())</span> <span class="c1">#序列化输出</span>
+<a id="__codelineno-1-27" name="__codelineno-1-27"></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2"> ops in the final graph.&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_graph_def</span><span class="o">.</span><span class="n">node</span><span class="p">))</span> <span class="c1">#得到当前图有几个操作节点</span>
+<a id="__codelineno-1-28" name="__codelineno-1-28"></a>            <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output_graph_def</span><span class="o">.</span><span class="n">node</span><span class="p">):</span>
+<a id="__codelineno-1-29" name="__codelineno-1-29"></a>                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Name of the node - </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">n</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+调用示例，注意这里ckpt只写到ckpt，不写后面的<code>.meta</code>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a>freeze_graph(&#39;cpktpath.ckpt&#39;,&#39;pbpath.pb&#39;)
+</code></pre></div></td></tr></table></div>
+上面方式生成的pb文件可能会有些问题，比如bn的<code>training</code>不应该作为输入而是一个<code>constant</code>，下面给出替换bn算子的解决方案。
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-3-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-3-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-3-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-3-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-3-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-3-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-3-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-3-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-3-10">10</a></span>
+<span class="normal"><a href="#__codelineno-3-11">11</a></span>
+<span class="normal"><a href="#__codelineno-3-12">12</a></span>
+<span class="normal"><a href="#__codelineno-3-13">13</a></span>
+<span class="normal"><a href="#__codelineno-3-14">14</a></span>
+<span class="normal"><a href="#__codelineno-3-15">15</a></span>
+<span class="normal"><a href="#__codelineno-3-16">16</a></span>
+<span class="normal"><a href="#__codelineno-3-17">17</a></span>
+<span class="normal"><a href="#__codelineno-3-18">18</a></span>
+<span class="normal"><a href="#__codelineno-3-19">19</a></span>
+<span class="normal"><a href="#__codelineno-3-20">20</a></span>
+<span class="normal"><a href="#__codelineno-3-21">21</a></span>
+<span class="normal"><a href="#__codelineno-3-22">22</a></span>
+<span class="normal"><a href="#__codelineno-3-23">23</a></span>
+<span class="normal"><a href="#__codelineno-3-24">24</a></span>
+<span class="normal"><a href="#__codelineno-3-25">25</a></span>
+<span class="normal"><a href="#__codelineno-3-26">26</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="kn">import</span> <span class="nn">sys</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="kn">from</span> <span class="nn">tensorflow.core.framework</span> <span class="kn">import</span> <span class="n">graph_pb2</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="kn">import</span> <span class="nn">copy</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="c1"># load our graph</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="k">def</span> <span class="nf">load_graph</span><span class="p">(</span><span class="n">grapf_filepath</span><span class="p">):</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a>    <span class="n">tf</span><span class="o">.</span><span class="n">reset_default_graph</span><span class="p">()</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a>    <span class="n">graph_def</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">GraphDef</span><span class="p">()</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8"></a>    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">gfile</span><span class="o">.</span><span class="n">FastGFile</span><span class="p">(</span><span class="n">grapf_filepath</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9"></a>        <span class="n">graph_def</span><span class="o">.</span><span class="n">ParseFromString</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10"></a>    <span class="k">return</span> <span class="n">graph_def</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11"></a><span class="k">def</span> <span class="nf">replace_placeholder_with_constant</span><span class="p">(</span><span class="n">input_grapf_filepath</span><span class="p">,</span> <span class="n">output_grapf_filepath</span><span class="p">,</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12"></a>                                      <span class="n">target_node_name</span><span class="p">,</span> <span class="n">replace_const</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13"></a>    <span class="k">if</span> <span class="n">replace_const</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14"></a>        <span class="n">replace_const</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[],</span> <span class="n">name</span><span class="o">=</span><span class="n">target_node_name</span><span class="p">)</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15"></a>    <span class="n">graph_def</span> <span class="o">=</span> <span class="n">load_graph</span><span class="p">(</span><span class="n">input_grapf_filepath</span><span class="p">)</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16"></a>    <span class="c1"># Create new graph, and rebuild it from original one</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17"></a>    <span class="c1"># replacing phase train node def with constant</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18"></a>    <span class="n">new_graph_def</span> <span class="o">=</span> <span class="n">graph_pb2</span><span class="o">.</span><span class="n">GraphDef</span><span class="p">()</span>
+<a id="__codelineno-3-19" name="__codelineno-3-19"></a>    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph_def</span><span class="o">.</span><span class="n">node</span><span class="p">:</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20"></a>        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">target_node_name</span><span class="p">:</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21"></a>            <span class="n">new_graph_def</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">replace_const</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">node_def</span><span class="p">])</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22"></a>        <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-3-23" name="__codelineno-3-23"></a>            <span class="n">new_graph_def</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">node</span><span class="p">)])</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24"></a>    <span class="c1"># save new graph</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25"></a>    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">gfile</span><span class="o">.</span><span class="n">GFile</span><span class="p">(</span><span class="n">output_grapf_filepath</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<a id="__codelineno-3-26" name="__codelineno-3-26"></a>        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">new_graph_def</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">())</span>
+</code></pre></div></td></tr></table></div>
+调用示例，实现把名字<code>Placeholder_2</code>的输入去除，改为值为<code>False</code>的<code>constant</code>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a>replace_placeholder_with_constant(&#39;./original.pb&#39;,&#39;new.pb&#39;,&#39;Placeholder_2&#39;)
+</code></pre></div></td></tr></table></div></p>
+<h2 id="3">3 总结</h2>
+<p>在实际环境下，往往有兼容旧设备或者旧版本的需求，frozen graph尽管在新的设备上不怎么常用但还是需要照顾一下。
+此外，对于pb的处理这种hack方式可能也是解决兼容问题的一种途径，比如当你使用新的版本对之前版本重构以后会出现输入和输出名字不对齐的问题，这个时候就需要对pb文件“做手术”
+onnx作为现在较为通用的部署格式，尽管有些大佬不喜欢，但依然阻挡不住其被各大推理框架支持的脚步。但是onnx中的算子和推理框架中的算子只能说有交集，针对推理框架中不支持的算子，依然需要写plugin或者拆成两个onnx，中间不支持部分采用原生方式的方式来实现。
+总而言之，碰到问题解决问题就是了，至于怎么解决，如何解决才是更快更好的方案，这就是经验所在了。</p>
+                
+                  
+                
+                
+                  
+                  <hr>
+                  <div class="md-source-date">
+                    <small>
+                      
+                        最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 16, 2022</span>
+                      
+                    </small>
+                  </div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../2022%E5%B9%B403%E6%9C%8807%E6%97%A5%2020%E6%97%B633%E5%88%8650%E7%A7%92/" title="自动微分autograd原理-简单demo" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  上一页
+                </span>
+                自动微分autograd原理-简单demo
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" title="再谈自动微分：自动微分中的前向模式与反向模式" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  下一页
+                </span>
+                再谈自动微分：自动微分中的前向模式与反向模式
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
+    
+      <a href="mailto:haibintian@foxmail.com" target="_blank" rel="noopener" title="" class="md-footer-social__link fa fa-"></a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
+      
+        
+        
+          
+          <script src="../../assets/javascripts/lunr/lunr.stemmer.support.js"></script>
+          
+            
+              
+                <script src="../../assets/javascripts/lunr/tinyseg.js"></script>
+              
+              
+                <script src="../../assets/javascripts/lunr/lunr.ja.js"></script>
+              
+            
+          
+          
+        
+      
+      <script>app.initialize({version:"1.3.1",url:{base:"../.."}})</script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+      
+        <script src="../../javascripts/social_share.js"></script>
+      
+    
+  </body>
+</html>

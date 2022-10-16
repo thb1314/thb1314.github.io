@@ -1,0 +1,1158 @@
+
+
+
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="复制">
+      
+        <meta name="lang:clipboard.copied" content="已复制">
+      
+        <meta name="lang:search.language" content="ja">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="没有找到符合条件的结果">
+      
+        <meta name="lang:search.result.one" content="找到 1 个符合条件的结果">
+      
+        <meta name="lang:search.result.other" content="# 个符合条件的结果">
+      
+        <meta name="lang:search.tokenizer" content="[\uff0c\u3002]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-4.6.3">
+    
+    
+      
+        <title>cublas中矩阵乘及其广播机制的实现与单元测试 - 海滨的Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#cublas" tabindex="0" class="md-skip">
+        跳转至
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="海滨的Blog" aria-label="海滨的Blog" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              海滨的Blog
+            </span>
+            <span class="md-header-nav__topic">
+              
+                cublas中矩阵乘及其广播机制的实现与单元测试
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            键入以开始搜索
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="海滨的Blog" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    海滨的Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Index" class="md-nav__link">
+      Index
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      DL框架原理与技巧
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        DL框架原理与技巧
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" title="Pytorch下的多卡间变量同步操作" class="md-nav__link">
+      Pytorch下的多卡间变量同步操作
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8807%E6%97%A5%2020%E6%97%B633%E5%88%8650%E7%A7%92/" title="自动微分autograd原理-简单demo" class="md-nav__link">
+      自动微分autograd原理-简单demo
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8811%E6%97%A5%2015%E6%97%B614%E5%88%8655%E7%A7%92/" title="TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换" class="md-nav__link">
+      TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" title="再谈自动微分：自动微分中的前向模式与反向模式" class="md-nav__link">
+      再谈自动微分：自动微分中的前向模式与反向模式
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      OCR相关
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        OCR相关
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../OCR%E7%9B%B8%E5%85%B3/2022%E5%B9%B403%E6%9C%8829%E6%97%A5%2022%E6%97%B651%E5%88%8611%E7%A7%92/" title="Pytorch中CTC Loss源码解析" class="md-nav__link">
+      Pytorch中CTC Loss源码解析
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
+    
+    <label class="md-nav__link" for="nav-4">
+      Cuda相关
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        Cuda相关
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        cublas中矩阵乘及其广播机制的实现与单元测试
+      </label>
+    
+    <a href="./" title="cublas中矩阵乘及其广播机制的实现与单元测试" class="md-nav__link md-nav__link--active">
+      cublas中矩阵乘及其广播机制的实现与单元测试
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">目录</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    一、准备工作
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python" class="md-nav__link">
+    二、python端验证代码
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    三、矩阵乘法的实现
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    3.1 普通矩阵乘
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-batched" class="md-nav__link">
+    3.2 batched 矩阵乘
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    3.3 广播的矩阵乘
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    四、总结
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2022%E5%B9%B407%E6%9C%8823%E6%97%A5%2023%E6%97%B617%E5%88%8614%E7%A7%92/" title="cuDNN API的使用与测试-以二维卷积+Relu激活函数为例" class="md-nav__link">
+      cuDNN API的使用与测试-以二维卷积+Relu激活函数为例
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      python&C++
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        python&C++
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../python%26C%2B%2B/2022%E5%B9%B406%E6%9C%8807%E6%97%A5%2015%E6%97%B650%E5%88%8636%E7%A7%92/" title="python与C/C++数据交互的陷阱：numpy/torch中的视图" class="md-nav__link">
+      python与C/C++数据交互的陷阱：numpy/torch中的视图
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6">
+    
+    <label class="md-nav__link" for="nav-6">
+      模型轻量化
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        模型轻量化
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2021%E5%B9%B412%E6%9C%8825%E6%97%A5%2016%E6%97%B604%E5%88%8649%E7%A7%92/" title="Network Slimming-神经网络剪枝的精细控制实现" class="md-nav__link">
+      Network Slimming-神经网络剪枝的精细控制实现
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B401%E6%9C%8817%E6%97%A5%2010%E6%97%B647%E5%88%8629%E7%A7%92/" title="模型压缩框架nncf模型量化中QAT量化参数的梯度推导" class="md-nav__link">
+      模型压缩框架nncf模型量化中QAT量化参数的梯度推导
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8805%E6%97%A5%2016%E6%97%B630%E5%88%8647%E7%A7%92/" title="对模型量化框架mqbench添加openvino推理格式支持" class="md-nav__link">
+      对模型量化框架mqbench添加openvino推理格式支持
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8821%E6%97%A5%2012%E6%97%B619%E5%88%8614%E7%A7%92/" title="一文总结TensorRT下两种量化方式QAT和PTQ的部署" class="md-nav__link">
+      一文总结TensorRT下两种量化方式QAT和PTQ的部署
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7">
+    
+    <label class="md-nav__link" for="nav-7">
+      模型部署
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        模型部署
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2021%E5%B9%B412%E6%9C%8816%E6%97%A5%2014%E6%97%B626%E5%88%8600%E7%A7%92/" title="FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案" class="md-nav__link">
+      FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8806%E6%97%A5%2022%E6%97%B621%E5%88%8616%E7%A7%92/" title="生产者消费者模式在多batch推理下的应用(延时队列)" class="md-nav__link">
+      生产者消费者模式在多batch推理下的应用(延时队列)
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8811%E6%97%A5%2023%E6%97%B612%E5%88%8655%E7%A7%92/" title="pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例" class="md-nav__link">
+      pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B405%E6%9C%8828%E6%97%A5%2017%E6%97%B623%E5%88%8651%E7%A7%92/" title="计算图的优化-以onnx表示形式为例" class="md-nav__link">
+      计算图的优化-以onnx表示形式为例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B408%E6%9C%8802%E6%97%A5%2023%E6%97%B628%E5%88%8628%E7%A7%92/" title="TensorRT Plugin的实现、调试与验证：以实现Layernorm为例" class="md-nav__link">
+      TensorRT Plugin的实现、调试与验证：以实现Layernorm为例
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-8" type="checkbox" id="nav-8">
+    
+    <label class="md-nav__link" for="nav-8">
+      论文解读
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-8">
+        论文解读
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/convnext/" title="关于ConvNext若干细节的解读与讨论" class="md-nav__link">
+      关于ConvNext若干细节的解读与讨论
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">目录</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    一、准备工作
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python" class="md-nav__link">
+    二、python端验证代码
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    三、矩阵乘法的实现
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    3.1 普通矩阵乘
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-batched" class="md-nav__link">
+    3.2 batched 矩阵乘
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    3.3 广播的矩阵乘
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    四、总结
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="cublas">cublas中矩阵乘及其广播机制的实现与单元测试</h1>
+<h2 id="_1">一、准备工作</h2>
+<p>要想测试cuda函数，如果采用原生的验证方式就需要自己在cpu上将在gpu上的<code>kernel</code>全都实现一遍，这个工作量是很大的。此外对于显存的管理和cublas参数的配置也较为复杂，对这些过程简化的方式就是封装，对显存和内存的管理进行封装。为了解决验证的问题，还需要将运行在kernel的数据导出，采用python的numpy库进行验证。面对这样的问题，本项工作将<a href="https://github.com/rogersce/cnpy" title="cnpy">cnpy</a>封装进用于管理显存和内存的Tensor类中,Tensor类的原版参考TensorRT-Pro，我手动增加了一些类型支持和cnpy的导出功能。
+验证流程如下：</p>
+<ol>
+<li>cpp/cu实现cuda/cublas函数，并将输入输出的tensor导出为npy/npz/bin</li>
+<li>采用python中的numpy读取保存的二进制文件，并将cuda函数实现的功能采用寥寥几行python代码实现一边，将python计算的结果与cuda结果比对。</li>
+</ol>
+<blockquote>
+<p>本项目全部代码开源在:
+https://github.com/thb1314/cublas_matmul</p>
+</blockquote>
+<h2 id="python">二、python端验证代码</h2>
+<p>这里以验证矩阵elementwise加法为例。
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span>
+<span class="normal"><a href="#__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="k">def</span> <span class="nf">_load_tensor</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a>        <span class="n">binary_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a>    <span class="n">magic_number</span><span class="p">,</span> <span class="n">ndims</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">binary_data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a>    <span class="k">assert</span> <span class="n">magic_number</span> <span class="o">==</span> <span class="mh">0xFCCFE2E2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> not a tensor file.&quot;</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a>    <span class="n">dims</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">binary_data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">ndims</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a>    <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a>        <span class="n">np_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a>    <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a>        <span class="n">np_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float16</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a>        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Unsupport dtype = </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, can not convert to numpy dtype&quot;</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">binary_data</span><span class="p">,</span> <span class="n">np_dtype</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="p">(</span><span class="n">ndims</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">dims</span><span class="p">)</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="k">def</span> <span class="nf">load_tensor</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a>    <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;npz&quot;</span><span class="p">):</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>    <span class="k">elif</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;npy&quot;</span><span class="p">):</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a>        <span class="k">return</span> <span class="n">_load_tensor</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>    <span class="n">p_tensor</span> <span class="o">=</span> <span class="n">load_tensor</span><span class="p">(</span><span class="s1">&#39;p_tensor.npz&#39;</span><span class="p">)</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a>    <span class="n">q_tensor</span> <span class="o">=</span> <span class="n">load_tensor</span><span class="p">(</span><span class="s1">&#39;q_tensor.npz&#39;</span><span class="p">)</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a>    <span class="n">out_tensor</span> <span class="o">=</span> <span class="n">load_tensor</span><span class="p">(</span><span class="s1">&#39;out_tensor.npz&#39;</span><span class="p">)</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="n">out</span> <span class="o">=</span> <span class="n">p_tensor</span> <span class="o">+</span> <span class="n">q_tensor</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">out</span> <span class="o">-</span> <span class="n">out_tensor</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a>    <span class="n">test</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div></p>
+<h2 id="_2">三、矩阵乘法的实现</h2>
+<h3 id="31">3.1 普通矩阵乘</h3>
+<ol>
+<li>行主维与列主维</li>
+</ol>
+<p>在C/C++中数据的存储是按照线性的，是按照行优先存储的。比如对于一个两行三列的二维矩阵<code>[[1,2,3],[4,5,6]]</code>，那么按照行优先存储在内存中为<code>[1,2,3,4,5,6]</code>。但是在一些语言（比如Fortran）和cublas中是按照列优先存储来读取数据的。同样是表示<code>[[1,2,3],[4,5,6]]</code>，按照列优先存储在内存中应该为<code>[1,4,2,5,3,6]</code>。如果是<code>[1,2,3,4,5,6]</code>按照列优先读取为两行三列的二维矩阵的话，应该表示为<code>[[1,3,5],[2,4,6]]</code>，这显然与原来的矩阵对不上。但是，如果按照三行两列的二维矩阵来读取，可以表示为<code>[[1,4],[2,5],[3,6]]</code>，会发现按照行优先存储的矩阵按照列优先方式读取为其转置形状的话，可以理解为其在行优先存储形式的矩阵的转置。即我们在申请一块显存按照行优先来存储矩阵，那么在cublas使用时要按照其转置的形状来理解。</p>
+<ol>
+<li>矩阵乘的转换</li>
+</ol>
+<p>给定<code>C = A @ B</code>，那么<code>C.T = B.T @ A.T</code>。<code>C.T</code>是相对于cublas来说的，其内存分布按照行优先存储其实为C，所以我们在调用cublas函数时，需要将所有矩阵按照转置维度来理解，并且需要注意第一个矩阵的参数为<code>B.T</code>，而不是<code>A</code>了。这样就引出了第一个cublas的矩阵乘法函数。
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-1-10">10</a></span>
+<span class="normal"><a href="#__codelineno-1-11">11</a></span>
+<span class="normal"><a href="#__codelineno-1-12">12</a></span>
+<span class="normal"><a href="#__codelineno-1-13">13</a></span>
+<span class="normal"><a href="#__codelineno-1-14">14</a></span>
+<span class="normal"><a href="#__codelineno-1-15">15</a></span>
+<span class="normal"><a href="#__codelineno-1-16">16</a></span>
+<span class="normal"><a href="#__codelineno-1-17">17</a></span>
+<span class="normal"><a href="#__codelineno-1-18">18</a></span>
+<span class="normal"><a href="#__codelineno-1-19">19</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="n">cublasStatus_t</span><span class="w"> </span><span class="nf">cublasGemmEx</span><span class="p">(</span><span class="n">cublasHandle_t</span><span class="w"> </span><span class="n">handle</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">                           </span><span class="n">cublasOperation_t</span><span class="w"> </span><span class="n">transa</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">                           </span><span class="n">cublasOperation_t</span><span class="w"> </span><span class="n">transb</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">                           </span><span class="kt">int</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">                           </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">                           </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">                           </span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="w">    </span><span class="o">*</span><span class="n">alpha</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w">                           </span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="w">     </span><span class="o">*</span><span class="n">A</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="w">                           </span><span class="n">cudaDataType_t</span><span class="w"> </span><span class="n">Atype</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="w">                           </span><span class="kt">int</span><span class="w"> </span><span class="n">lda</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="w">                           </span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="w">     </span><span class="o">*</span><span class="n">B</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="w">                           </span><span class="n">cudaDataType_t</span><span class="w"> </span><span class="n">Btype</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-13" name="__codelineno-1-13"></a><span class="w">                           </span><span class="kt">int</span><span class="w"> </span><span class="n">ldb</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-14" name="__codelineno-1-14"></a><span class="w">                           </span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="w">    </span><span class="o">*</span><span class="n">beta</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="w">                           </span><span class="kt">void</span><span class="w">           </span><span class="o">*</span><span class="n">C</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-16" name="__codelineno-1-16"></a><span class="w">                           </span><span class="n">cudaDataType_t</span><span class="w"> </span><span class="n">Ctype</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="w">                           </span><span class="kt">int</span><span class="w"> </span><span class="n">ldc</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="w">                           </span><span class="n">cublasComputeType_t</span><span class="w"> </span><span class="n">computeType</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="w">                           </span><span class="n">cublasGemmAlgo_t</span><span class="w"> </span><span class="n">algo</span><span class="p">);</span><span class="w"></span>
+</code></pre></div></td></tr></table></div>
+这里我们计算<code>Q @ P</code>,其中<code>Q</code>的形状为<code>m x k</code>，<code>P</code>的形状为<code>k x n</code>。下面给出关键代码
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-2-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-2-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-2-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-2-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-2-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-2-10">10</a></span>
+<span class="normal"><a href="#__codelineno-2-11">11</a></span>
+<span class="normal"><a href="#__codelineno-2-12">12</a></span>
+<span class="normal"><a href="#__codelineno-2-13">13</a></span>
+<span class="normal"><a href="#__codelineno-2-14">14</a></span>
+<span class="normal"><a href="#__codelineno-2-15">15</a></span>
+<span class="normal"><a href="#__codelineno-2-16">16</a></span>
+<span class="normal"><a href="#__codelineno-2-17">17</a></span>
+<span class="normal"><a href="#__codelineno-2-18">18</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="kt">float</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="kt">float</span><span class="w"> </span><span class="n">beta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="c1">// the LDA is used to define the distance in memory between elements of two consecutive columns which have the same row index</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="c1">// B [k,n] B.T [n,k]</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="c1">// A [m,k] A.T [k,m]</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="c1">// C [m,n] C.T [n,m]</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="n">cublasComputeType_t</span><span class="w"> </span><span class="n">computeType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CUBLAS_COMPUTE_32F</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="n">cudaDataType_t</span><span class="w"> </span><span class="n">qType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CUDA_R_32F</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="n">cudaDataType_t</span><span class="w"> </span><span class="n">pType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CUDA_R_32F</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="n">cudaDataType_t</span><span class="w"> </span><span class="n">oType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CUDA_R_32F</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-11" name="__codelineno-2-11"></a><span class="n">cublasGemmAlgo_t</span><span class="w"> </span><span class="n">algo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CUBLAS_GEMM_DEFAULT</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-2-12" name="__codelineno-2-12"></a><span class="n">cublasGemmEx</span><span class="p">(</span><span class="n">mCublas</span><span class="p">,</span><span class="w"> </span><span class="n">CUBLAS_OP_N</span><span class="p">,</span><span class="w"> </span><span class="n">CUBLAS_OP_N</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">alpha</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-13" name="__codelineno-2-13"></a><span class="w">            </span><span class="n">pptr_gpu</span><span class="p">,</span><span class="w"> </span><span class="n">pType</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-14" name="__codelineno-2-14"></a><span class="w">            </span><span class="n">qptr_gpu</span><span class="p">,</span><span class="w"> </span><span class="n">qType</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-15" name="__codelineno-2-15"></a><span class="w">            </span><span class="o">&amp;</span><span class="n">beta</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-16" name="__codelineno-2-16"></a><span class="w">            </span><span class="n">outptr_gpu</span><span class="p">,</span><span class="w"> </span><span class="n">oType</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-2-17" name="__codelineno-2-17"></a><span class="w">            </span><span class="n">computeType</span><span class="p">,</span><span class="w"> </span><span class="n">algo</span><span class="w"></span>
+<a id="__codelineno-2-18" name="__codelineno-2-18"></a><span class="p">);</span><span class="w"></span>
+</code></pre></div></td></tr></table></div>
+详情可以参考git链接中的<code>02cublas_test_matmul</code>。</p>
+<h3 id="32-batched">3.2 batched 矩阵乘</h3>
+<p>batched矩阵乘法git中给出两种api，第一个是<code>cublasGemmBatchedEx</code>，第二个是<code>cublasGemmStridedBatchedEx</code>。
+<code>cublasGemmBatchedEx</code>需要将一个批次中的单个数据理解为一个指针，整个batch存储为一个指针数据。
+<code>cublasGemmStridedBatchedEx</code>是将一个批次的数据理解为一块连续内存，单个矩阵数据之间相隔stride的距离。
+理解了上面的这些知识点和列主维存储，对于<code>A[b,m,k] @ B[b,k,n]</code>的实现就相对简单了。
+下面给出关键代码
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span>
+<span class="normal"><a href="#__codelineno-3-3">3</a></span>
+<span class="normal"><a href="#__codelineno-3-4">4</a></span>
+<span class="normal"><a href="#__codelineno-3-5">5</a></span>
+<span class="normal"><a href="#__codelineno-3-6">6</a></span>
+<span class="normal"><a href="#__codelineno-3-7">7</a></span>
+<span class="normal"><a href="#__codelineno-3-8">8</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="n">CUBLASASSERT</span><span class="p">(</span><span class="n">cublasGemmBatchedEx</span><span class="p">(</span><span class="n">mCublas</span><span class="p">,</span><span class="w"> </span><span class="n">CUBLAS_OP_N</span><span class="p">,</span><span class="w"> </span><span class="n">CUBLAS_OP_N</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="w">                                </span><span class="o">&amp;</span><span class="n">alpha</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="w">                                </span><span class="p">(</span><span class="kt">void</span><span class="o">**</span><span class="p">)</span><span class="n">pptr_gpu_arr_tensor</span><span class="p">.</span><span class="n">to_gpu</span><span class="p">(</span><span class="nb">true</span><span class="p">).</span><span class="n">gpu</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">*&gt;</span><span class="p">(),</span><span class="w"> </span><span class="n">pType</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="w">                                </span><span class="p">(</span><span class="kt">void</span><span class="o">**</span><span class="p">)</span><span class="n">qptr_gpu_arr_tensor</span><span class="p">.</span><span class="n">to_gpu</span><span class="p">(</span><span class="nb">true</span><span class="p">).</span><span class="n">gpu</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">*&gt;</span><span class="p">(),</span><span class="w"> </span><span class="n">qType</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w">                                </span><span class="o">&amp;</span><span class="n">beta</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="w">                                </span><span class="p">(</span><span class="kt">void</span><span class="o">**</span><span class="p">)</span><span class="n">outptr_gpu_arr_tensor</span><span class="p">.</span><span class="n">to_gpu</span><span class="p">().</span><span class="n">gpu</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">*&gt;</span><span class="p">(),</span><span class="w"> </span><span class="n">oType</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="w">                                </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">computeType</span><span class="p">,</span><span class="w"> </span><span class="n">algo</span><span class="w"></span>
+<a id="__codelineno-3-8" name="__codelineno-3-8"></a><span class="w">                                </span><span class="p">));</span><span class="w"></span>
+</code></pre></div></td></tr></table></div>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span>
+<span class="normal"><a href="#__codelineno-4-3">3</a></span>
+<span class="normal"><a href="#__codelineno-4-4">4</a></span>
+<span class="normal"><a href="#__codelineno-4-5">5</a></span>
+<span class="normal"><a href="#__codelineno-4-6">6</a></span>
+<span class="normal"><a href="#__codelineno-4-7">7</a></span>
+<span class="normal"><a href="#__codelineno-4-8">8</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="n">CUBLASASSERT</span><span class="p">(</span><span class="n">cublasGemmStridedBatchedEx</span><span class="p">(</span><span class="n">mCublas</span><span class="p">,</span><span class="w"> </span><span class="n">CUBLAS_OP_N</span><span class="p">,</span><span class="w"> </span><span class="n">CUBLAS_OP_N</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="w">                                        </span><span class="o">&amp;</span><span class="n">alpha</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="w">                                        </span><span class="n">pptr_gpu</span><span class="p">,</span><span class="w"> </span><span class="n">pType</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"></span>
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="w">                                        </span><span class="n">qptr_gpu</span><span class="p">,</span><span class="w"> </span><span class="n">qType</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">q_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">q_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"></span>
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="w">                                        </span><span class="o">&amp;</span><span class="n">beta</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="w">                                        </span><span class="n">outptr_gpu1</span><span class="p">,</span><span class="w"> </span><span class="n">oType</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">out_tensor1</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_tensor1</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"></span>
+<a id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="w">                                        </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">computeType</span><span class="p">,</span><span class="w"> </span><span class="n">algo</span><span class="w"></span>
+<a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="w">                                        </span><span class="p">));</span><span class="w"></span>
+</code></pre></div></td></tr></table></div></p>
+<h3 id="33">3.3 广播的矩阵乘</h3>
+<ol>
+<li>较为简单的形式</li>
+</ol>
+<p>对于 <code>A[b,m,k] @ B[1,k,n]</code>，在采用<code>cublasGemmStridedBatchedEx</code> API时我们只需要将B的stride设置为0，这样就可以实现b个batch读取的都是相同的B。
+关键代码如下
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
+<span class="normal"><a href="#__codelineno-5-2">2</a></span>
+<span class="normal"><a href="#__codelineno-5-3">3</a></span>
+<span class="normal"><a href="#__codelineno-5-4">4</a></span>
+<span class="normal"><a href="#__codelineno-5-5">5</a></span>
+<span class="normal"><a href="#__codelineno-5-6">6</a></span>
+<span class="normal"><a href="#__codelineno-5-7">7</a></span>
+<span class="normal"><a href="#__codelineno-5-8">8</a></span>
+<span class="normal"><a href="#__codelineno-5-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="c1">// Q[0:1] @ P    Q[0:1] 会广播到 P 的 batch</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="w">    </span><span class="n">CUBLASASSERT</span><span class="p">(</span><span class="n">cublasGemmStridedBatchedEx</span><span class="p">(</span><span class="n">mCublas</span><span class="p">,</span><span class="w"> </span><span class="n">CUBLAS_OP_N</span><span class="p">,</span><span class="w"> </span><span class="n">CUBLAS_OP_N</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="w">                                            </span><span class="o">&amp;</span><span class="n">alpha</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="w">                                            </span><span class="n">pptr_gpu</span><span class="p">,</span><span class="w"> </span><span class="n">pType</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"></span>
+<a id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="w">                                            </span><span class="n">qptr_gpu</span><span class="p">,</span><span class="w"> </span><span class="n">qType</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-5-6" name="__codelineno-5-6"></a><span class="w">                                            </span><span class="o">&amp;</span><span class="n">beta</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-5-7" name="__codelineno-5-7"></a><span class="w">                                            </span><span class="n">outptr_gpu2</span><span class="p">,</span><span class="w"> </span><span class="n">oType</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">out_tensor2</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_tensor2</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span><span class="w"></span>
+<a id="__codelineno-5-8" name="__codelineno-5-8"></a><span class="w">                                            </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">computeType</span><span class="p">,</span><span class="w"> </span><span class="n">algo</span><span class="w"></span>
+<a id="__codelineno-5-9" name="__codelineno-5-9"></a><span class="w">                                            </span><span class="p">));</span><span class="w"></span>
+</code></pre></div></td></tr></table></div></p>
+<ol>
+<li>较为复杂的形式</li>
+</ol>
+<p>对于<code>A[1,s,m,k] @ B[b,s,k,n]</code>，numpy的做法时将B广播为<code>B[b,s,k,n]</code>，那么该如何模拟这种行为呢？实际上还是拆解为已知的方法。
+拆解方法如下
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
+<span class="normal"><a href="#__codelineno-6-2">2</a></span>
+<span class="normal"><a href="#__codelineno-6-3">3</a></span>
+<span class="normal"><a href="#__codelineno-6-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a>C[0, s, :m, :n] = A[0, s, :m, :k] @ B[0, s, :k, :n]
+<a id="__codelineno-6-2" name="__codelineno-6-2"></a>C[1, s, :m, :n] = A[0, s, :m, :k] @ B[1, s, :k, :n]
+<a id="__codelineno-6-3" name="__codelineno-6-3"></a>C[2, s, :m, :n] = A[0, s, :m, :k] @ B[2, s, :k, :n]
+<a id="__codelineno-6-4" name="__codelineno-6-4"></a>...
+</code></pre></div></td></tr></table></div>
+这样我们需要循环b次来完成上面的广播，并且batch参数设置为s，A的stride为m<em>k。B的stride为k</em>n，B的地址需要动态计算。C的stride为m*n，C的地址在每次循环时也需要动态计算。
+相关代码实现如下
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-7-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-7-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-7-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-7-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-7-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-7-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-7-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-7-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-7-10">10</a></span>
+<span class="normal"><a href="#__codelineno-7-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="c1">// 代码中Q=A，P=B</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="w">        </span><span class="n">CUBLASASSERT</span><span class="p">(</span><span class="n">cublasGemmStridedBatchedEx</span><span class="p">(</span><span class="n">mCublas</span><span class="p">,</span><span class="w"> </span><span class="n">CUBLAS_OP_N</span><span class="p">,</span><span class="w"> </span><span class="n">CUBLAS_OP_N</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="w">        </span><span class="o">&amp;</span><span class="n">alpha</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-7-5" name="__codelineno-7-5"></a><span class="w">        </span><span class="n">pptr_gpu</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">pType</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"></span>
+<a id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="w">        </span><span class="n">qptr_gpu</span><span class="p">,</span><span class="w"> </span><span class="n">qType</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">q_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">q_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"></span>
+<a id="__codelineno-7-7" name="__codelineno-7-7"></a><span class="w">        </span><span class="o">&amp;</span><span class="n">beta</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-7-8" name="__codelineno-7-8"></a><span class="w">        </span><span class="n">outptr_gpu2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_tensor2</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_tensor2</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_tensor2</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">oType</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">out_tensor2</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_tensor2</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"></span>
+<a id="__codelineno-7-9" name="__codelineno-7-9"></a><span class="w">        </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">computeType</span><span class="p">,</span><span class="w"> </span><span class="n">algo</span><span class="w"></span>
+<a id="__codelineno-7-10" name="__codelineno-7-10"></a><span class="w">        </span><span class="p">));</span><span class="w"></span>
+<a id="__codelineno-7-11" name="__codelineno-7-11"></a><span class="w">    </span><span class="p">}</span><span class="w"></span>
+</code></pre></div></td></tr></table></div>
+下面看另外一种广播形式的实现，
+<code>A[b,1,m,k] @ B[b,s,k,n]</code>,照旧还是需要转换为已有带stride形式。
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span>
+<span class="normal"><a href="#__codelineno-8-2">2</a></span>
+<span class="normal"><a href="#__codelineno-8-3">3</a></span>
+<span class="normal"><a href="#__codelineno-8-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a>C[b, 0, :m, :n] = A[b, 0, :m, :k] @ B[b, 0, :k, :n]
+<a id="__codelineno-8-2" name="__codelineno-8-2"></a>C[b, 1, :m, :n] = A[b, 0, :m, :k] @ B[b, 1, :k, :n]
+<a id="__codelineno-8-3" name="__codelineno-8-3"></a>C[b, 2, :m, :n] = A[b, 0, :m, :k] @ B[b, 2, :k, :n]
+<a id="__codelineno-8-4" name="__codelineno-8-4"></a>...
+</code></pre></div></td></tr></table></div>
+相应的stride和地址都需要做更改，这里A的stride为<code>s x m x k</code>的原因是想偷个懒，采用原来的数据做一些切片。 B的stride为<code>s x k x n</code>，C的stride为<code>s x m x n</code>。
+关键代码如下：
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-9-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-9-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-9-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-9-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-9-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-9-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-9-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-9-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-9-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-9-2" name="__codelineno-9-2"></a><span class="w">        </span><span class="n">CUBLASASSERT</span><span class="p">(</span><span class="n">cublasGemmStridedBatchedEx</span><span class="p">(</span><span class="n">mCublas</span><span class="p">,</span><span class="w"> </span><span class="n">CUBLAS_OP_N</span><span class="p">,</span><span class="w"> </span><span class="n">CUBLAS_OP_N</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="w">        </span><span class="o">&amp;</span><span class="n">alpha</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="w">        </span><span class="n">pptr_gpu</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">  </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">pType</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"></span>
+<a id="__codelineno-9-5" name="__codelineno-9-5"></a><span class="w">        </span><span class="n">qptr_gpu</span><span class="p">,</span><span class="w"> </span><span class="n">qType</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">q_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">q_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">q_tensor</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"></span>
+<a id="__codelineno-9-6" name="__codelineno-9-6"></a><span class="w">        </span><span class="o">&amp;</span><span class="n">beta</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-9-7" name="__codelineno-9-7"></a><span class="w">        </span><span class="n">outptr_gpu3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_tensor3</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">  </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_tensor3</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_tensor3</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">oType</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">out_tensor3</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_tensor3</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_tensor3</span><span class="p">.</span><span class="n">size</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span><span class="w"></span>
+<a id="__codelineno-9-8" name="__codelineno-9-8"></a><span class="w">        </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">computeType</span><span class="p">,</span><span class="w"> </span><span class="n">algo</span><span class="w"></span>
+<a id="__codelineno-9-9" name="__codelineno-9-9"></a><span class="w">        </span><span class="p">));</span><span class="w"></span>
+<a id="__codelineno-9-10" name="__codelineno-9-10"></a><span class="p">}</span><span class="w"></span>
+</code></pre></div></td></tr></table></div></p>
+<h2 id="_3">四、总结</h2>
+<p>本文逐步给出cublas中矩阵乘法及其广播形式的实现，并给出一种验证cuda函数的较为通用的框架，希望能给读者带来一些启发。</p>
+                
+                  
+                
+                
+                  
+                  <hr>
+                  <div class="md-source-date">
+                    <small>
+                      
+                        最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 16, 2022</span>
+                      
+                    </small>
+                  </div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../../OCR%E7%9B%B8%E5%85%B3/2022%E5%B9%B403%E6%9C%8829%E6%97%A5%2022%E6%97%B651%E5%88%8611%E7%A7%92/" title="Pytorch中CTC Loss源码解析" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  上一页
+                </span>
+                Pytorch中CTC Loss源码解析
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../2022%E5%B9%B407%E6%9C%8823%E6%97%A5%2023%E6%97%B617%E5%88%8614%E7%A7%92/" title="cuDNN API的使用与测试-以二维卷积+Relu激活函数为例" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  下一页
+                </span>
+                cuDNN API的使用与测试-以二维卷积+Relu激活函数为例
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
+    
+      <a href="mailto:haibintian@foxmail.com" target="_blank" rel="noopener" title="" class="md-footer-social__link fa fa-"></a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
+      
+        
+        
+          
+          <script src="../../assets/javascripts/lunr/lunr.stemmer.support.js"></script>
+          
+            
+              
+                <script src="../../assets/javascripts/lunr/tinyseg.js"></script>
+              
+              
+                <script src="../../assets/javascripts/lunr/lunr.ja.js"></script>
+              
+            
+          
+          
+        
+      
+      <script>app.initialize({version:"1.3.1",url:{base:"../.."}})</script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+      
+        <script src="../../javascripts/social_share.js"></script>
+      
+    
+  </body>
+</html>

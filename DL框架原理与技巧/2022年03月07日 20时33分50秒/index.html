@@ -1,0 +1,1095 @@
+
+
+
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="复制">
+      
+        <meta name="lang:clipboard.copied" content="已复制">
+      
+        <meta name="lang:search.language" content="ja">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="没有找到符合条件的结果">
+      
+        <meta name="lang:search.result.one" content="找到 1 个符合条件的结果">
+      
+        <meta name="lang:search.result.other" content="# 个符合条件的结果">
+      
+        <meta name="lang:search.tokenizer" content="[\uff0c\u3002]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-4.6.3">
+    
+    
+      
+        <title>自动微分autograd原理-简单demo - 海滨的Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#autograd-demo" tabindex="0" class="md-skip">
+        跳转至
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="海滨的Blog" aria-label="海滨的Blog" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              海滨的Blog
+            </span>
+            <span class="md-header-nav__topic">
+              
+                自动微分autograd原理-简单demo
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            键入以开始搜索
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="海滨的Blog" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    海滨的Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Index" class="md-nav__link">
+      Index
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      DL框架原理与技巧
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        DL框架原理与技巧
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" title="Pytorch下的多卡间变量同步操作" class="md-nav__link">
+      Pytorch下的多卡间变量同步操作
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        自动微分autograd原理-简单demo
+      </label>
+    
+    <a href="./" title="自动微分autograd原理-简单demo" class="md-nav__link md-nav__link--active">
+      自动微分autograd原理-简单demo
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">目录</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    需求
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    分析
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    代码
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    总结
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2022%E5%B9%B403%E6%9C%8811%E6%97%A5%2015%E6%97%B614%E5%88%8655%E7%A7%92/" title="TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换" class="md-nav__link">
+      TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" title="再谈自动微分：自动微分中的前向模式与反向模式" class="md-nav__link">
+      再谈自动微分：自动微分中的前向模式与反向模式
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      OCR相关
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        OCR相关
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../OCR%E7%9B%B8%E5%85%B3/2022%E5%B9%B403%E6%9C%8829%E6%97%A5%2022%E6%97%B651%E5%88%8611%E7%A7%92/" title="Pytorch中CTC Loss源码解析" class="md-nav__link">
+      Pytorch中CTC Loss源码解析
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      Cuda相关
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        Cuda相关
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B406%E6%9C%8812%E6%97%A5%2021%E6%97%B613%E5%88%8644%E7%A7%92/" title="cublas中矩阵乘及其广播机制的实现与单元测试" class="md-nav__link">
+      cublas中矩阵乘及其广播机制的实现与单元测试
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B407%E6%9C%8823%E6%97%A5%2023%E6%97%B617%E5%88%8614%E7%A7%92/" title="cuDNN API的使用与测试-以二维卷积+Relu激活函数为例" class="md-nav__link">
+      cuDNN API的使用与测试-以二维卷积+Relu激活函数为例
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      python&C++
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        python&C++
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../python%26C%2B%2B/2022%E5%B9%B406%E6%9C%8807%E6%97%A5%2015%E6%97%B650%E5%88%8636%E7%A7%92/" title="python与C/C++数据交互的陷阱：numpy/torch中的视图" class="md-nav__link">
+      python与C/C++数据交互的陷阱：numpy/torch中的视图
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6">
+    
+    <label class="md-nav__link" for="nav-6">
+      模型轻量化
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        模型轻量化
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2021%E5%B9%B412%E6%9C%8825%E6%97%A5%2016%E6%97%B604%E5%88%8649%E7%A7%92/" title="Network Slimming-神经网络剪枝的精细控制实现" class="md-nav__link">
+      Network Slimming-神经网络剪枝的精细控制实现
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B401%E6%9C%8817%E6%97%A5%2010%E6%97%B647%E5%88%8629%E7%A7%92/" title="模型压缩框架nncf模型量化中QAT量化参数的梯度推导" class="md-nav__link">
+      模型压缩框架nncf模型量化中QAT量化参数的梯度推导
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8805%E6%97%A5%2016%E6%97%B630%E5%88%8647%E7%A7%92/" title="对模型量化框架mqbench添加openvino推理格式支持" class="md-nav__link">
+      对模型量化框架mqbench添加openvino推理格式支持
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8821%E6%97%A5%2012%E6%97%B619%E5%88%8614%E7%A7%92/" title="一文总结TensorRT下两种量化方式QAT和PTQ的部署" class="md-nav__link">
+      一文总结TensorRT下两种量化方式QAT和PTQ的部署
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7">
+    
+    <label class="md-nav__link" for="nav-7">
+      模型部署
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        模型部署
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2021%E5%B9%B412%E6%9C%8816%E6%97%A5%2014%E6%97%B626%E5%88%8600%E7%A7%92/" title="FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案" class="md-nav__link">
+      FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8806%E6%97%A5%2022%E6%97%B621%E5%88%8616%E7%A7%92/" title="生产者消费者模式在多batch推理下的应用(延时队列)" class="md-nav__link">
+      生产者消费者模式在多batch推理下的应用(延时队列)
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8811%E6%97%A5%2023%E6%97%B612%E5%88%8655%E7%A7%92/" title="pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例" class="md-nav__link">
+      pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B405%E6%9C%8828%E6%97%A5%2017%E6%97%B623%E5%88%8651%E7%A7%92/" title="计算图的优化-以onnx表示形式为例" class="md-nav__link">
+      计算图的优化-以onnx表示形式为例
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B408%E6%9C%8802%E6%97%A5%2023%E6%97%B628%E5%88%8628%E7%A7%92/" title="TensorRT Plugin的实现、调试与验证：以实现Layernorm为例" class="md-nav__link">
+      TensorRT Plugin的实现、调试与验证：以实现Layernorm为例
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-8" type="checkbox" id="nav-8">
+    
+    <label class="md-nav__link" for="nav-8">
+      论文解读
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-8">
+        论文解读
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/convnext/" title="关于ConvNext若干细节的解读与讨论" class="md-nav__link">
+      关于ConvNext若干细节的解读与讨论
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">目录</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    需求
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    分析
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    代码
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    总结
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="autograd-demo">自动微分autograd原理-简单demo</h1>
+<h2 id="_1">需求</h2>
+<p>实现一个类似pytorch的简略版自动微分mini框架，支持加减乘除，api设计参考pytorch即可。这个实际上是某节的一道面试题的精简版，不知道今年还出不出。</p>
+<h2 id="_2">分析</h2>
+<ol>
+<li>需要构造计算图，以z = func(x,y) 为例，执行<code>z.backward</code>时候需要找到x和y,因此构造的z对象对应的类需要有存储x和y对象引用的设计</li>
+<li>函数指针。需要构造前向传播函数与反向传播函数，显然每个函数需要当做参数传递给参与计算的变量使用</li>
+<li>接口设计参考<code>torch.autograd.Function</code></li>
+</ol>
+<h2 id="_3">代码</h2>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">  1</a></span>
+<span class="normal"><a href="#__codelineno-0-2">  2</a></span>
+<span class="normal"><a href="#__codelineno-0-3">  3</a></span>
+<span class="normal"><a href="#__codelineno-0-4">  4</a></span>
+<span class="normal"><a href="#__codelineno-0-5">  5</a></span>
+<span class="normal"><a href="#__codelineno-0-6">  6</a></span>
+<span class="normal"><a href="#__codelineno-0-7">  7</a></span>
+<span class="normal"><a href="#__codelineno-0-8">  8</a></span>
+<span class="normal"><a href="#__codelineno-0-9">  9</a></span>
+<span class="normal"><a href="#__codelineno-0-10"> 10</a></span>
+<span class="normal"><a href="#__codelineno-0-11"> 11</a></span>
+<span class="normal"><a href="#__codelineno-0-12"> 12</a></span>
+<span class="normal"><a href="#__codelineno-0-13"> 13</a></span>
+<span class="normal"><a href="#__codelineno-0-14"> 14</a></span>
+<span class="normal"><a href="#__codelineno-0-15"> 15</a></span>
+<span class="normal"><a href="#__codelineno-0-16"> 16</a></span>
+<span class="normal"><a href="#__codelineno-0-17"> 17</a></span>
+<span class="normal"><a href="#__codelineno-0-18"> 18</a></span>
+<span class="normal"><a href="#__codelineno-0-19"> 19</a></span>
+<span class="normal"><a href="#__codelineno-0-20"> 20</a></span>
+<span class="normal"><a href="#__codelineno-0-21"> 21</a></span>
+<span class="normal"><a href="#__codelineno-0-22"> 22</a></span>
+<span class="normal"><a href="#__codelineno-0-23"> 23</a></span>
+<span class="normal"><a href="#__codelineno-0-24"> 24</a></span>
+<span class="normal"><a href="#__codelineno-0-25"> 25</a></span>
+<span class="normal"><a href="#__codelineno-0-26"> 26</a></span>
+<span class="normal"><a href="#__codelineno-0-27"> 27</a></span>
+<span class="normal"><a href="#__codelineno-0-28"> 28</a></span>
+<span class="normal"><a href="#__codelineno-0-29"> 29</a></span>
+<span class="normal"><a href="#__codelineno-0-30"> 30</a></span>
+<span class="normal"><a href="#__codelineno-0-31"> 31</a></span>
+<span class="normal"><a href="#__codelineno-0-32"> 32</a></span>
+<span class="normal"><a href="#__codelineno-0-33"> 33</a></span>
+<span class="normal"><a href="#__codelineno-0-34"> 34</a></span>
+<span class="normal"><a href="#__codelineno-0-35"> 35</a></span>
+<span class="normal"><a href="#__codelineno-0-36"> 36</a></span>
+<span class="normal"><a href="#__codelineno-0-37"> 37</a></span>
+<span class="normal"><a href="#__codelineno-0-38"> 38</a></span>
+<span class="normal"><a href="#__codelineno-0-39"> 39</a></span>
+<span class="normal"><a href="#__codelineno-0-40"> 40</a></span>
+<span class="normal"><a href="#__codelineno-0-41"> 41</a></span>
+<span class="normal"><a href="#__codelineno-0-42"> 42</a></span>
+<span class="normal"><a href="#__codelineno-0-43"> 43</a></span>
+<span class="normal"><a href="#__codelineno-0-44"> 44</a></span>
+<span class="normal"><a href="#__codelineno-0-45"> 45</a></span>
+<span class="normal"><a href="#__codelineno-0-46"> 46</a></span>
+<span class="normal"><a href="#__codelineno-0-47"> 47</a></span>
+<span class="normal"><a href="#__codelineno-0-48"> 48</a></span>
+<span class="normal"><a href="#__codelineno-0-49"> 49</a></span>
+<span class="normal"><a href="#__codelineno-0-50"> 50</a></span>
+<span class="normal"><a href="#__codelineno-0-51"> 51</a></span>
+<span class="normal"><a href="#__codelineno-0-52"> 52</a></span>
+<span class="normal"><a href="#__codelineno-0-53"> 53</a></span>
+<span class="normal"><a href="#__codelineno-0-54"> 54</a></span>
+<span class="normal"><a href="#__codelineno-0-55"> 55</a></span>
+<span class="normal"><a href="#__codelineno-0-56"> 56</a></span>
+<span class="normal"><a href="#__codelineno-0-57"> 57</a></span>
+<span class="normal"><a href="#__codelineno-0-58"> 58</a></span>
+<span class="normal"><a href="#__codelineno-0-59"> 59</a></span>
+<span class="normal"><a href="#__codelineno-0-60"> 60</a></span>
+<span class="normal"><a href="#__codelineno-0-61"> 61</a></span>
+<span class="normal"><a href="#__codelineno-0-62"> 62</a></span>
+<span class="normal"><a href="#__codelineno-0-63"> 63</a></span>
+<span class="normal"><a href="#__codelineno-0-64"> 64</a></span>
+<span class="normal"><a href="#__codelineno-0-65"> 65</a></span>
+<span class="normal"><a href="#__codelineno-0-66"> 66</a></span>
+<span class="normal"><a href="#__codelineno-0-67"> 67</a></span>
+<span class="normal"><a href="#__codelineno-0-68"> 68</a></span>
+<span class="normal"><a href="#__codelineno-0-69"> 69</a></span>
+<span class="normal"><a href="#__codelineno-0-70"> 70</a></span>
+<span class="normal"><a href="#__codelineno-0-71"> 71</a></span>
+<span class="normal"><a href="#__codelineno-0-72"> 72</a></span>
+<span class="normal"><a href="#__codelineno-0-73"> 73</a></span>
+<span class="normal"><a href="#__codelineno-0-74"> 74</a></span>
+<span class="normal"><a href="#__codelineno-0-75"> 75</a></span>
+<span class="normal"><a href="#__codelineno-0-76"> 76</a></span>
+<span class="normal"><a href="#__codelineno-0-77"> 77</a></span>
+<span class="normal"><a href="#__codelineno-0-78"> 78</a></span>
+<span class="normal"><a href="#__codelineno-0-79"> 79</a></span>
+<span class="normal"><a href="#__codelineno-0-80"> 80</a></span>
+<span class="normal"><a href="#__codelineno-0-81"> 81</a></span>
+<span class="normal"><a href="#__codelineno-0-82"> 82</a></span>
+<span class="normal"><a href="#__codelineno-0-83"> 83</a></span>
+<span class="normal"><a href="#__codelineno-0-84"> 84</a></span>
+<span class="normal"><a href="#__codelineno-0-85"> 85</a></span>
+<span class="normal"><a href="#__codelineno-0-86"> 86</a></span>
+<span class="normal"><a href="#__codelineno-0-87"> 87</a></span>
+<span class="normal"><a href="#__codelineno-0-88"> 88</a></span>
+<span class="normal"><a href="#__codelineno-0-89"> 89</a></span>
+<span class="normal"><a href="#__codelineno-0-90"> 90</a></span>
+<span class="normal"><a href="#__codelineno-0-91"> 91</a></span>
+<span class="normal"><a href="#__codelineno-0-92"> 92</a></span>
+<span class="normal"><a href="#__codelineno-0-93"> 93</a></span>
+<span class="normal"><a href="#__codelineno-0-94"> 94</a></span>
+<span class="normal"><a href="#__codelineno-0-95"> 95</a></span>
+<span class="normal"><a href="#__codelineno-0-96"> 96</a></span>
+<span class="normal"><a href="#__codelineno-0-97"> 97</a></span>
+<span class="normal"><a href="#__codelineno-0-98"> 98</a></span>
+<span class="normal"><a href="#__codelineno-0-99"> 99</a></span>
+<span class="normal"><a href="#__codelineno-0-100">100</a></span>
+<span class="normal"><a href="#__codelineno-0-101">101</a></span>
+<span class="normal"><a href="#__codelineno-0-102">102</a></span>
+<span class="normal"><a href="#__codelineno-0-103">103</a></span>
+<span class="normal"><a href="#__codelineno-0-104">104</a></span>
+<span class="normal"><a href="#__codelineno-0-105">105</a></span>
+<span class="normal"><a href="#__codelineno-0-106">106</a></span>
+<span class="normal"><a href="#__codelineno-0-107">107</a></span>
+<span class="normal"><a href="#__codelineno-0-108">108</a></span>
+<span class="normal"><a href="#__codelineno-0-109">109</a></span>
+<span class="normal"><a href="#__codelineno-0-110">110</a></span>
+<span class="normal"><a href="#__codelineno-0-111">111</a></span>
+<span class="normal"><a href="#__codelineno-0-112">112</a></span>
+<span class="normal"><a href="#__codelineno-0-113">113</a></span>
+<span class="normal"><a href="#__codelineno-0-114">114</a></span>
+<span class="normal"><a href="#__codelineno-0-115">115</a></span>
+<span class="normal"><a href="#__codelineno-0-116">116</a></span>
+<span class="normal"><a href="#__codelineno-0-117">117</a></span>
+<span class="normal"><a href="#__codelineno-0-118">118</a></span>
+<span class="normal"><a href="#__codelineno-0-119">119</a></span>
+<span class="normal"><a href="#__codelineno-0-120">120</a></span>
+<span class="normal"><a href="#__codelineno-0-121">121</a></span>
+<span class="normal"><a href="#__codelineno-0-122">122</a></span>
+<span class="normal"><a href="#__codelineno-0-123">123</a></span>
+<span class="normal"><a href="#__codelineno-0-124">124</a></span>
+<span class="normal"><a href="#__codelineno-0-125">125</a></span>
+<span class="normal"><a href="#__codelineno-0-126">126</a></span>
+<span class="normal"><a href="#__codelineno-0-127">127</a></span>
+<span class="normal"><a href="#__codelineno-0-128">128</a></span>
+<span class="normal"><a href="#__codelineno-0-129">129</a></span>
+<span class="normal"><a href="#__codelineno-0-130">130</a></span>
+<span class="normal"><a href="#__codelineno-0-131">131</a></span>
+<span class="normal"><a href="#__codelineno-0-132">132</a></span>
+<span class="normal"><a href="#__codelineno-0-133">133</a></span>
+<span class="normal"><a href="#__codelineno-0-134">134</a></span>
+<span class="normal"><a href="#__codelineno-0-135">135</a></span>
+<span class="normal"><a href="#__codelineno-0-136">136</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="kn">import</span> <span class="nn">abc</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="k">class</span> <span class="nc">Function</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span><span class="p">):</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a>        <span class="k">pass</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12"></a>    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a>        <span class="k">pass</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a>    <span class="k">def</span> <span class="nf">saved_for_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a>    <span class="k">def</span> <span class="nf">get_saved_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>    <span class="nd">@classmethod</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>        <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>        <span class="c1"># add grad func for args</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">required_grad</span><span class="p">:</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a>            <span class="n">result</span><span class="o">.</span><span class="n">saved_ctx</span> <span class="o">=</span> <span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">backward</span><span class="p">)</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a>        <span class="k">return</span> <span class="n">result</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="k">def</span> <span class="nf">as_var</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Varible</span><span class="p">):</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>        <span class="k">return</span> <span class="n">data</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a>    <span class="k">return</span> <span class="n">Varible</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">required_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="k">class</span> <span class="nc">Varible</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">required_grad</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">required_grad</span> <span class="o">=</span> <span class="n">required_grad</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">value</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">saved_ctx</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a>    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grad</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">retain_graph</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>        <span class="n">grad</span> <span class="o">=</span> <span class="n">grad</span> <span class="ow">or</span> <span class="mf">1.0</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">required_grad</span><span class="p">:</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a>            <span class="k">return</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_ctx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>            <span class="nb">vars</span><span class="p">,</span> <span class="n">backward_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">saved_ctx</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a>            <span class="n">grads</span> <span class="o">=</span> <span class="n">backward_func</span><span class="p">(</span><span class="n">grad</span><span class="p">)</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a>            <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">var_grad</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">vars</span><span class="p">,</span> <span class="n">grads</span><span class="p">):</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a>                <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">required_grad</span><span class="p">:</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>                    <span class="n">var</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">grad</span> <span class="ow">or</span> <span class="mf">0.0</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a>                    <span class="n">var</span><span class="o">.</span><span class="n">grad</span> <span class="o">+=</span> <span class="n">var_grad</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>                    <span class="n">var</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">var_grad</span><span class="p">,</span> <span class="n">retain_graph</span><span class="p">)</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">retain_graph</span><span class="p">:</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a>                <span class="bp">self</span><span class="o">.</span><span class="n">saved_ctx</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a>    <span class="k">def</span> <span class="nf">copy_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">required_grad</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">required_grad</span><span class="p">)</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">saved_ctx</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">saved_ctx</span><span class="p">)</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>    <span class="k">def</span> <span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>    <span class="k">def</span> <span class="fm">__isub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__sub__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>    <span class="k">def</span> <span class="fm">__imul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__mul__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>    <span class="k">def</span> <span class="nf">__idiv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__div__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="k">def</span> <span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="k">def</span> <span class="fm">__rsub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__sub__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>    <span class="k">def</span> <span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__mul__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>    <span class="k">def</span> <span class="fm">__rtruediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__truediv__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a>    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>        <span class="k">return</span> <span class="n">AddFunction</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">as_var</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a>    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a>        <span class="k">return</span> <span class="n">SubFunction</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">as_var</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a>    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a>        <span class="k">return</span> <span class="n">MulFunction</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">as_var</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a>    <span class="k">def</span> <span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a>        <span class="k">return</span> <span class="n">DivFunction</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">as_var</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;data=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="si">}</span><span class="s2">, required_grad=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">required_grad</span><span class="si">}</span><span class="s2">, grad=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">grad</span><span class="si">}</span><span class="s2">&quot;</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a><span class="k">class</span> <span class="nc">AddFunction</span><span class="p">(</span><span class="n">Function</span><span class="p">):</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a>        <span class="n">required_grad</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">required_grad</span> <span class="ow">or</span> <span class="n">y</span><span class="o">.</span><span class="n">required_grad</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a>        <span class="n">result_data</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">data</span> <span class="o">+</span> <span class="n">y</span><span class="o">.</span><span class="n">data</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">Varible</span><span class="p">(</span><span class="n">result_data</span><span class="p">,</span> <span class="n">required_grad</span><span class="o">=</span><span class="n">required_grad</span><span class="p">)</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>        <span class="k">return</span> <span class="n">result</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">grad</span><span class="p">):</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>        <span class="c1"># grad for x and y</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a>        <span class="k">return</span> <span class="n">grad</span><span class="p">,</span> <span class="n">grad</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a><span class="k">class</span> <span class="nc">SubFunction</span><span class="p">(</span><span class="n">Function</span><span class="p">):</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a>        <span class="n">required_grad</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">required_grad</span> <span class="ow">or</span> <span class="n">y</span><span class="o">.</span><span class="n">required_grad</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a>        <span class="n">result_data</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">data</span> <span class="o">-</span> <span class="n">y</span><span class="o">.</span><span class="n">data</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">Varible</span><span class="p">(</span><span class="n">result_data</span><span class="p">,</span> <span class="n">required_grad</span><span class="o">=</span><span class="n">required_grad</span><span class="p">)</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a>        <span class="k">return</span> <span class="n">result</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a>    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">grad</span><span class="p">):</span>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>        <span class="c1"># grad for x and y</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>        <span class="k">return</span> <span class="n">grad</span><span class="p">,</span> <span class="o">-</span><span class="n">grad</span>
+<a id="__codelineno-0-106" name="__codelineno-0-106"></a><span class="k">class</span> <span class="nc">MulFunction</span><span class="p">(</span><span class="n">Function</span><span class="p">):</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<a id="__codelineno-0-108" name="__codelineno-0-108"></a>        <span class="n">required_grad</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">required_grad</span> <span class="ow">or</span> <span class="n">y</span><span class="o">.</span><span class="n">required_grad</span>
+<a id="__codelineno-0-109" name="__codelineno-0-109"></a>        <span class="n">result_data</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">y</span><span class="o">.</span><span class="n">data</span>
+<a id="__codelineno-0-110" name="__codelineno-0-110"></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">saved_for_backward</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<a id="__codelineno-0-111" name="__codelineno-0-111"></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">Varible</span><span class="p">(</span><span class="n">result_data</span><span class="p">,</span> <span class="n">required_grad</span><span class="o">=</span><span class="n">required_grad</span><span class="p">)</span>
+<a id="__codelineno-0-112" name="__codelineno-0-112"></a>        <span class="k">return</span> <span class="n">result</span>
+<a id="__codelineno-0-113" name="__codelineno-0-113"></a>    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">grad</span><span class="p">):</span>
+<a id="__codelineno-0-114" name="__codelineno-0-114"></a>        <span class="c1"># grad for x and y</span>
+<a id="__codelineno-0-115" name="__codelineno-0-115"></a>        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_saved_buffer</span><span class="p">()</span>
+<a id="__codelineno-0-116" name="__codelineno-0-116"></a>        <span class="k">return</span> <span class="n">grad</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="n">grad</span> <span class="o">*</span> <span class="n">x</span>
+<a id="__codelineno-0-117" name="__codelineno-0-117"></a><span class="k">class</span> <span class="nc">DivFunction</span><span class="p">(</span><span class="n">Function</span><span class="p">):</span>
+<a id="__codelineno-0-118" name="__codelineno-0-118"></a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<a id="__codelineno-0-119" name="__codelineno-0-119"></a>        <span class="n">required_grad</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">required_grad</span> <span class="ow">or</span> <span class="n">y</span><span class="o">.</span><span class="n">required_grad</span>
+<a id="__codelineno-0-120" name="__codelineno-0-120"></a>        <span class="n">result_data</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">data</span> <span class="o">/</span> <span class="n">y</span><span class="o">.</span><span class="n">data</span>
+<a id="__codelineno-0-121" name="__codelineno-0-121"></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">saved_for_backward</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<a id="__codelineno-0-122" name="__codelineno-0-122"></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">Varible</span><span class="p">(</span><span class="n">result_data</span><span class="p">,</span> <span class="n">required_grad</span><span class="o">=</span><span class="n">required_grad</span><span class="p">)</span>
+<a id="__codelineno-0-123" name="__codelineno-0-123"></a>        <span class="k">return</span> <span class="n">result</span>
+<a id="__codelineno-0-124" name="__codelineno-0-124"></a>    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">grad</span><span class="p">):</span>
+<a id="__codelineno-0-125" name="__codelineno-0-125"></a>        <span class="c1"># grad for x and y</span>
+<a id="__codelineno-0-126" name="__codelineno-0-126"></a>        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get_saved_buffer</span><span class="p">()</span>
+<a id="__codelineno-0-127" name="__codelineno-0-127"></a>        <span class="k">return</span> <span class="n">grad</span> <span class="o">/</span> <span class="n">y</span><span class="p">,</span> <span class="o">-</span> <span class="n">grad</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">**</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-0-128" name="__codelineno-0-128"></a>
+<a id="__codelineno-0-129" name="__codelineno-0-129"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-0-130" name="__codelineno-0-130"></a>    <span class="n">a</span> <span class="o">=</span> <span class="n">Varible</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">required_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-0-131" name="__codelineno-0-131"></a>    <span class="n">b</span> <span class="o">=</span> <span class="n">Varible</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">required_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-0-132" name="__codelineno-0-132"></a>    <span class="n">y</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a</span> <span class="o">/</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">a</span>
+<a id="__codelineno-0-133" name="__codelineno-0-133"></a>    <span class="n">y</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<a id="__codelineno-0-134" name="__codelineno-0-134"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<a id="__codelineno-0-135" name="__codelineno-0-135"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<a id="__codelineno-0-136" name="__codelineno-0-136"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="_4">总结</h2>
+<p>以上代码既实现了标量的自动微分，主要是两个类，<code>Function</code>和<code>Variable</code>。核心是一个方法<code>backward</code>，里头会链式调用子节点的<code>backward</code>方法，实现链式的反向传播功能。</p>
+                
+                  
+                
+                
+                  
+                  <hr>
+                  <div class="md-source-date">
+                    <small>
+                      
+                        最后更新: <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">October 16, 2022</span>
+                      
+                    </small>
+                  </div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" title="Pytorch下的多卡间变量同步操作" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  上一页
+                </span>
+                Pytorch下的多卡间变量同步操作
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../2022%E5%B9%B403%E6%9C%8811%E6%97%A5%2015%E6%97%B614%E5%88%8655%E7%A7%92/" title="TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  下一页
+                </span>
+                TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
+    
+      <a href="mailto:haibintian@foxmail.com" target="_blank" rel="noopener" title="" class="md-footer-social__link fa fa-"></a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
+      
+        
+        
+          
+          <script src="../../assets/javascripts/lunr/lunr.stemmer.support.js"></script>
+          
+            
+              
+                <script src="../../assets/javascripts/lunr/tinyseg.js"></script>
+              
+              
+                <script src="../../assets/javascripts/lunr/lunr.ja.js"></script>
+              
+            
+          
+          
+        
+      
+      <script>app.initialize({version:"1.3.1",url:{base:"../.."}})</script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+      
+        <script src="../../javascripts/social_share.js"></script>
+      
+    
+  </body>
+</html>
