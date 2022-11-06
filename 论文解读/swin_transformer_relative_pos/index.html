@@ -8,19 +8,19 @@
       
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.6">
     
     
       
-        <title>海滨的Blog</title>
+        <title>对Swin Transformer中的相对位置编码与attention mask的理解 - 海滨的Blog</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.20d9efc8.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.20d9efc8.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
         
       
       
@@ -39,7 +39,7 @@
     
       <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/css/share.min.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#index" class="md-skip">
+        <a href="#swin-transformerattention-mask" class="md-skip">
           跳转至
         </a>
       
@@ -78,7 +78,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="页眉">
-    <a href="." title="海滨的Blog" class="md-header__button md-logo" aria-label="海滨的Blog" data-md-component="logo">
+    <a href="../.." title="海滨的Blog" class="md-header__button md-logo" aria-label="海滨的Blog" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -97,7 +97,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Index
+              对Swin Transformer中的相对位置编码与attention mask的理解
             
           </span>
         </div>
@@ -164,7 +164,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="海滨的Blog" class="md-nav__button md-logo" aria-label="海滨的Blog" data-md-component="logo">
+    <a href="../.." title="海滨的Blog" class="md-nav__button md-logo" aria-label="海滨的Blog" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -181,52 +181,11 @@
 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Index
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
         Index
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目录">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    个人简介
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -265,7 +224,7 @@
   
   
     <li class="md-nav__item">
-      <a href="DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" class="md-nav__link">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" class="md-nav__link">
         Pytorch下的多卡间变量同步操作
       </a>
     </li>
@@ -279,7 +238,7 @@
   
   
     <li class="md-nav__item">
-      <a href="DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8807%E6%97%A5%2020%E6%97%B633%E5%88%8650%E7%A7%92/" class="md-nav__link">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8807%E6%97%A5%2020%E6%97%B633%E5%88%8650%E7%A7%92/" class="md-nav__link">
         自动微分autograd原理-简单demo
       </a>
     </li>
@@ -293,7 +252,7 @@
   
   
     <li class="md-nav__item">
-      <a href="DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8811%E6%97%A5%2015%E6%97%B614%E5%88%8655%E7%A7%92/" class="md-nav__link">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8811%E6%97%A5%2015%E6%97%B614%E5%88%8655%E7%A7%92/" class="md-nav__link">
         TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
       </a>
     </li>
@@ -307,7 +266,7 @@
   
   
     <li class="md-nav__item">
-      <a href="DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" class="md-nav__link">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" class="md-nav__link">
         再谈自动微分：自动微分中的前向模式与反向模式
       </a>
     </li>
@@ -355,7 +314,7 @@
   
   
     <li class="md-nav__item">
-      <a href="OCR%E7%9B%B8%E5%85%B3/2022%E5%B9%B403%E6%9C%8829%E6%97%A5%2022%E6%97%B651%E5%88%8611%E7%A7%92/" class="md-nav__link">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/2022%E5%B9%B403%E6%9C%8829%E6%97%A5%2022%E6%97%B651%E5%88%8611%E7%A7%92/" class="md-nav__link">
         Pytorch中CTC Loss源码解析
       </a>
     </li>
@@ -403,7 +362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B406%E6%9C%8812%E6%97%A5%2021%E6%97%B613%E5%88%8644%E7%A7%92/" class="md-nav__link">
+      <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B406%E6%9C%8812%E6%97%A5%2021%E6%97%B613%E5%88%8644%E7%A7%92/" class="md-nav__link">
         cublas中矩阵乘及其广播机制的实现与单元测试
       </a>
     </li>
@@ -417,7 +376,7 @@
   
   
     <li class="md-nav__item">
-      <a href="cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B407%E6%9C%8823%E6%97%A5%2023%E6%97%B617%E5%88%8614%E7%A7%92/" class="md-nav__link">
+      <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B407%E6%9C%8823%E6%97%A5%2023%E6%97%B617%E5%88%8614%E7%A7%92/" class="md-nav__link">
         cuDNN API的使用与测试-以二维卷积+Relu激活函数为例
       </a>
     </li>
@@ -465,7 +424,7 @@
   
   
     <li class="md-nav__item">
-      <a href="python%26C%2B%2B/2022%E5%B9%B406%E6%9C%8807%E6%97%A5%2015%E6%97%B650%E5%88%8636%E7%A7%92/" class="md-nav__link">
+      <a href="../../python%26C%2B%2B/2022%E5%B9%B406%E6%9C%8807%E6%97%A5%2015%E6%97%B650%E5%88%8636%E7%A7%92/" class="md-nav__link">
         python与C/C++数据交互的陷阱：numpy/torch中的视图
       </a>
     </li>
@@ -513,7 +472,7 @@
   
   
     <li class="md-nav__item">
-      <a href="%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2021%E5%B9%B412%E6%9C%8825%E6%97%A5%2016%E6%97%B604%E5%88%8649%E7%A7%92/" class="md-nav__link">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2021%E5%B9%B412%E6%9C%8825%E6%97%A5%2016%E6%97%B604%E5%88%8649%E7%A7%92/" class="md-nav__link">
         Network Slimming-神经网络剪枝的精细控制实现
       </a>
     </li>
@@ -527,7 +486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B401%E6%9C%8817%E6%97%A5%2010%E6%97%B647%E5%88%8629%E7%A7%92/" class="md-nav__link">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B401%E6%9C%8817%E6%97%A5%2010%E6%97%B647%E5%88%8629%E7%A7%92/" class="md-nav__link">
         模型压缩框架nncf模型量化中QAT量化参数的梯度推导
       </a>
     </li>
@@ -541,7 +500,7 @@
   
   
     <li class="md-nav__item">
-      <a href="%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8805%E6%97%A5%2016%E6%97%B630%E5%88%8647%E7%A7%92/" class="md-nav__link">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8805%E6%97%A5%2016%E6%97%B630%E5%88%8647%E7%A7%92/" class="md-nav__link">
         对模型量化框架mqbench添加openvino推理格式支持
       </a>
     </li>
@@ -555,7 +514,7 @@
   
   
     <li class="md-nav__item">
-      <a href="%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8821%E6%97%A5%2012%E6%97%B619%E5%88%8614%E7%A7%92/" class="md-nav__link">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8821%E6%97%A5%2012%E6%97%B619%E5%88%8614%E7%A7%92/" class="md-nav__link">
         一文总结TensorRT下两种量化方式QAT和PTQ的部署
       </a>
     </li>
@@ -603,7 +562,7 @@
   
   
     <li class="md-nav__item">
-      <a href="%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2021%E5%B9%B412%E6%9C%8816%E6%97%A5%2014%E6%97%B626%E5%88%8600%E7%A7%92/" class="md-nav__link">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2021%E5%B9%B412%E6%9C%8816%E6%97%A5%2014%E6%97%B626%E5%88%8600%E7%A7%92/" class="md-nav__link">
         FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案
       </a>
     </li>
@@ -617,7 +576,7 @@
   
   
     <li class="md-nav__item">
-      <a href="%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8806%E6%97%A5%2022%E6%97%B621%E5%88%8616%E7%A7%92/" class="md-nav__link">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8806%E6%97%A5%2022%E6%97%B621%E5%88%8616%E7%A7%92/" class="md-nav__link">
         生产者消费者模式在多batch推理下的应用(延时队列)
       </a>
     </li>
@@ -631,7 +590,7 @@
   
   
     <li class="md-nav__item">
-      <a href="%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8811%E6%97%A5%2023%E6%97%B612%E5%88%8655%E7%A7%92/" class="md-nav__link">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8811%E6%97%A5%2023%E6%97%B612%E5%88%8655%E7%A7%92/" class="md-nav__link">
         pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例
       </a>
     </li>
@@ -645,7 +604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B405%E6%9C%8828%E6%97%A5%2017%E6%97%B623%E5%88%8651%E7%A7%92/" class="md-nav__link">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B405%E6%9C%8828%E6%97%A5%2017%E6%97%B623%E5%88%8651%E7%A7%92/" class="md-nav__link">
         计算图的优化-以onnx表示形式为例
       </a>
     </li>
@@ -659,7 +618,7 @@
   
   
     <li class="md-nav__item">
-      <a href="%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B408%E6%9C%8802%E6%97%A5%2023%E6%97%B628%E5%88%8628%E7%A7%92/" class="md-nav__link">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B408%E6%9C%8802%E6%97%A5%2023%E6%97%B628%E5%88%8628%E7%A7%92/" class="md-nav__link">
         TensorRT Plugin的实现、调试与验证：以实现Layernorm为例
       </a>
     </li>
@@ -679,12 +638,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" checked>
       
       
       
@@ -707,7 +668,7 @@
   
   
     <li class="md-nav__item">
-      <a href="%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/convnext/" class="md-nav__link">
+      <a href="../convnext/" class="md-nav__link">
         关于ConvNext若干细节的解读与讨论
       </a>
     </li>
@@ -719,11 +680,86 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/swin_transformer_relative_pos/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          对Swin Transformer中的相对位置编码与attention mask的理解
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         对Swin Transformer中的相对位置编码与attention mask的理解
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    一、前言
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#window-attention" class="md-nav__link">
+    二、Window Attention的相对位置编码
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shifted-window-attentionattention-mask" class="md-nav__link">
+    三、Shifted Window Attention中的attention mask
+  </a>
+  
+    <nav class="md-nav" aria-label="三、Shifted Window Attention中的attention mask">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-attention-mask" class="md-nav__link">
+    3.1 为什么需要attention mask
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    3.2 具体过程
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -763,8 +799,42 @@
       
         <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
-    个人简介
+    一、前言
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#window-attention" class="md-nav__link">
+    二、Window Attention的相对位置编码
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shifted-window-attentionattention-mask" class="md-nav__link">
+    三、Shifted Window Attention中的attention mask
+  </a>
+  
+    <nav class="md-nav" aria-label="三、Shifted Window Attention中的attention mask">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-attention-mask" class="md-nav__link">
+    3.1 为什么需要attention mask
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    3.2 具体过程
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -783,9 +853,48 @@
                   
 
 
-<h1 id="index">Index</h1>
-<h2 id="_1">个人简介</h2>
-<p>海滨，95后算法工程师一枚，野生码农，研究领域包括模型轻量化和显著性物体检测，目前从事CV工业应用相关工作。</p>
+<h1 id="swin-transformerattention-mask">对Swin Transformer中的相对位置编码与attention mask的理解</h1>
+<h2 id="_1">一、前言</h2>
+<p>前一阵系统看了下swin transformer的论文和源码，反复咀嚼后对让我曾经头疼的两点内容谈一下自己的理解，其中包括window内部的用于self attention的相对位置编码和Shifted Window Attention中的attention mask。  </p>
+<p>本文不会介绍swin transformer的主要思路，主要聚焦于上面说的两个问题，没有看过原文的读者还请仔细读一下原文  </p>
+<blockquote>
+<p>论文地址：<a href="https://arxiv.org/pdf/2103.14030.pdf">https://arxiv.org/pdf/2103.14030.pdf</a></p>
+<p>代码地址：<a href="https://github.com/microsoft/Swin-Transformer">https://github.com/microsoft/Swin-Transformer</a>  </p>
+</blockquote>
+<h2 id="window-attention">二、Window Attention的相对位置编码</h2>
+<p>论文中提到Swin Transformer中的Attention采用relative postition的方式，不同于最初版本的VIT，relative position bias 会加到每一层的attention层。论文中有关相关位置编码的叙述如下</p>
+<p><strong>Relative position bias</strong>. In computing self-attention, we follow<span class="arithmatex">\(\text{ }^{[49,1,32,33]}\)</span> by including a relative position bias <span class="arithmatex">\(B \in \mathbb{R}^{M^2 \times M^2}\)</span> to each head in computing similarity:<br />
+$$
+\operatorname{Attention}(Q, K, V)=\operatorname{SoftMax}\left(Q K^T / \sqrt{d}+B\right) V
+$$</p>
+<p>where <span class="arithmatex">\(Q, K, V \in \mathbb{R}^{M^2 \times d}\)</span> are the query, key and value matrices; <span class="arithmatex">\(d\)</span> is the query/key dimension, and <span class="arithmatex">\(M^2\)</span> is the number of patches in a window. Since the relative position along each axis lies in the range <span class="arithmatex">\([-M+1, M-1]\)</span>, we parameterize a smaller-sized bias matrix <span class="arithmatex">\(\hat{B} \in \mathbb{R}^{(2 M-1) \times(2 M-1)}\)</span>, and values in <span class="arithmatex">\(B\)</span> are taken from <span class="arithmatex">\(\hat{B}\)</span>.  </p>
+<blockquote>
+<p>假设矩阵A是n*m,矩阵B是m*p,矩阵A和B相乘得到矩阵C是n*p，矩阵乘的时间复杂度为m*n*p </p>
+</blockquote>
+<p>假设输入张量形状为<code>[B, numWindows, window_size * window_size, C]</code>，上文中说<span class="arithmatex">\(\text{M}^{2}\)</span>表示一个窗口中元素的个数，Q/K的形状为<code>[B*numWindows, num_heads, window_size*window_size, C//num_heads]</code>，M即window_size， d=C//num_heads。在生成Q、K、V的时候，可以理解为<code>B * numWindows * num_heads</code>个形状为<code>[window_size * window_size, C // num_heads]</code>矩阵乘以<code>[C // num_heads, C // num_heads * 3]</code>的转换矩阵，这里转换矩阵是共享的。相比较与传统VIT的<code>[B, C, H, W]-&gt;[B, num_heads, H*W, C // num_heads]</code>（<code>B*num_heads</code>），<code>SwinTransformer</code>的共享矩阵个数多<code>numWindows</code>倍，矩阵乘法由<code>[H*W, C // num_heads] @ [C // num_heads, C // num_heads * 3]</code>变为<code>[H // win_num * W // win_num, C //num_heads] @ [C // num_heads, C // num_heads * 3]</code> ，这里定义<code>win_num * win_num = numWindows</code>。所以传统VIT矩阵乘法时间复杂度为<code>B * num_heads * H * W * C // num_heads * C // num_heads * 3</code>，即<code>B * H * W * C // num_heads * C * 3</code>。SwinTransformer的时间复杂度为<code>B * numWindows * window_size * window_size * C * C // num_heads * 3</code>。相比较而言<strong>在计算QKV矩阵的时候，Swin Transformer并没有节省计算量，节省计算量的部分发生在与V矩阵交互的过程中</strong>。</p>
+<p>通过上述过程熟悉一下计算过程中的tensor的形状变化，方便我们更好的理解相对位置B，<code>Q@K</code>的形状应该是<code>[B*numWindows, num_heads, window_size * window_size, window_size * window_size]</code>，B的形状也可以是<code>[1, num_heads, window_size * window_size, window_size * window_size]</code>或者<code>[1, 1, window_size * window_size, window_size * window_size]</code>，文中采用的是前者，<strong>那么为什么不是后者呢？</strong>这个问题我一时半会也没想明白，两者的区别在于不同注意力头之间的相对位置编码是否可以共享，个人感觉从简单角度考虑是可以共享的。</p>
+<p>下面说一下B是如何生成的，先考虑单头注意力，假设window中的H与W都是2，遍历窗口中每一个元素，求出遍历元素当做原点<code>[0,0]</code>时其余元素的坐标，可以分为以下4种情况：</p>
+<p><img alt="swin" src="../swin_transformer_relative_pos.assets/swin.png" /></p>
+<p><strong>B矩阵可以理解为一个一个的行向量，将上述窗口按照行展开成一维向量，B矩阵每一行的行坐标x表示以x元素为坐标原点，每一个行向量表示以x为坐标原点时的相对位置坐标。</strong>由于展开成一维以后需要从存储表中查找对应元素，所以需要调整只一维坐标且从0开始，故采用如下策略进行变换，为什么乘以(2*windows_size - 1)可以按照将一个N进制数转换为10进制数的算法来理解：</p>
+<p><img alt="img" src="../swin_transformer_relative_pos.assets/v2-0c99206fb39da67bae3415a650c38742_720w.webp" /></p>
+<h2 id="shifted-window-attentionattention-mask">三、Shifted Window Attention中的attention mask</h2>
+<h3 id="31-attention-mask">3.1 为什么需要attention mask</h3>
+<p>为了满足不同windows之间的信息交互</p>
+<h3 id="32">3.2 具体过程</h3>
+<ol>
+<li>先看左图roll之前的结果，针对如下特征进行按照做图进行窗口划分，虚线表示原来的窗口，为了表示roll之前和roll之后的变化，在左边预先设置划分好划分后的块数。实际上一开始仅有四块。</li>
+</ol>
+<p><img alt="img" src="../swin_transformer_relative_pos.assets/v2-52b0bec2b0e2341e1eab1fd6342bc9e6_720w.webp" /></p>
+<ol>
+<li>
+<p>再看右图roll之后的结果，还是按照2x2的窗口大小进行划分，由于空间上连续的像素点之间的特征加上相对位置编码后计算self-attention才有意义，所以需要对<code>5，3</code>，<code>7,1</code>，<code>8,6,2,0</code>加上attention mask，将注意力控制在每个子模块内部。</p>
+</li>
+<li>
+<p>mask生成过程如下图所示</p>
+</li>
+</ol>
+<p><img alt="img" src="../swin_transformer_relative_pos.assets/v2-af19485ae400a2f52ede6306fcfb078e_720w.webp" /></p>
+<p>采用右边的向量乘以左边的向量，然后找到满足条件<code>结果矩阵M中的元素值 等于其中一个x*x（x为向量中的所有元素）的值</code>设置为true，其余设置为false，从而对<code>Q@K</code>矩阵加上一个mask，在计算softmax的时候不再考虑这个元素的贡献，至此attention mask讲解完毕。</p>
 
   <hr>
 <div class="md-source-file">
@@ -822,21 +931,21 @@
     
     <nav class="md-footer__inner md-grid" aria-label="页脚" >
       
-      
         
-        <a href="DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" class="md-footer__link md-footer__link--next" aria-label="下一页: Pytorch下的多卡间变量同步操作" rel="next">
+        <a href="../convnext/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 关于ConvNext若干细节的解读与讨论" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
-                下一页
+                上一页
               </span>
-              Pytorch下的多卡间变量同步操作
+              关于ConvNext若干细节的解读与讨论
             </div>
           </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
         </a>
+      
       
     </nav>
   
@@ -875,12 +984,12 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": ".", "features": ["content.code.annotate", "content.tabs.link", "navigation.instant", "header.autohide", "navigation.tracking"], "search": "assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\s\\-\uff0c\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate", "content.tabs.link", "navigation.instant", "header.autohide", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\s\\-\uff0c\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
     
     
-      <script src="assets/javascripts/bundle.078830c0.min.js"></script>
+      <script src="../../assets/javascripts/bundle.078830c0.min.js"></script>
       
-        <script src="javascripts/mathjax.js"></script>
+        <script src="../../javascripts/mathjax.js"></script>
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       
@@ -888,7 +997,7 @@
       
         <script src="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
       
-        <script src="javascripts/social_share.js"></script>
+        <script src="../../javascripts/social_share.js"></script>
       
     
   </body>
