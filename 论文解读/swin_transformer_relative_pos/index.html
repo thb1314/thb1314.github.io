@@ -863,10 +863,10 @@
 </blockquote>
 <h2 id="window-attention">二、Window Attention的相对位置编码</h2>
 <p>论文中提到Swin Transformer中的Attention采用relative postition的方式，不同于最初版本的VIT，relative position bias 会加到每一层的attention层。论文中有关相关位置编码的叙述如下</p>
-<p><strong>Relative position bias</strong>. In computing self-attention, we follow<span class="arithmatex">\(\text{ }^{[49,1,32,33]}\)</span> by including a relative position bias <span class="arithmatex">\(B \in \mathbb{R}^{M^2 \times M^2}\)</span> to each head in computing similarity:<br />
-$$
+<p><strong>Relative position bias</strong>. In computing self-attention, we follow<span class="arithmatex">\(\text{ }^{[49,1,32,33]}\)</span> by including a relative position bias <span class="arithmatex">\(B \in \mathbb{R}^{M^2 \times M^2}\)</span> to each head in computing similarity:  </p>
+<div class="arithmatex">\[
 \operatorname{Attention}(Q, K, V)=\operatorname{SoftMax}\left(Q K^T / \sqrt{d}+B\right) V
-$$</p>
+\]</div>
 <p>where <span class="arithmatex">\(Q, K, V \in \mathbb{R}^{M^2 \times d}\)</span> are the query, key and value matrices; <span class="arithmatex">\(d\)</span> is the query/key dimension, and <span class="arithmatex">\(M^2\)</span> is the number of patches in a window. Since the relative position along each axis lies in the range <span class="arithmatex">\([-M+1, M-1]\)</span>, we parameterize a smaller-sized bias matrix <span class="arithmatex">\(\hat{B} \in \mathbb{R}^{(2 M-1) \times(2 M-1)}\)</span>, and values in <span class="arithmatex">\(B\)</span> are taken from <span class="arithmatex">\(\hat{B}\)</span>.  </p>
 <blockquote>
 <p>假设矩阵A是n*m,矩阵B是m*p,矩阵A和B相乘得到矩阵C是n*p，矩阵乘的时间复杂度为m*n*p </p>
