@@ -1803,15 +1803,13 @@
 <p>shell编译命令如下</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-28-1">1</a></span>
 <span class="normal"><a href="#__codelineno-28-2">2</a></span>
-<span class="normal"><a href="#__codelineno-28-3">3</a></span>
-<span class="normal"><a href="#__codelineno-28-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1"></a><span class="c1"># 采用一个低版本的g++</span>
-<a id="__codelineno-28-2" name="__codelineno-28-2"></a>/usr/bin/gcc main.c -std<span class="o">=</span>c99 <span class="k">$(</span>python3-config --cflags<span class="k">)</span> <span class="k">$(</span>python3-config --ldflags<span class="k">)</span> -fno-lto -o main
-<a id="__codelineno-28-3" name="__codelineno-28-3"></a>
-<a id="__codelineno-28-4" name="__codelineno-28-4"></a>./main
+<span class="normal"><a href="#__codelineno-28-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1"></a>gcc main.c -std<span class="o">=</span>c99 <span class="k">$(</span>python3-config --includes<span class="k">)</span> <span class="k">$(</span>python3-config --ldflags<span class="k">)</span> -fno-lto -o main
+<a id="__codelineno-28-2" name="__codelineno-28-2"></a>
+<a id="__codelineno-28-3" name="__codelineno-28-3"></a>./main
 </code></pre></div></td></tr></table></div>
 <h3 id="32-pybind11python">3.2 采用Pybind11扩展调用python</h3>
 <p>pybind11通过简单的C++包装公开了Python类型和函数，这使得我们可以方便的在C++中调用Python代码，而无需借助Python C API。</p>
-<p><code>demo1.cpp</code></p>
+<p><code>demo1.cpp</code>(调用自己写的sum模块)</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-29-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-29-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-29-3"> 3</a></span>
@@ -1826,23 +1824,27 @@
 <span class="normal"><a href="#__codelineno-29-12">12</a></span>
 <span class="normal"><a href="#__codelineno-29-13">13</a></span>
 <span class="normal"><a href="#__codelineno-29-14">14</a></span>
-<span class="normal"><a href="#__codelineno-29-15">15</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;pybind11/pybind11.h&gt;</span><span class="cp"></span>
+<span class="normal"><a href="#__codelineno-29-15">15</a></span>
+<span class="normal"><a href="#__codelineno-29-16">16</a></span>
+<span class="normal"><a href="#__codelineno-29-17">17</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;pybind11/pybind11.h&gt;</span><span class="cp"></span>
 <a id="__codelineno-29-2" name="__codelineno-29-2"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;pybind11/stl.h&gt;</span><span class="cp"></span>
-<a id="__codelineno-29-3" name="__codelineno-29-3"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
-<a id="__codelineno-29-4" name="__codelineno-29-4"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
-<a id="__codelineno-29-5" name="__codelineno-29-5"></a>
+<a id="__codelineno-29-3" name="__codelineno-29-3"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;pybind11/embed.h&gt;</span><span class="cp"></span>
+<a id="__codelineno-29-4" name="__codelineno-29-4"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+<a id="__codelineno-29-5" name="__codelineno-29-5"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
 <a id="__codelineno-29-6" name="__codelineno-29-6"></a>
-<a id="__codelineno-29-7" name="__codelineno-29-7"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">py</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">pybind11</span><span class="p">;</span><span class="w"></span>
-<a id="__codelineno-29-8" name="__codelineno-29-8"></a>
-<a id="__codelineno-29-9" name="__codelineno-29-9"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<a id="__codelineno-29-10" name="__codelineno-29-10"></a><span class="w">  </span><span class="n">py</span><span class="o">::</span><span class="n">object</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">module_</span><span class="o">::</span><span class="k">import</span><span class="p">(</span><span class="s">&quot;sum&quot;</span><span class="p">);</span><span class="w"></span>
-<a id="__codelineno-29-11" name="__codelineno-29-11"></a><span class="w">  </span><span class="n">py</span><span class="o">::</span><span class="n">object</span><span class="w"> </span><span class="n">py_list_sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum</span><span class="p">.</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;py_list_sum&quot;</span><span class="p">);</span><span class="w"></span>
-<a id="__codelineno-29-12" name="__codelineno-29-12"></a><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">py_list_sum</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">}).</span><span class="n">cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
-<a id="__codelineno-29-13" name="__codelineno-29-13"></a><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;result:&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<a id="__codelineno-29-14" name="__codelineno-29-14"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<a id="__codelineno-29-15" name="__codelineno-29-15"></a><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-29-7" name="__codelineno-29-7"></a>
+<a id="__codelineno-29-8" name="__codelineno-29-8"></a><span class="k">namespace</span><span class="w"> </span><span class="nn">py</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">pybind11</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-29-9" name="__codelineno-29-9"></a>
+<a id="__codelineno-29-10" name="__codelineno-29-10"></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-29-11" name="__codelineno-29-11"></a><span class="w">  </span><span class="n">py</span><span class="o">::</span><span class="n">scoped_interpreter</span><span class="w"> </span><span class="n">guard</span><span class="p">{};</span><span class="w"> </span>
+<a id="__codelineno-29-12" name="__codelineno-29-12"></a><span class="w">  </span><span class="n">py</span><span class="o">::</span><span class="n">object</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">module_</span><span class="o">::</span><span class="k">import</span><span class="p">(</span><span class="s">&quot;sum&quot;</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-29-13" name="__codelineno-29-13"></a><span class="w">  </span><span class="n">py</span><span class="o">::</span><span class="n">object</span><span class="w"> </span><span class="n">py_list_sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum</span><span class="p">.</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;py_list_sum&quot;</span><span class="p">);</span><span class="w"></span>
+<a id="__codelineno-29-14" name="__codelineno-29-14"></a><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">py_list_sum</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">}).</span><span class="n">cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<a id="__codelineno-29-15" name="__codelineno-29-15"></a><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;py_list_sum([1,2,3,4,5]) result:&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-29-16" name="__codelineno-29-16"></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<a id="__codelineno-29-17" name="__codelineno-29-17"></a><span class="p">}</span><span class="w"></span>
 </code></pre></div></td></tr></table></div>
-<p><code>demo2.cpp</code></p>
+<p><code>demo2.cpp</code>(运行python语句)</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-30-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-30-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-30-3"> 3</a></span>
@@ -1875,8 +1877,17 @@
 <a id="__codelineno-30-15" name="__codelineno-30-15"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 <a id="__codelineno-30-16" name="__codelineno-30-16"></a><span class="p">}</span><span class="w"></span>
 </code></pre></div></td></tr></table></div>
-<p>TODO：这里报错了。后续解决</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-31-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1"></a>g++ -std<span class="o">=</span>c++11 -Wl,-Bstatic <span class="k">$(</span>python3 -m pybind11 --includes<span class="k">)</span> <span class="k">$(</span>python3-config --includes<span class="k">)</span> <span class="k">$(</span>python3-config --ldflags<span class="k">)</span> -fno-lto demo2.cpp -o demo2
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-31-1">1</a></span>
+<span class="normal"><a href="#__codelineno-31-2">2</a></span>
+<span class="normal"><a href="#__codelineno-31-3">3</a></span>
+<span class="normal"><a href="#__codelineno-31-4">4</a></span>
+<span class="normal"><a href="#__codelineno-31-5">5</a></span>
+<span class="normal"><a href="#__codelineno-31-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1"></a><span class="c1"># -c表示 只编译不连接 只生成目标文件 .o文件</span>
+<a id="__codelineno-31-2" name="__codelineno-31-2"></a><span class="c1"># -o 指定生成的可执行文件的名称。如果不使用-o选项则会生成默认可执行文件a.out</span>
+<a id="__codelineno-31-3" name="__codelineno-31-3"></a><span class="c1"># -g 添加gdb调试选项</span>
+<a id="__codelineno-31-4" name="__codelineno-31-4"></a>g++ -std<span class="o">=</span>c++11 <span class="k">$(</span>python3 -m pybind11 --includes<span class="k">)</span> demo1.cpp -Wl,-rpath,<span class="k">$(</span>python3-config --prefix<span class="k">)</span>/lib <span class="k">$(</span>python3-config --prefix<span class="k">)</span>/lib/libpython3.7m.so -o demo1 <span class="o">&amp;&amp;</span> ./demo1
+<a id="__codelineno-31-5" name="__codelineno-31-5"></a>
+<a id="__codelineno-31-6" name="__codelineno-31-6"></a>g++ -std<span class="o">=</span>c++11 <span class="k">$(</span>python3 -m pybind11 --includes<span class="k">)</span> demo2.cpp -Wl,-rpath,<span class="k">$(</span>python3-config --prefix<span class="k">)</span>/lib <span class="k">$(</span>python3-config --prefix<span class="k">)</span>/lib/libpython3.7m.so -o demo2 <span class="o">&amp;&amp;</span> ./demo2
 </code></pre></div></td></tr></table></div>
 <h2 id="_2">四. 效率对比</h2>
 <p>由于我们的功能实现的较为简单，这里给出b站上一位up主给的关于效率问题做的总结</p>
@@ -1931,11 +1942,11 @@
   <small>
     
       最后更新:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">December 10, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">December 16, 2022</span>
       
         <br>
         创建日期:
-        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">December 10, 2022</span>
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">December 16, 2022</span>
       
     
   </small>
