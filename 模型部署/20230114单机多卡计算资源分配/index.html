@@ -812,6 +812,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/TOOD/" class="md-nav__link">
+        TOOD论文和源码解读：目标检测中定位和分类任务一致性问题
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/convnext/" class="md-nav__link">
         关于ConvNext若干细节的解读与讨论
       </a>
@@ -1008,10 +1022,10 @@
 <p>这里需要说明的是，不同内存的方法自然也可以用于同一个内核，只不过同一个内核当中有更适合的办法。</p>
 <p>同理，同一个内核当中，进程之间的通信方式自然也可以用于线程和协程（线程和协程不存在通信问题，需要解决的是同步问题），只不过后者有自己更好的同步方式。</p>
 <h4 id="321">3.2.1 同一个内核</h4>
-<p>在同一个内核的有同一个操作系统内部的进程、线程、协程，下面分开进行讨论。  </p>
+<p>在同一个内核的有同一个操作系统内部的进程、线程、协程，下面分开进行讨论。    </p>
 <p>进程之间通信：</p>
 <ul>
-<li>非IPC（Inter-Process Communication）通信</li>
+<li>非IPC（Inter-Process Communication）通信<ul>
 <li>管道：半双工通信，一条管道只能一个进程写，一个进程读，且不可以用时读写。<ul>
 <li>匿名管道：适用于有亲缘关系的进程之间的通信（父子进程、兄弟进程）</li>
 <li>命名管道：适用于独立进程之间通信</li>
@@ -1019,11 +1033,15 @@
 </li>
 <li>文件锁：主要利用IO操作可以做成互斥访问这一特性</li>
 <li>互斥锁：进程之间的互斥锁存在于内核当中，主要看操作系统是否支持</li>
-<li>IPC通信：</li>
+</ul>
+</li>
+<li>IPC通信：<ul>
 <li>消息队列：将消息体以队列形式进行封装，可以实现边发送边接收。</li>
 <li>共享内存：共享内存的机制是不同进程拿出一块虚拟内存空间，映射到相同的物理内存空间</li>
 <li>信号：Windows和Linux中都有，用于响应各种事件，也可以用于自定义事件比如进程同步</li>
 <li>信号灯：实现共享资源的互斥访问与进程间的同步操作</li>
+</ul>
+</li>
 </ul>
 <blockquote>
 <p><strong>Note:</strong></p>
@@ -1102,11 +1120,11 @@
   <small>
     
       最后更新:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">January 14, 2023</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">February 8, 2023</span>
       
         <br>
         创建日期:
-        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">January 14, 2023</span>
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">February 8, 2023</span>
       
     
   </small>
@@ -1196,13 +1214,13 @@
       
       
         
-        <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/convnext/" class="md-footer__link md-footer__link--next" aria-label="下一页: 关于ConvNext若干细节的解读与讨论" rel="next">
+        <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/TOOD/" class="md-footer__link md-footer__link--next" aria-label="下一页: TOOD论文和源码解读：目标检测中定位和分类任务一致性问题" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 下一页
               </span>
-              关于ConvNext若干细节的解读与讨论
+              TOOD论文和源码解读：目标检测中定位和分类任务一致性问题
             </div>
           </div>
           <div class="md-footer__button md-icon">
