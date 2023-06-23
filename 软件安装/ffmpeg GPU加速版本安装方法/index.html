@@ -1,0 +1,1448 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.6">
+    
+    
+      
+        <title>FFMPEG Cuda版本编译安装方法 - 海滨的Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.20d9efc8.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ffmpeg-cuda" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="海滨的Blog" class="md-header__button md-logo" aria-label="海滨的Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            海滨的Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              FFMPEG Cuda版本编译安装方法
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="海滨的Blog" class="md-nav__button md-logo" aria-label="海滨的Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    海滨的Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          DL框架原理与技巧
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="DL框架原理与技巧" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          DL框架原理与技巧
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" class="md-nav__link">
+        Pytorch下的多卡间变量同步操作
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8807%E6%97%A5%2020%E6%97%B633%E5%88%8650%E7%A7%92/" class="md-nav__link">
+        自动微分autograd原理-简单demo
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8811%E6%97%A5%2015%E6%97%B614%E5%88%8655%E7%A7%92/" class="md-nav__link">
+        TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" class="md-nav__link">
+        再谈自动微分：自动微分中的前向模式与反向模式
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          OCR相关
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="OCR相关" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          OCR相关
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/2022%E5%B9%B403%E6%9C%8829%E6%97%A5%2022%E6%97%B651%E5%88%8611%E7%A7%92/" class="md-nav__link">
+        Pytorch中CTC Loss源码解析
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Cuda相关
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Cuda相关" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Cuda相关
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B406%E6%9C%8812%E6%97%A5%2021%E6%97%B613%E5%88%8644%E7%A7%92/" class="md-nav__link">
+        cublas中矩阵乘及其广播机制的实现与单元测试
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B407%E6%9C%8823%E6%97%A5%2023%E6%97%B617%E5%88%8614%E7%A7%92/" class="md-nav__link">
+        cuDNN API的使用与测试-以二维卷积+Relu激活函数为例
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          python&C++
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="python&C++" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          python&C++
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/2022%E5%B9%B406%E6%9C%8807%E6%97%A5%2015%E6%97%B650%E5%88%8636%E7%A7%92/" class="md-nav__link">
+        python与C/C++数据交互的陷阱：numpy/torch中的视图
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/python%E5%92%8CC%E7%9A%84%E4%BA%A4%E4%BA%92/" class="md-nav__link">
+        一文总结Python和C/C++的交互方式
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          模型轻量化
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="模型轻量化" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          模型轻量化
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2021%E5%B9%B412%E6%9C%8825%E6%97%A5%2016%E6%97%B604%E5%88%8649%E7%A7%92/" class="md-nav__link">
+        Network Slimming-神经网络剪枝的精细控制实现
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B401%E6%9C%8817%E6%97%A5%2010%E6%97%B647%E5%88%8629%E7%A7%92/" class="md-nav__link">
+        模型压缩框架nncf模型量化中QAT量化参数的梯度推导
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8805%E6%97%A5%2016%E6%97%B630%E5%88%8647%E7%A7%92/" class="md-nav__link">
+        对模型量化框架mqbench添加openvino推理格式支持
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8821%E6%97%A5%2012%E6%97%B619%E5%88%8614%E7%A7%92/" class="md-nav__link">
+        一文总结TensorRT下两种量化方式QAT和PTQ的部署
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          模型部署
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="模型部署" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          模型部署
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2021%E5%B9%B412%E6%9C%8816%E6%97%A5%2014%E6%97%B626%E5%88%8600%E7%A7%92/" class="md-nav__link">
+        FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8806%E6%97%A5%2022%E6%97%B621%E5%88%8616%E7%A7%92/" class="md-nav__link">
+        生产者消费者模式在多batch推理下的应用(延时队列)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8811%E6%97%A5%2023%E6%97%B612%E5%88%8655%E7%A7%92/" class="md-nav__link">
+        pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B405%E6%9C%8828%E6%97%A5%2017%E6%97%B623%E5%88%8651%E7%A7%92/" class="md-nav__link">
+        计算图的优化-以onnx表示形式为例
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B408%E6%9C%8802%E6%97%A5%2023%E6%97%B628%E5%88%8628%E7%A7%92/" class="md-nav__link">
+        TensorRT Plugin的实现、调试与验证：以实现Layernorm为例
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/20230114%E5%8D%95%E6%9C%BA%E5%A4%9A%E5%8D%A1%E8%AE%A1%E7%AE%97%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/" class="md-nav__link">
+        对单机多卡AI模型推理场景下计算资源分配问题的思考
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/maskrcnn-tensorrt/" class="md-nav__link">
+        基于mmdet的maskrcnn在TensorRT上的端到端部署与精度对齐
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8">
+          论文解读
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="论文解读" data-md-level="1">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          论文解读
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/TOOD/" class="md-nav__link">
+        TOOD论文和源码解读：目标检测中定位和分类任务一致性问题
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/convnext/" class="md-nav__link">
+        关于ConvNext若干细节的解读与讨论
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/nanodet-plus-explain/" class="md-nav__link">
+        Nanodet-Plus 从数据集、模型搭建到训练全流程解读
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/swin_transformer_relative_pos/" class="md-nav__link">
+        对Swin Transformer中的相对位置编码与attention mask的理解
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9">
+          软件安装
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="软件安装" data-md-level="1">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          软件安装
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          FFMPEG Cuda版本编译安装方法
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        FFMPEG Cuda版本编译安装方法
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    零、前言
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ffmpeg" class="md-nav__link">
+    一、ffmpeg介绍
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    二、安装过程
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gpu" class="md-nav__link">
+    三、GPU加速转码命令
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    零、前言
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ffmpeg" class="md-nav__link">
+    一、ffmpeg介绍
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    二、安装过程
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gpu" class="md-nav__link">
+    三、GPU加速转码命令
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="ffmpeg-cuda">FFMPEG Cuda版本编译安装方法</h1>
+<blockquote>
+<p>本文写于2023-06-23中午十二点</p>
+</blockquote>
+<h2 id="_1">零、前言</h2>
+<p>最近在录制一些视频，需要上传到b站备份一下，上传上去后提示转码失败，遂采用ffmpeg将视频转码压制一下。</p>
+<p>可怜我用了将近十年的笔记本电脑慢如龟速，就想着换上我配的2080TI主机，并采用显卡加速，编译完成后我准备将此过程记录下来，留给读者借鉴，因此就有了本篇文章。</p>
+<h2 id="ffmpeg">一、ffmpeg介绍</h2>
+<p>官网：<a href="http://ffmpeg.org/">http://ffmpeg.org/</a>  </p>
+<p>FFmpeg即是一款音视频编解码工具,同时也是一组音视频编码开发套件,作为编码开发套件,它为开发者提供了丰富的音视频处理的调用接口。</p>
+<p>从使用者而不是而开发者角度来看，这个介绍足够了。</p>
+<h2 id="_2">二、安装过程</h2>
+<p>FFMPEG的cuda版本需要编译安装，笔者采用的环境如下</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
+<span class="normal"><a href="#__codelineno-0-2">2</a></span>
+<span class="normal"><a href="#__codelineno-0-3">3</a></span>
+<span class="normal"><a href="#__codelineno-0-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>OS:ubuntu22
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a>gcc 7
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a>cuda10.2
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a>nvidia驱动版本  515.65.01
+</code></pre></div></td></tr></table></div>
+<ol>
+<li>确定安装目录结构</li>
+</ol>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>mkdir -p ~/ffmpeg/source <span class="c1"># 存放源码</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a>mkdir -p ~/ffmpeg/other_binary <span class="c1"># 存放第三方库</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a>mkdir -p ~/ffmpeg/binary <span class="c1"># 存放ffmpeg可执行文件</span>
+</code></pre></div></td></tr></table></div>
+<p>最后的目录结构为
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
+<span class="normal"><a href="#__codelineno-2-2">2</a></span>
+<span class="normal"><a href="#__codelineno-2-3">3</a></span>
+<span class="normal"><a href="#__codelineno-2-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a>.
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a>├── binary
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a>├── other_binary
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a>└── source
+</code></pre></div></td></tr></table></div></p>
+<ol>
+<li>在source目录下下载依赖库源码并编译</li>
+</ol>
+<p>这里我省略切换到<code>cd source</code>的过程，读者自行添加</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-3-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-3-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-3-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-3-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-3-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-3-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-3-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-3-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-3-10">10</a></span>
+<span class="normal"><a href="#__codelineno-3-11">11</a></span>
+<span class="normal"><a href="#__codelineno-3-12">12</a></span>
+<span class="normal"><a href="#__codelineno-3-13">13</a></span>
+<span class="normal"><a href="#__codelineno-3-14">14</a></span>
+<span class="normal"><a href="#__codelineno-3-15">15</a></span>
+<span class="normal"><a href="#__codelineno-3-16">16</a></span>
+<span class="normal"><a href="#__codelineno-3-17">17</a></span>
+<span class="normal"><a href="#__codelineno-3-18">18</a></span>
+<span class="normal"><a href="#__codelineno-3-19">19</a></span>
+<span class="normal"><a href="#__codelineno-3-20">20</a></span>
+<span class="normal"><a href="#__codelineno-3-21">21</a></span>
+<span class="normal"><a href="#__codelineno-3-22">22</a></span>
+<span class="normal"><a href="#__codelineno-3-23">23</a></span>
+<span class="normal"><a href="#__codelineno-3-24">24</a></span>
+<span class="normal"><a href="#__codelineno-3-25">25</a></span>
+<span class="normal"><a href="#__codelineno-3-26">26</a></span>
+<span class="normal"><a href="#__codelineno-3-27">27</a></span>
+<span class="normal"><a href="#__codelineno-3-28">28</a></span>
+<span class="normal"><a href="#__codelineno-3-29">29</a></span>
+<span class="normal"><a href="#__codelineno-3-30">30</a></span>
+<span class="normal"><a href="#__codelineno-3-31">31</a></span>
+<span class="normal"><a href="#__codelineno-3-32">32</a></span>
+<span class="normal"><a href="#__codelineno-3-33">33</a></span>
+<span class="normal"><a href="#__codelineno-3-34">34</a></span>
+<span class="normal"><a href="#__codelineno-3-35">35</a></span>
+<span class="normal"><a href="#__codelineno-3-36">36</a></span>
+<span class="normal"><a href="#__codelineno-3-37">37</a></span>
+<span class="normal"><a href="#__codelineno-3-38">38</a></span>
+<span class="normal"><a href="#__codelineno-3-39">39</a></span>
+<span class="normal"><a href="#__codelineno-3-40">40</a></span>
+<span class="normal"><a href="#__codelineno-3-41">41</a></span>
+<span class="normal"><a href="#__codelineno-3-42">42</a></span>
+<span class="normal"><a href="#__codelineno-3-43">43</a></span>
+<span class="normal"><a href="#__codelineno-3-44">44</a></span>
+<span class="normal"><a href="#__codelineno-3-45">45</a></span>
+<span class="normal"><a href="#__codelineno-3-46">46</a></span>
+<span class="normal"><a href="#__codelineno-3-47">47</a></span>
+<span class="normal"><a href="#__codelineno-3-48">48</a></span>
+<span class="normal"><a href="#__codelineno-3-49">49</a></span>
+<span class="normal"><a href="#__codelineno-3-50">50</a></span>
+<span class="normal"><a href="#__codelineno-3-51">51</a></span>
+<span class="normal"><a href="#__codelineno-3-52">52</a></span>
+<span class="normal"><a href="#__codelineno-3-53">53</a></span>
+<span class="normal"><a href="#__codelineno-3-54">54</a></span>
+<span class="normal"><a href="#__codelineno-3-55">55</a></span>
+<span class="normal"><a href="#__codelineno-3-56">56</a></span>
+<span class="normal"><a href="#__codelineno-3-57">57</a></span>
+<span class="normal"><a href="#__codelineno-3-58">58</a></span>
+<span class="normal"><a href="#__codelineno-3-59">59</a></span>
+<span class="normal"><a href="#__codelineno-3-60">60</a></span>
+<span class="normal"><a href="#__codelineno-3-61">61</a></span>
+<span class="normal"><a href="#__codelineno-3-62">62</a></span>
+<span class="normal"><a href="#__codelineno-3-63">63</a></span>
+<span class="normal"><a href="#__codelineno-3-64">64</a></span>
+<span class="normal"><a href="#__codelineno-3-65">65</a></span>
+<span class="normal"><a href="#__codelineno-3-66">66</a></span>
+<span class="normal"><a href="#__codelineno-3-67">67</a></span>
+<span class="normal"><a href="#__codelineno-3-68">68</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="c1"># 安装x264</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a>git clone https://code.videolan.org/videolan/x264.git
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a>./configure --prefix<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/ffmpeg/other_binary/x264&quot;</span> --bindir<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/ffmpeg/other_binary/x264/bin&quot;</span> --enable-shared --enable-pic  --disable-asm
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a>make -j
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a>make install
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a>
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="c1"># 安装x265</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8"></a>git clone https://github.com/videolan/x265.git
+<a id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="nb">cd</span> x265
+<a id="__codelineno-3-10" name="__codelineno-3-10"></a><span class="nb">cd</span> build/linux
+<a id="__codelineno-3-11" name="__codelineno-3-11"></a>cmake -G <span class="s2">&quot;Unix Makefiles&quot;</span> -DCMAKE_INSTALL_PREFIX<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/ffmpeg/other_binary/x265&quot;</span> -DENABLE_SHARED:bool<span class="o">=</span>off .
+<a id="__codelineno-3-12" name="__codelineno-3-12"></a>make -j
+<a id="__codelineno-3-13" name="__codelineno-3-13"></a>make install
+<a id="__codelineno-3-14" name="__codelineno-3-14"></a>
+<a id="__codelineno-3-15" name="__codelineno-3-15"></a><span class="c1"># 安装fdk-acc</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16"></a>sudo apt-get install -y libtool
+<a id="__codelineno-3-17" name="__codelineno-3-17"></a>git clone --depth <span class="m">1</span> --branch v0.1.6 https://github.com/mstorsjo/fdk-aac.git
+<a id="__codelineno-3-18" name="__codelineno-3-18"></a><span class="nb">cd</span> fdk-aac
+<a id="__codelineno-3-19" name="__codelineno-3-19"></a>autoreconf -fiv
+<a id="__codelineno-3-20" name="__codelineno-3-20"></a>./configure --prefix<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/ffmpeg/other_binary/libfdk_aac&quot;</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21"></a>make -j
+<a id="__codelineno-3-22" name="__codelineno-3-22"></a>make install
+<a id="__codelineno-3-23" name="__codelineno-3-23"></a>
+<a id="__codelineno-3-24" name="__codelineno-3-24"></a><span class="c1"># 安装lame</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25"></a>curl -O -L http://downloads.sourceforge.net/project/lame/lame/3.99/lame-3.99.tar.gz
+<a id="__codelineno-3-26" name="__codelineno-3-26"></a>tar xzvf lame-3.99.tar.gz
+<a id="__codelineno-3-27" name="__codelineno-3-27"></a><span class="nb">cd</span> lame-3.99
+<a id="__codelineno-3-28" name="__codelineno-3-28"></a>./configure --prefix<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/ffmpeg/other_binary/libmp3lame&quot;</span> --bindir<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/ffmpeg/other_binary/libmp3lame/bin&quot;</span>
+<a id="__codelineno-3-29" name="__codelineno-3-29"></a>make -j
+<a id="__codelineno-3-30" name="__codelineno-3-30"></a>make install
+<a id="__codelineno-3-31" name="__codelineno-3-31"></a>
+<a id="__codelineno-3-32" name="__codelineno-3-32"></a><span class="c1"># 安装libopus</span>
+<a id="__codelineno-3-33" name="__codelineno-3-33"></a>curl -O -L https://archive.mozilla.org/pub/opus/opus-1.2.1.tar.gz
+<a id="__codelineno-3-34" name="__codelineno-3-34"></a>tar xzvf opus-1.2.1.tar.gz
+<a id="__codelineno-3-35" name="__codelineno-3-35"></a><span class="nb">cd</span> opus-1.2.1
+<a id="__codelineno-3-36" name="__codelineno-3-36"></a>./configure --prefix<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/ffmpeg/other_binary/libopus&quot;</span>
+<a id="__codelineno-3-37" name="__codelineno-3-37"></a>make -j
+<a id="__codelineno-3-38" name="__codelineno-3-38"></a>make install
+<a id="__codelineno-3-39" name="__codelineno-3-39"></a>
+<a id="__codelineno-3-40" name="__codelineno-3-40"></a><span class="c1"># 安装libogg</span>
+<a id="__codelineno-3-41" name="__codelineno-3-41"></a>curl -O -L http://downloads.xiph.org/releases/ogg/libogg-1.3.3.tar.gz
+<a id="__codelineno-3-42" name="__codelineno-3-42"></a>tar xzvf libogg-1.3.3.tar.gz
+<a id="__codelineno-3-43" name="__codelineno-3-43"></a><span class="nb">cd</span> libogg-1.3.3
+<a id="__codelineno-3-44" name="__codelineno-3-44"></a>./configure --prefix<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/ffmpeg/other_binary/libogg&quot;</span>
+<a id="__codelineno-3-45" name="__codelineno-3-45"></a>make -j
+<a id="__codelineno-3-46" name="__codelineno-3-46"></a>make install
+<a id="__codelineno-3-47" name="__codelineno-3-47"></a>
+<a id="__codelineno-3-48" name="__codelineno-3-48"></a><span class="c1"># 安装libvorbis</span>
+<a id="__codelineno-3-49" name="__codelineno-3-49"></a>curl -O -L http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.5.tar.gz
+<a id="__codelineno-3-50" name="__codelineno-3-50"></a>tar xzvf libvorbis-1.3.5.tar.gz
+<a id="__codelineno-3-51" name="__codelineno-3-51"></a><span class="nb">cd</span> libvorbis-1.3.5
+<a id="__codelineno-3-52" name="__codelineno-3-52"></a>./configure --prefix<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/ffmpeg/other_binary/libvorbis&quot;</span> --with-ogg<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/ffmpeg/other_binary/libogg&quot;</span>
+<a id="__codelineno-3-53" name="__codelineno-3-53"></a>make -j
+<a id="__codelineno-3-54" name="__codelineno-3-54"></a>make install
+<a id="__codelineno-3-55" name="__codelineno-3-55"></a>
+<a id="__codelineno-3-56" name="__codelineno-3-56"></a><span class="c1"># 安装libvpx</span>
+<a id="__codelineno-3-57" name="__codelineno-3-57"></a>sudo apt-get install -y yasm
+<a id="__codelineno-3-58" name="__codelineno-3-58"></a>git clone --depth <span class="m">1</span> -b v1.13.0 --single-branch https://github.com/webmproject/libvpx.git
+<a id="__codelineno-3-59" name="__codelineno-3-59"></a><span class="nb">cd</span> libvpx
+<a id="__codelineno-3-60" name="__codelineno-3-60"></a>./configure --prefix<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/ffmpeg/other_binary/libvpx&quot;</span> --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as<span class="o">=</span>yasm --enable-shared
+<a id="__codelineno-3-61" name="__codelineno-3-61"></a>make -j
+<a id="__codelineno-3-62" name="__codelineno-3-62"></a>make install
+<a id="__codelineno-3-63" name="__codelineno-3-63"></a>
+<a id="__codelineno-3-64" name="__codelineno-3-64"></a><span class="c1"># 安装nv-headers 根据自己的驱动库版本切换branch</span>
+<a id="__codelineno-3-65" name="__codelineno-3-65"></a>git clone -b n11.1.5.2 --single-branch https://github.com/FFmpeg/nv-codec-headers.git
+<a id="__codelineno-3-66" name="__codelineno-3-66"></a><span class="nb">cd</span> nv-codec-headers 
+<a id="__codelineno-3-67" name="__codelineno-3-67"></a>make
+<a id="__codelineno-3-68" name="__codelineno-3-68"></a>sudo make install
+</code></pre></div></td></tr></table></div>
+<ol>
+<li>安装ffmpeg支持cuda版本</li>
+</ol>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-4-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-4-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-4-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-4-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-4-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-4-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-4-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-4-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-4-10">10</a></span>
+<span class="normal"><a href="#__codelineno-4-11">11</a></span>
+<span class="normal"><a href="#__codelineno-4-12">12</a></span>
+<span class="normal"><a href="#__codelineno-4-13">13</a></span>
+<span class="normal"><a href="#__codelineno-4-14">14</a></span>
+<span class="normal"><a href="#__codelineno-4-15">15</a></span>
+<span class="normal"><a href="#__codelineno-4-16">16</a></span>
+<span class="normal"><a href="#__codelineno-4-17">17</a></span>
+<span class="normal"><a href="#__codelineno-4-18">18</a></span>
+<span class="normal"><a href="#__codelineno-4-19">19</a></span>
+<span class="normal"><a href="#__codelineno-4-20">20</a></span>
+<span class="normal"><a href="#__codelineno-4-21">21</a></span>
+<span class="normal"><a href="#__codelineno-4-22">22</a></span>
+<span class="normal"><a href="#__codelineno-4-23">23</a></span>
+<span class="normal"><a href="#__codelineno-4-24">24</a></span>
+<span class="normal"><a href="#__codelineno-4-25">25</a></span>
+<span class="normal"><a href="#__codelineno-4-26">26</a></span>
+<span class="normal"><a href="#__codelineno-4-27">27</a></span>
+<span class="normal"><a href="#__codelineno-4-28">28</a></span>
+<span class="normal"><a href="#__codelineno-4-29">29</a></span>
+<span class="normal"><a href="#__codelineno-4-30">30</a></span>
+<span class="normal"><a href="#__codelineno-4-31">31</a></span>
+<span class="normal"><a href="#__codelineno-4-32">32</a></span>
+<span class="normal"><a href="#__codelineno-4-33">33</a></span>
+<span class="normal"><a href="#__codelineno-4-34">34</a></span>
+<span class="normal"><a href="#__codelineno-4-35">35</a></span>
+<span class="normal"><a href="#__codelineno-4-36">36</a></span>
+<span class="normal"><a href="#__codelineno-4-37">37</a></span>
+<span class="normal"><a href="#__codelineno-4-38">38</a></span>
+<span class="normal"><a href="#__codelineno-4-39">39</a></span>
+<span class="normal"><a href="#__codelineno-4-40">40</a></span>
+<span class="normal"><a href="#__codelineno-4-41">41</a></span>
+<span class="normal"><a href="#__codelineno-4-42">42</a></span>
+<span class="normal"><a href="#__codelineno-4-43">43</a></span>
+<span class="normal"><a href="#__codelineno-4-44">44</a></span>
+<span class="normal"><a href="#__codelineno-4-45">45</a></span>
+<span class="normal"><a href="#__codelineno-4-46">46</a></span>
+<span class="normal"><a href="#__codelineno-4-47">47</a></span>
+<span class="normal"><a href="#__codelineno-4-48">48</a></span>
+<span class="normal"><a href="#__codelineno-4-49">49</a></span>
+<span class="normal"><a href="#__codelineno-4-50">50</a></span>
+<span class="normal"><a href="#__codelineno-4-51">51</a></span>
+<span class="normal"><a href="#__codelineno-4-52">52</a></span>
+<span class="normal"><a href="#__codelineno-4-53">53</a></span>
+<span class="normal"><a href="#__codelineno-4-54">54</a></span>
+<span class="normal"><a href="#__codelineno-4-55">55</a></span>
+<span class="normal"><a href="#__codelineno-4-56">56</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="c1"># 安装ffmpeg</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a>sudo apt install libfreetype6-dev
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a>curl -O -L https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a>tar xJvf ffmpeg-6.0.tar.xz
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="nb">cd</span> ffmpeg-6.0
+<a id="__codelineno-4-6" name="__codelineno-4-6"></a>
+<a id="__codelineno-4-7" name="__codelineno-4-7"></a>
+<a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="c1"># 安装</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="nv">ffmpep_dep_include_dir</span><span class="o">=</span><span class="sb">`</span>find <span class="nv">$HOME</span>/ffmpeg/other_binary -name <span class="s2">&quot;include&quot;</span> -type d<span class="sb">`</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="nv">ffmpep_dep_lib_dir</span><span class="o">=</span><span class="sb">`</span>find <span class="nv">$HOME</span>/ffmpeg/other_binary -name <span class="s2">&quot;lib&quot;</span> -type d<span class="sb">`</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="nv">ffmpep_dep_package_dir</span><span class="o">=</span><span class="sb">`</span>find ~/ffmpeg -name pkgconfig<span class="sb">`</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="nv">ffmpep_dep_include_str</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13"></a><span class="nv">ffmpep_dep_lib_str</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14"></a><span class="nv">ffmpep_dep_package_str</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15"></a><span class="k">for</span> item <span class="k">in</span> <span class="nv">$ffmpep_dep_include_dir</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16"></a><span class="k">do</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17"></a>    <span class="nv">ffmpep_dep_include_str</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$ffmpep_dep_include_str</span><span class="s2"> -I</span><span class="nv">$item</span><span class="s2">&quot;</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18"></a><span class="k">done</span>
+<a id="__codelineno-4-19" name="__codelineno-4-19"></a><span class="k">for</span> item <span class="k">in</span> <span class="nv">$ffmpep_dep_lib_dir</span>
+<a id="__codelineno-4-20" name="__codelineno-4-20"></a><span class="k">do</span>
+<a id="__codelineno-4-21" name="__codelineno-4-21"></a>    <span class="nv">ffmpep_dep_lib_str</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$ffmpep_dep_lib_str</span><span class="s2"> -L</span><span class="nv">$item</span><span class="s2">&quot;</span>
+<a id="__codelineno-4-22" name="__codelineno-4-22"></a><span class="k">done</span>
+<a id="__codelineno-4-23" name="__codelineno-4-23"></a><span class="k">for</span> item <span class="k">in</span> <span class="nv">$ffmpep_dep_package_dir</span>
+<a id="__codelineno-4-24" name="__codelineno-4-24"></a><span class="k">do</span>
+<a id="__codelineno-4-25" name="__codelineno-4-25"></a>    <span class="nv">ffmpep_dep_package_str</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$item</span><span class="s2">:</span><span class="nv">$ffmpep_dep_package_str</span><span class="s2">&quot;</span>
+<a id="__codelineno-4-26" name="__codelineno-4-26"></a><span class="k">done</span>
+<a id="__codelineno-4-27" name="__codelineno-4-27"></a>
+<a id="__codelineno-4-28" name="__codelineno-4-28"></a>
+<a id="__codelineno-4-29" name="__codelineno-4-29"></a><span class="nv">PKG_CONFIG_PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$PKG_CONFIG_PATH</span><span class="s2">:</span><span class="nv">$ffmpep_dep_package_str</span><span class="s2">&quot;</span> ./configure <span class="se">\</span>
+<a id="__codelineno-4-30" name="__codelineno-4-30"></a>  --prefix<span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/ffmpeg/binary/&quot;</span> <span class="se">\</span>
+<a id="__codelineno-4-31" name="__codelineno-4-31"></a>  --pkg-config-flags<span class="o">=</span><span class="s2">&quot;--static&quot;</span> <span class="se">\</span>
+<a id="__codelineno-4-32" name="__codelineno-4-32"></a>  --extra-cflags<span class="o">=</span><span class="s2">&quot;-I/usr/local/cuda/include </span><span class="nv">$ffmpep_dep_include_str</span><span class="s2">&quot;</span> <span class="se">\</span>
+<a id="__codelineno-4-33" name="__codelineno-4-33"></a>  --extra-ldflags<span class="o">=</span><span class="s2">&quot;-L/usr/local/cuda/lib64 </span><span class="nv">$ffmpep_dep_lib_str</span><span class="s2">&quot;</span> <span class="se">\</span>
+<a id="__codelineno-4-34" name="__codelineno-4-34"></a>  --disable-static <span class="se">\</span>
+<a id="__codelineno-4-35" name="__codelineno-4-35"></a>  --enable-shared <span class="se">\</span>
+<a id="__codelineno-4-36" name="__codelineno-4-36"></a>  --extra-libs<span class="o">=</span>-lpthread <span class="se">\</span>
+<a id="__codelineno-4-37" name="__codelineno-4-37"></a>  --extra-libs<span class="o">=</span>-lm <span class="se">\</span>
+<a id="__codelineno-4-38" name="__codelineno-4-38"></a>  --enable-gpl <span class="se">\</span>
+<a id="__codelineno-4-39" name="__codelineno-4-39"></a>  --enable-libfdk_aac <span class="se">\</span>
+<a id="__codelineno-4-40" name="__codelineno-4-40"></a>  --enable-libfreetype <span class="se">\</span>
+<a id="__codelineno-4-41" name="__codelineno-4-41"></a>  --enable-libmp3lame <span class="se">\</span>
+<a id="__codelineno-4-42" name="__codelineno-4-42"></a>  --enable-libopus <span class="se">\</span>
+<a id="__codelineno-4-43" name="__codelineno-4-43"></a>  --enable-libvorbis <span class="se">\</span>
+<a id="__codelineno-4-44" name="__codelineno-4-44"></a>  --enable-libvpx <span class="se">\</span>
+<a id="__codelineno-4-45" name="__codelineno-4-45"></a>  --enable-libx264 <span class="se">\</span>
+<a id="__codelineno-4-46" name="__codelineno-4-46"></a>  --enable-libx265 <span class="se">\</span>
+<a id="__codelineno-4-47" name="__codelineno-4-47"></a>  --enable-cuda-nvcc <span class="se">\</span>
+<a id="__codelineno-4-48" name="__codelineno-4-48"></a>  --enable-cuda <span class="se">\</span>
+<a id="__codelineno-4-49" name="__codelineno-4-49"></a>  --enable-libnpp <span class="se">\</span>
+<a id="__codelineno-4-50" name="__codelineno-4-50"></a>  --disable-ffplay <span class="se">\</span>
+<a id="__codelineno-4-51" name="__codelineno-4-51"></a>  --disable-doc <span class="se">\</span>
+<a id="__codelineno-4-52" name="__codelineno-4-52"></a>  --enable-cuvid <span class="se">\</span>
+<a id="__codelineno-4-53" name="__codelineno-4-53"></a>  --enable-nvenc <span class="se">\</span>
+<a id="__codelineno-4-54" name="__codelineno-4-54"></a>  --enable-nonfree
+<a id="__codelineno-4-55" name="__codelineno-4-55"></a>make -j
+<a id="__codelineno-4-56" name="__codelineno-4-56"></a>make install
+</code></pre></div></td></tr></table></div>
+<blockquote>
+<p>经验：  </p>
+<ol>
+<li>缺什么工具就apt安装什么工具</li>
+<li>缺什么依赖库就编译安装该依赖库，实在不成功了再去apt install</li>
+<li>如果是环境问题，建议在docker环境下编译安装，然后把二进制文件以及相关依赖动态库copy出来即可</li>
+</ol>
+</blockquote>
+<p>安装完成ffmpeg后直接打开是不能用的，原因是我们编译出来的大量的动态库并没有在系统动态库的搜索目录中，因此我们在<code>ff</code>写一个启动脚本。</p>
+<p><code>vim ~/ffmpeg/binary/bin/start_ffmpeg.sh</code></p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-5-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-5-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-5-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-5-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-5-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-5-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-5-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-5-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-5-10">10</a></span>
+<span class="normal"><a href="#__codelineno-5-11">11</a></span>
+<span class="normal"><a href="#__codelineno-5-12">12</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="ch">#!/bin/bash</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="nv">CURDIR</span><span class="o">=</span><span class="k">$(</span>dirname <span class="k">$(</span>realpath <span class="nv">$0</span><span class="k">))</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="nv">ffmpep_dep_lib_dir</span><span class="o">=</span><span class="sb">`</span>find <span class="nv">$HOME</span>/ffmpeg/other_binary -name <span class="s2">&quot;lib&quot;</span> -type d<span class="sb">`</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6"></a><span class="nv">ffmpep_dep_package_str</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7"></a><span class="k">for</span> item <span class="k">in</span> <span class="nv">$ffmpep_dep_lib_dir</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8"></a><span class="k">do</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9"></a>        <span class="nv">ffmpep_dep_lib_str</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$ffmpep_dep_lib_str</span><span class="s2">:</span><span class="nv">$item</span><span class="s2">&quot;</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10"></a><span class="k">done</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11"></a><span class="nb">export</span> <span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>dirname <span class="nv">$CURDIR</span><span class="k">)</span><span class="s2">/lib:</span><span class="nv">$ffmpep_dep_lib_str</span><span class="s2">:</span><span class="nv">$LD_LIBRARY_PATH</span><span class="s2">&quot;</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12"></a><span class="nv">$CURDIR</span>/ffmpeg <span class="nv">$@</span>
+</code></pre></div></td></tr></table></div>
+<p><code>chmod a+x ~/ffmpeg/binary/bin/start_ffmpeg.sh</code></p>
+<p>输入<code>~/ffmpeg/binary/bin/start_ffmpeg.sh -hwaccels</code>可以看到</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
+<span class="normal"><a href="#__codelineno-6-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a>Hardware acceleration methods:
+<a id="__codelineno-6-2" name="__codelineno-6-2"></a>cuda
+</code></pre></div></td></tr></table></div>
+<h2 id="gpu">三、GPU加速转码命令</h2>
+<p>对于wmv3编码的wmv文件，我们可以采用如下命令将其转成wmv</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a>~/ffmpeg/binary/bin/start_ffmpeg.sh -hwaccel cuda -extra_hw_frames 10 -c:v wmv3 -i input.wmv -c:v h264_nvenc -b:v 4000k -r 25 -preset slow output.mp4
+</code></pre></div></td></tr></table></div>
+<ul>
+<li>ffmpeg命令有一个特点是写在-i前面的算解码器参数，写在-i后面的算编码器参数</li>
+<li><code>-r</code>：指定视频fps</li>
+<li><code>-b:v</code>：指定视频比特率</li>
+</ul>
+<p>我这里采用的原则是输出编码为<code>h264</code>，且采用适配的nvidia编码库。</p>
+<p>输出视频的fps与码率与原视频相同，采用上述命令转码时，我的GPU算力利用率约为10%。</p>
+<p><code>speed</code>为8，即1s处理视频中8s的数据。</p>
+<p>OK，就写到这吧，后续疑问欢迎在评论区交流。</p>
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      最后更新:
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 23, 2023</span>
+      
+        <br>
+        创建日期:
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 23, 2023</span>
+      
+    
+  </small>
+</div>
+
+
+
+
+
+  <h2 id="__comments">评论</h2>
+  <script src="https://giscus.app/client.js"
+        data-repo="thb1314/thb1314.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkyNDg0MTE1NTg="
+        data-category="Announcements"
+        data-category-id="DIC_kwDODs51ps4CSAxI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="0"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="light"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+  </script>
+  <!-- Synchronize Giscus theme with palette -->
+  <script>
+    var giscus = document.querySelector("script[src*=giscus]")
+
+    /* Set palette on initial load */
+    var palette = __md_get("__palette")
+    if (palette && typeof palette.color === "object") {
+      var theme = palette.color.scheme === "slate" ? "dark" : "light"
+      giscus.setAttribute("data-theme", theme) 
+    }
+
+    /* Register event handlers after documented loaded */
+    document.addEventListener("DOMContentLoaded", function() {
+      var ref = document.querySelector("[data-md-component=palette]")
+	  if(!ref) return
+      ref.addEventListener("change", function() {
+        var palette = __md_get("__palette")
+        if (palette && typeof palette.color === "object") {
+          var theme = palette.color.scheme === "slate" ? "dark" : "light"
+
+          /* Instruct Giscus to change theme */
+          var frame = document.querySelector(".giscus-frame")
+          frame.contentWindow.postMessage(
+            { giscus: { setConfig: { theme } } },
+            "https://giscus.app"
+          )
+        }
+      })
+    })
+  </script>
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="页脚" >
+      
+        
+        <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/swin_transformer_relative_pos/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 对Swin Transformer中的相对位置编码与attention mask的理解" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              对Swin Transformer中的相对位置编码与attention mask的理解
+            </div>
+          </div>
+        </a>
+      
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022 HaiBin
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    <a href="mailto:haibintian@foxmail.com" target="_blank" rel="noopener" title="" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6l-126.3-52.5-40.1 74.5c-5.2 9.7-16.3 14.6-27 11.9S192 499 192 488v-96c0-5.3 1.8-10.5 5.1-14.7l165.3-212.6c2.5-7.1-6.5-14.3-13-8.4l-179 161.9-32 28.9c-9.2 8.3-22.3 10.6-33.8 5.8l-85-35.4C8.4 312.8.8 302.2.1 290s5.5-23.7 16.1-29.8l448-256c10.7-6.1 23.9-5.5 34 1.4z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate", "content.tabs.link", "navigation.instant", "header.autohide", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\s\\-\uff0c\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.078830c0.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.bootcdn.net/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+      
+        <script src="../../javascripts/social_share.js"></script>
+      
+    
+  </body>
+</html>
