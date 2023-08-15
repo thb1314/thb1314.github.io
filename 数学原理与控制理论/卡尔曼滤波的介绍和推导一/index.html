@@ -13,7 +13,7 @@
     
     
       
-        <title>灰度图分类采用Imagenet预训练时卷积核压缩Trick - 海滨的Blog</title>
+        <title>卡尔曼滤波的公式推导和应用举例(一) - 海滨的Blog</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#imagenettrick" class="md-skip">
+        <a href="#_1" class="md-skip">
           跳转至
         </a>
       
@@ -97,7 +97,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              灰度图分类采用Imagenet预训练时卷积核压缩Trick
+              卡尔曼滤波的公式推导和应用举例(一)
             
           </span>
         </div>
@@ -196,14 +196,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
       
       
       
@@ -226,7 +224,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" class="md-nav__link">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" class="md-nav__link">
         Pytorch下的多卡间变量同步操作
       </a>
     </li>
@@ -240,7 +238,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../2022%E5%B9%B403%E6%9C%8807%E6%97%A5%2020%E6%97%B633%E5%88%8650%E7%A7%92/" class="md-nav__link">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8807%E6%97%A5%2020%E6%97%B633%E5%88%8650%E7%A7%92/" class="md-nav__link">
         自动微分autograd原理-简单demo
       </a>
     </li>
@@ -254,7 +252,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../2022%E5%B9%B403%E6%9C%8811%E6%97%A5%2015%E6%97%B614%E5%88%8655%E7%A7%92/" class="md-nav__link">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8811%E6%97%A5%2015%E6%97%B614%E5%88%8655%E7%A7%92/" class="md-nav__link">
         TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
       </a>
     </li>
@@ -268,7 +266,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" class="md-nav__link">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" class="md-nav__link">
         再谈自动微分：自动微分中的前向模式与反向模式
       </a>
     </li>
@@ -280,73 +278,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          灰度图分类采用Imagenet预训练时卷积核压缩Trick
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/gray_image_pretrained_on_imagenet/" class="md-nav__link">
         灰度图分类采用Imagenet预训练时卷积核压缩Trick
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目录">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    一、工业相机成像的实际需求
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    二、公式推导
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    三、代码验证
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    四、总结
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -536,12 +472,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" checked>
       
       
       
@@ -562,11 +500,134 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8E%A8%E5%AF%BC%E4%B8%80/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          卡尔曼滤波的公式推导和应用举例(一)
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         卡尔曼滤波的公式推导和应用举例(一)
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    零、前言
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    一、卡尔曼滤波的介绍
+  </a>
+  
+    <nav class="md-nav" aria-label="一、卡尔曼滤波的介绍">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    1.1关于滤波
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    1.2 何为卡尔曼滤波
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13" class="md-nav__link">
+    1.3应用场景
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    二、基础知识准备
+  </a>
+  
+    <nav class="md-nav" aria-label="二、基础知识准备">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    2.1 平均值滤波中的数据融合
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    2.2 卡尔曼滤波中对于数据的融合
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    三、公式推导(法一)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    四、结语
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    五、参考文献和链接
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -965,29 +1026,90 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    一、工业相机成像的实际需求
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
-    二、公式推导
+    零、前言
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
-    三、代码验证
+    一、卡尔曼滤波的介绍
   </a>
+  
+    <nav class="md-nav" aria-label="一、卡尔曼滤波的介绍">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    1.1关于滤波
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    1.2 何为卡尔曼滤波
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13" class="md-nav__link">
+    1.3应用场景
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
-    四、总结
+    二、基础知识准备
+  </a>
+  
+    <nav class="md-nav" aria-label="二、基础知识准备">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    2.1 平均值滤波中的数据融合
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    2.2 卡尔曼滤波中对于数据的融合
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    三、公式推导(法一)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    四、结语
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    五、参考文献和链接
   </a>
   
 </li>
@@ -1007,152 +1129,293 @@
                   
 
 
-<h1 id="imagenettrick">灰度图分类采用Imagenet预训练时卷积核压缩Trick</h1>
+<h1 id="_1">卡尔曼滤波的公式推导和应用举例(一)</h1>
 <blockquote>
-<p>本文写于2023-07-20晚上十点</p>
+<p>本文写于2023-08-15晚上十点</p>
 </blockquote>
-<h2 id="_1">一、工业相机成像的实际需求</h2>
-<p>工业相机又称摄像机，相比于传统的民用相机（摄像机）而言，它具有高的图像稳定性、高传输能力和高抗干扰能力等，目前市面上的工业相机大多是基于 CCD（Charge CoupledDevice）或 CMOS（Complementary MetalOxide Semiconductor）芯片的相机。</p>
-<p>工业相机成像有黑白（gm）与彩色（gc）两种，分别为两种不同的像素存储格式。</p>
-<p>相比较于自然图像基本为彩色图像，工业相机成像中灰度图依然占有很大比例。</p>
-<p>对于灰度图像做图像分类任务，我们往往会采用一些成熟的模型架构，比如resnet、vgg等。</p>
-<p>实践证明，Imagenet预训练对工业产品的灰度图像依然有迁移学习效果，那么采用单通道灰度图相采用Imagenet预训练就必然需要采用其对应的图片预处理方式，即将图片扩充为三通道然后减去均值除以标准差，可是灰度图像是单通道的呀，是否有一种方法来对模型结构做一次等价代换从而使得现有模型直接从单通道图像进行计算，而不需要将单通道复制为三通道呢？</p>
-<h2 id="_2">二、公式推导</h2>
-<p>其实在视频理解任务中，常常采用扩充Imagenet预训练2D卷积核的办法，将2D卷积扩充为3D卷积，最终目标是为了实现在输入相同N个图片组成的一个Sequence中，得到N个与原来2D Imagenet预训练推理出的相同的特征图。</p>
-<p>类比于上面的原理，在没有减去均值除以标准差的操作时，因为单通道图像会看做各个通道值都相同的三通道图像，我们也可以很自然的将3通道输入的卷积核，在输入通道上累加，实现对单通道图片的卷积操作。</p>
-<p>设输入图像为 <span class="arithmatex">\(\rm{X} \in R^{3,H,W}\)</span>，X的三个通道满足<span class="arithmatex">\(\rm{X_r} = \rm{X_g} = \rm{X_b} = \rm{X_{gray}} \in R^{H,W}\)</span>。<span class="arithmatex">\(\rm{X_{gray}}\)</span>表示灰度图像。设卷积核权重为<span class="arithmatex">\(\rm{W} \in R^{C_{out}, C_{in}, K_h, K_w}\)</span>，bias为<span class="arithmatex">\(\rm{b} \in R^{C_{out}}\)</span>。其中<span class="arithmatex">\(\rm{C}_{out}\)</span>为输入通道数，<span class="arithmatex">\(\rm{C}_{in}\)</span>为输入通道数，此时<span class="arithmatex">\(\rm{C}_{in}=3\)</span>，<span class="arithmatex">\(\rm{K}_h, \rm{K}_w\)</span>为卷积核的高和宽，<span class="arithmatex">\(*\)</span> 表示卷积操作，不考虑batch维度，输出<span class="arithmatex">\(\rm{output} \in R^{C_{out},H',W'}\)</span></p>
-<p>对输入图像直接做卷积操作的公式如下，</p>
-<div class="arithmatex">\[
-\begin{aligned}
-\rm{output} &amp;= \rm{W} * \rm{X} + \rm{b} \\
-            &amp;= \rm{reduce\_sum}(\rm{W}, \rm{axis}=1, \rm{keepdim}=true) * \rm{X_{gray}} + \rm{b}
-\end{aligned}
-\]</div>
-<p>其中<span class="arithmatex">\(\rm{reduce\_sum}\)</span>表示对张量特定维度归约求和，一般张量运算库都支持该运算。</p>
-<p>可是在Imagenet预训练要求的预处理条件下，即除以255后，减去均值除以标准差，我们又该化简该过程呢？</p>
-<p>设Imagenet数据集的均值和方差<span class="arithmatex">\(\rm{mean} = [0.485, 0.456, 0.406]\)</span>，<span class="arithmatex">\(\rm{std} = [0.229, 0.224, 0.225]\)</span>。</p>
-<p>卷积（参考<code>im2col</code>）和矩阵乘法可以等价，满足结合律，则上述过程可以写出如下公式：</p>
-<div class="arithmatex">\[
-\begin{aligned}
-\rm{output} &amp;= \rm{W} * \frac{ \frac{\rm{X}}{255} - \rm{mean} }{ \rm{std} } + \rm{b} \\
-            &amp;= \rm{W} * \frac{ \rm{X} - 255 \times \rm{mean} }{ 255 \times \rm{std} } + \rm{b} \\
-            &amp;= \frac{\rm{W}}{255 \times \rm{std}} * \rm{X} -  \rm{W} * \rm{full\_like}(\rm{X}, \frac{ \rm{mean} }{ \rm{std} }) + \rm{b} \\
-            &amp;= \rm{reduce\_sum}(\frac{\rm{W}}{255 \times \rm{std}}, \rm{axis}=1, \rm{keepdim}=true) * \rm{X_{gray}} + \rm{b} \\
-            &amp;\ \ \ \ + \rm{reduce\_mean}(-  \rm{W} * \rm{full\_like}(\rm{X}, \frac{ \rm{mean} }{ \rm{std} }), axis=[-1, -2], \rm{keepdim}=false)
-\end{aligned}
-\]</div>
-<p>其中<span class="arithmatex">\(\rm{full\_like}(\rm{X}, \frac{ \rm{mean} }{ \rm{std} })\)</span>表示一个与X形状相同，且三个通道的值为<span class="arithmatex">\(\frac{ \rm{mean} }{ \rm{std} }\)</span>的张量。  <span class="arithmatex">\(\rm{reduce\_mean}\)</span>表示对张量特定维度进行归约求平均。</p>
-<p>从上面公式可以看出上面预处理的过程可以融合到卷积核，新的权重是<span class="arithmatex">\(\rm{reduce\_sum}(\frac{\rm{W}}{255 \times \rm{std}}, \rm{axis}=1, \rm{keepdim}=true)\)</span>，新的bias为<span class="arithmatex">\(\rm{b} + \rm{reduce\_mean}(-  \rm{W} * \rm{full\_like}(\rm{X}, \frac{ \rm{mean} }{ \rm{std} }), axis=[-1, -2], \rm{keepdim}=false)\)</span> 。如何理解bias项中的后项呢？读者可以试想一下，在卷积核参数不变的情况下，输入张量的每个通道内部都是相同的值，那么是不是意味着输出通道的内部，每个输出通道内部值也是一样的，此时对其求mean实际上等价于利用张量运算库中的广播机制，将一个通道内部元素相同的张量转换为一个向量表示，而这个向量形状恰好与bias相同，从而可以实现与原来的bias相加。</p>
+<h2 id="_2">零、前言</h2>
+<p>作为机械加控制科班出身的大学生，自然是学过传统控制理论+现代控制理论的，想当年线性二阶系统的奈奎斯特图和伯德图的绘制也画的很溜。</p>
+<p>可说起来惭愧的是，直到现在我才刚刚弄懂一点最优控制理论的一点点内容。</p>
+<p>由于硕士期间做了计算机视觉，所以控制理论相关的内容都快忘得差不多了，好在底子还在，慢慢还能就捡了起来。</p>
+<p>再加上学过矩阵论后，对于矩阵求导之类的不再陌生，对卡尔曼滤波的推导的接受程度也比较快，这么来看学习的每一处知识都有用。</p>
+<p>本文的一些介绍性文字都是从相关文献或者公众号上摘抄组合而来，相关链接会放在文章末尾</p>
+<h2 id="_3">一、卡尔曼滤波的介绍</h2>
+<h3 id="11">1.1关于滤波</h3>
+<p>援引来自知乎大神的解释。</p>
 <blockquote>
-<p>遗漏细节：</p>
-<p>通常stage1的卷积操作都有padding，且padding_value=0，所以在边界处得到的值不满足上述条件，即在通道内部，边界处的值与内部的值不一样（输入输出都是一样），在计算的时候我们要忽略掉padding的计算结果</p>
+<p>一位专业课的教授给我们上课的时候，曾谈到：<strong>filtering is weighting</strong>（滤波即加权）。滤波的作用就是给不同的信号分量不同的权重。最简单的loss pass filter， 就是直接把低频的信号给1权重，而给高频部分0权重。对于更复杂的滤波，比如维纳滤波, 则要根据信号的统计知识来设计权重。</p>
+<p>从统计信号处理的角度，降噪可以看成滤波的一种。降噪的目的在于突出信号本身而抑制噪声影响。从这个角度，降噪就是给信号一个高的权重而给噪声一个低的权重。维纳滤波就是一个典型的降噪滤波器。</p>
 </blockquote>
-<p>Tips：  </p>
-<p>在计算<span class="arithmatex">\(-  \rm{W} * \rm{full\_like}(\rm{X}, \frac{ \rm{mean} }{ \rm{std} }) + \rm{b}\)</span>有一个技巧，即将X设置为全0向量，带入到<span class="arithmatex">\(\rm{W} * \frac{ \frac{\rm{X}}{255} - \rm{mean} }{ \rm{std} } + \rm{b}\)</span>，然后直接计算reduce_mean即可。</p>
-<p>如果conv后面接的是bn，conv可能没有bias，这个时候原来的bias=0。</p>
-<h2 id="_3">三、代码验证</h2>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
-<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
-<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
-<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
-<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
-<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-0-10">10</a></span>
-<span class="normal"><a href="#__codelineno-0-11">11</a></span>
-<span class="normal"><a href="#__codelineno-0-12">12</a></span>
-<span class="normal"><a href="#__codelineno-0-13">13</a></span>
-<span class="normal"><a href="#__codelineno-0-14">14</a></span>
-<span class="normal"><a href="#__codelineno-0-15">15</a></span>
-<span class="normal"><a href="#__codelineno-0-16">16</a></span>
-<span class="normal"><a href="#__codelineno-0-17">17</a></span>
-<span class="normal"><a href="#__codelineno-0-18">18</a></span>
-<span class="normal"><a href="#__codelineno-0-19">19</a></span>
-<span class="normal"><a href="#__codelineno-0-20">20</a></span>
-<span class="normal"><a href="#__codelineno-0-21">21</a></span>
-<span class="normal"><a href="#__codelineno-0-22">22</a></span>
-<span class="normal"><a href="#__codelineno-0-23">23</a></span>
-<span class="normal"><a href="#__codelineno-0-24">24</a></span>
-<span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
-<span class="normal"><a href="#__codelineno-0-31">31</a></span>
-<span class="normal"><a href="#__codelineno-0-32">32</a></span>
-<span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span>
-<span class="normal"><a href="#__codelineno-0-35">35</a></span>
-<span class="normal"><a href="#__codelineno-0-36">36</a></span>
-<span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span>
-<span class="normal"><a href="#__codelineno-0-39">39</a></span>
-<span class="normal"><a href="#__codelineno-0-40">40</a></span>
-<span class="normal"><a href="#__codelineno-0-41">41</a></span>
-<span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span>
-<span class="normal"><a href="#__codelineno-0-44">44</a></span>
-<span class="normal"><a href="#__codelineno-0-45">45</a></span>
-<span class="normal"><a href="#__codelineno-0-46">46</a></span>
-<span class="normal"><a href="#__codelineno-0-47">47</a></span>
-<span class="normal"><a href="#__codelineno-0-48">48</a></span>
-<span class="normal"><a href="#__codelineno-0-49">49</a></span>
-<span class="normal"><a href="#__codelineno-0-50">50</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="kn">import</span> <span class="nn">torch</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="kn">from</span> <span class="nn">torchvision.models</span> <span class="kn">import</span> <span class="n">resnet18</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5"></a>
-<a id="__codelineno-0-6" name="__codelineno-0-6"></a>
-<a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="c1"># 模拟灰度图输入</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="n">image_gray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">))</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="c1"># 赋值为三通道</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="n">image_rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">image_gray</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11"></a>
-<a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="n">model</span> <span class="o">=</span> <span class="n">resnet18</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="n">conv1</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">conv1</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15"></a>
-<a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="c1"># 查看卷积参数</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="nb">print</span><span class="p">(</span><span class="n">conv1</span><span class="p">)</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18"></a>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="n">weight</span> <span class="o">=</span> <span class="n">conv1</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="n">imagenet_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.485</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.406</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="n">imagenet_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.229</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a>
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a>
-<a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="n">input_tensor</span> <span class="o">=</span> <span class="p">(</span><span class="n">image_rgb</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span> <span class="o">-</span> <span class="n">imagenet_mean</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">imagenet_std</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="n">ori_output</span> <span class="o">=</span> <span class="n">conv1</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="n">new_weight</span> <span class="o">=</span> <span class="p">(</span><span class="n">weight</span> <span class="o">/</span> <span class="p">(</span><span class="mi">255</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">imagenet_std</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="n">tmp_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">imagenet_mean</span><span class="p">,</span> <span class="n">imagenet_std</span><span class="p">)):</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>    <span class="n">tmp_input</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">mean</span> <span class="o">/</span> <span class="n">std</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="c1"># 过滤到padding部分区域</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="n">new_bias</span> <span class="o">=</span> <span class="n">conv1</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">tmp_input</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="c1"># stride=(2, 2), padding=(3, 3) 两步才能不利用padding_value</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="n">new_bias</span> <span class="o">=</span> <span class="n">new_bias</span><span class="p">[:,:,</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="n">conv1</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">new_bias</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="n">conv1</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">new_weight</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="c1"># 修改卷积参数</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="n">conv1</span><span class="o">.</span><span class="n">in_channels</span> <span class="o">=</span> <span class="mi">1</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="n">new_output</span> <span class="o">=</span> <span class="n">conv1</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">image_gray</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="n">diff</span> <span class="o">=</span> <span class="n">new_output</span> <span class="o">-</span> <span class="n">ori_output</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="nb">print</span><span class="p">(</span><span class="n">diff</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="c1"># tensor(1.6212e-05, grad_fn=&lt;MaxBackward1&gt;)</span>
+<h3 id="12">1.2 何为卡尔曼滤波</h3>
+<p>卡尔曼滤波（Kalman filtering）一种利用线性系统状态方程，通过系统输入输出观测数据，对系统状态进行最优估计的算法。</p>
+<p>由于观测数据中包括系统中的噪声和干扰的影响，所以最优估计也可看作是滤波过程。</p>
+<p>Kalman Filter 算法，是一种<strong>递推预测滤波算法</strong>，算法中涉及到滤波，也涉及到对下一时刻数据的预测。Kalman Filter 由一系列递归数学公式描述。它提供了一种高效可计算的方法来估计过程的状态，并使<strong>估计均方误差</strong>最小。</p>
+<p>Kalman Filter 也可以被认为是一种数据融合算法（Data fusion algorithm），已有50多年的历史，是当今使用最重要和最常见的数据融合算法之一。Kalman Filter 的巨大成功归功于其小的计算需求，优雅的递归属性以及作为具有高斯误差统计的一维线性系统的最优估计器的状态。</p>
+<h3 id="13">1.3应用场景</h3>
+<p>卡尔曼滤波器之前被广泛用来做动态系统的状态估计、预测。主要的目的就是用来从带噪声的观测量，比如各种传感器的观测（IMU、GPS、里程计等）估计出最优的系统状态（state）。不过要明确强调的是，由于测量都带有噪声，也就是随机性，所以真正准确的状态是无法获知的。</p>
+<p>最小二乘法可以从一长串的测量值回归出一个最为匹配的模型。卡尔曼滤波相比于最小二乘法，采用了一种递归的计算方式，也就是每一时刻只需要保存上一时刻的状态。因此可以被用来处理实时任务。</p>
+<p>斯坦利·施密特(Stanley Schmidt)首次实现了卡尔曼滤波器。卡尔曼在NASA埃姆斯研究中心访问时，发现他的方法对于解决阿波罗计划的轨道预测很有用，后来阿波罗飞船的导航电脑使用了这种滤波器。</p>
+<p>虽然卡尔曼滤波器从美国阿波罗登月计划到如今已有几十年，且目前有更先进的因子图（Factor Graph）算法，但是在很多领域依旧可以看到卡尔曼滤波器的身影，特别是在自动驾驶的各个模块，比如：从IMU的数据（三轴加速度，三轴角速度）计算出运动物体的当前位置。</p>
+<h2 id="_4">二、基础知识准备</h2>
+<h3 id="21">2.1 平均值滤波中的数据融合</h3>
+<p>假设我们对某一个物理量拿仪器进行测量<code>k</code>次，前<code>k-1</code>次的平均值为<span class="arithmatex">\(\bar x_{k-1}\)</span>，第k次测量结果为<span class="arithmatex">\(x_k\)</span>，则第<code>k</code>次时平均值滤波结果计算如下：</p>
+<div class="arithmatex">\[
+\begin{align}
+\bar x_{k} &amp;= \frac{\bar x_{k-1} * (k - 1) + x_{k}}{k} \\
+           &amp;= \bar x_{k-1} * (1 - \frac{1}{k}) + \frac{1}{k} x_{k} \\
+           &amp;= \bar x_{k-1} + \frac{1}{k}(x_k - \bar x_{k-1})
+\end{align}
+\]</div>
+<p>在平均值滤波中，新的<span class="arithmatex">\(\bar x_k\)</span>可以看做<span class="arithmatex">\(x_k\)</span>和<span class="arithmatex">\(\bar x_{k-1}\)</span>的线性加权融合，<span class="arithmatex">\(\frac{1}{k}\)</span>即为融合因子。<span class="arithmatex">\(\bar x_{k-1}\)</span>为过往的状态值，<span class="arithmatex">\(x_k\)</span>为最新的测量值，平均值滤波就可以看做是对过往的状态值和最新的状态值的融合。</p>
+<p>将上述公式中<span class="arithmatex">\(\frac{1}{k}\)</span>抽象为一个可以变化的系数<span class="arithmatex">\(K\)</span>，则一般性的数据线性加权融合公式为</p>
+<div class="arithmatex">\[
+\hat x_k = \hat x_{k-1} + K_k(z_k - \hat x_{k-1})
+\]</div>
+<p>该公式可以理解为</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>当前的估计值 = 上一次的估计值 + 系数 * (当前的测量值 - 上一次的估计值)
 </code></pre></div></td></tr></table></div>
-<h2 id="_4">四、总结</h2>
-<p>针对实际的工程问题，本文采用等价代换的办法将对于三通道灰度图的运算化简到单通道，使得模型第一层卷积的计算量和参数量减少三倍，同时简化了模型的预处理方式，是一种部署友好的trick。  </p>
+<p>在卡尔曼滤波中，也采用了上述数据融合的思想，只不过<span class="arithmatex">\(K_k\)</span>的值是随着迭代动态变化的。</p>
+<h3 id="22">2.2 卡尔曼滤波中对于数据的融合</h3>
+<p>为了描述系统特性，这里给出系统的状态方程和测量方程</p>
+<div class="arithmatex">\[
+\begin{align}
+&amp;x_k = A_{k - 1}x_{k - 1} + B_{k-1}u_{k-1} + w_{k-1} \\
+&amp;z_k = H_k x_k + v_k
+\end{align}
+\]</div>
+<p>其中，<span class="arithmatex">\(A_{k-1}\)</span>为状态(转移)矩阵（Transition Matrix），<span class="arithmatex">\(x_{k-1}\)</span>记为<span class="arithmatex">\(k-1\)</span>时刻的状态向量。</p>
+<p><span class="arithmatex">\(u_{k-1}\)</span>为<span class="arithmatex">\(k-1\)</span>时刻输入，<span class="arithmatex">\(B_{k-1}\)</span>称为控制矩阵（Control Matrix），反映了系统输入到系统状态的映射关系。</p>
+<p><span class="arithmatex">\(w_{k-1}\)</span>是过程噪声，我们假定其符合均值为0，协方差矩阵为<span class="arithmatex">\(Q_{k-1}\)</span>的高斯噪声。</p>
+<p><span class="arithmatex">\(H_k\)</span>为测量矩阵（Measurement Matrix），描述了从系统状态到测量值的转换关系（举一个最简单的关系，系统状态是物体的直线距离，测量值是使用激光笔测出来的光从原点到物体的时间，那么<span class="arithmatex">\(H_k\)</span>就是光速的倒数）</p>
+<p><span class="arithmatex">\(v_k\)</span>是测量噪声，我们假定其符合均值为0，协方差为<span class="arithmatex">\(R_k\)</span>的高斯噪声。</p>
+<p>我们还需要引出状态预测方程和测量估计方程的概念</p>
+<p><strong>状态预测方程</strong>是取得是每一项的概率最大值处对应的自变量的值，噪声<span class="arithmatex">\(w_{k-1}\)</span>是均值为0的高斯噪声，因此最大概率对应的值为0。</p>
+<div class="arithmatex">\[
+\begin{align}
+&amp;\hat x^-_k = A_{k - 1}\hat x^{+}_{k - 1} + B_{k-1}u_{k-1} + 0\\
+\end{align}
+\]</div>
+<p>对系统状态向量上面加上一个帽子符号表示这是一个估计量，也就是我们实际输出的量。</p>
+<p><span class="arithmatex">\(\hat x^{+}_{k - 1}\)</span>表示<span class="arithmatex">\(k-1\)</span>时刻时的卡尔曼滤波后的状态向量，也称为状态向量的后验估计。</p>
+<p><span class="arithmatex">\(\hat x^-_k\)</span>表示当前根据系统状态方程计算预测得到的状态向量，也称为状态向量的先验估计。</p>
+<p><strong>测量估计方程</strong>同样忽略噪声项，变成对此时测量量的估计</p>
+<div class="arithmatex">\[
+\hat z_k = H_k \hat x^-_k
+\]</div>
+<p>由于我们不对<span class="arithmatex">\(z_k\)</span>做最优估计，所以不赋予其右上角的加减上下标。</p>
+<p>回到卡尔曼滤波，我们要观测一个系统中的一些状态值有两种办法。</p>
+<p>一种是通过系统的<strong>状态转移方程</strong>，并结合上一时刻的状态推得下一时刻的状态。</p>
+<p>一种是借助<strong>辅助系统（测量系统）</strong>的测量反推出系统状态。</p>
+<p>这两种方式都有各自的不确定性（含有噪声），卡尔曼滤波目标是将这两者做到最优结合（加权平均），使得我们估计的状态的不确定性小于其中任何一种。</p>
+<p>卡尔曼滤波的目标是得到一个线性最小方差估计量（Linear Minimum Mean Square Error, LMMSE），使其满足该估计值与真实值之间的均方误差达到最小。</p>
+<p>假设<span class="arithmatex">\(x_k\)</span>为真实值，那么卡尔曼滤波就是找到一个合适的<span class="arithmatex">\(K_k\)</span>使得下面式子中的<span class="arithmatex">\(\text{E}({||x_k - \hat x^+_k||}^2)\)</span>最小。</p>
+<p>我们根据测量方程可以反推出状态向量的测量反推值<span class="arithmatex">\(x_{measure}\)</span></p>
+<div class="arithmatex">\[
+x^{measure}_k = H_k^{-1} z_k
+\]</div>
+<div class="arithmatex">\[
+\begin{align}
+\hat x^+_k &amp;= \hat x^-_{k} + G_k(x^{measure}_k - \hat x^-_{k}) \\
+           &amp;= \hat x^-_{k} + G_k H_k^{-1} H_k (x^{measure}_k - \hat x^-_{k}) \\
+           &amp;= \hat x^-_{k} + G_k H_k^{-1} (z_k - \hat z^k) \\
+           &amp;= \hat x^-_{k} + K_k (z_k - \hat z^k)
+\end{align}
+\]</div>
+<p>上述式子中，为了展示<span class="arithmatex">\(\hat x^+_k\)</span>的融合过程，将<span class="arithmatex">\(K_k\)</span>定义为<span class="arithmatex">\(G_k H_k^{-1}\)</span>。</p>
+<p>卡尔曼滤波的目标函数为</p>
+<div class="arithmatex">\[
+minimize\ \text{E}({|x_k - \hat x^+_k|}^2) = minimize\ \text{E}({|x_k - \hat x^+_k|}*{|x_k - \hat x^+_k|}^\text{T})
+\]</div>
+<p>这里，我们尝试简化一下</p>
+<div class="arithmatex">\[
+\begin{align}
+&amp;\text{E}({|x_k - \hat x^+_k|}*{|x_k - \hat x^+_k|}^\text{T}) = \text{D}({x_k - \hat  x^+_k}) + [\text{E}({x_k - \hat x^+_k})]^2 \\
+\end{align}
+\]</div>
+<p>这里<span class="arithmatex">\(x_k\)</span>为真实值，表示一个常数，我们假设在初始状态下（即k=0）时，<span class="arithmatex">\(\hat x^+\)</span>可以准确的描述<span class="arithmatex">\(x_k\)</span>，即<span class="arithmatex">\(\text E(x_0 - \hat x^+_0)=0\)</span>。</p>
+<p>这里我们尝试化简一下<span class="arithmatex">\(x_k - \hat x^+_k\)</span></p>
+<div class="arithmatex">\[
+\begin{align}
+x_k - \hat x^+_k &amp;= x_k - (\hat x^-_{k} + K_k (z_k - \hat z^k)) \\
+                 &amp;= x_k - (\hat x^-_{k} + K_k(H_k x_k + v_k - H_k \hat x^-_{k})) \\
+                 &amp;= x_k - \hat x^-_{k} - K_kH_k x_k - K_kv_k + K_kH_k\hat x^-_{k} \\
+                 &amp;= (x_k - \hat x^-_{k}) - K_kH_k(x_k - \hat x^-_{k}) - K_kv_k \\
+                 &amp;= (I - K_kH_k)(x_k - \hat x^-_{k}) - K_kv_k \\
+                 &amp;= (I - K_kH_k)[(A_{k - 1}x_{k - 1} + B_{k-1}u_{k-1} + w_{k-1}) - (A_{k - 1}\hat x^{+}_{k - 1} + B_{k-1}u_{k-1})] - K_kv_k \\
+                 &amp;= (I - K_kH_k)A_{k - 1}(x_{k - 1} - \hat x^{+}_{k - 1}) + (I - K_kH_k) w_{k-1} - K_kv_k \\
+\end{align}
+\]</div>
+<div class="arithmatex">\[
+\begin{align}
+\text{E}({x_k - \hat x^+_k}) &amp;= E[(I - K_kH_k)A_{k - 1}(x_{k - 1} - \hat x^{+}_{k - 1}) + (I - K_kH_k) w_{k-1} - K_kv_k] \\
+                             &amp;= (I - K_kH_k)A_{k - 1}E(x_{k - 1} - \hat x^{+}_{k - 1}) 
+\end{align}
+\]</div>
+<div class="arithmatex">\[
+\begin{align}
+\text{E}({x_k - \hat x^+_k}) &amp;= E[(I - K_kH_k)(x_k - \hat x^-_{k}) - K_kv_k] \\
+                             &amp;= (I - K_kH_k)E(x_k - \hat x^-_{k}) 
+\end{align}
+\]</div>
+<blockquote>
+<p>在上述公式中，<span class="arithmatex">\(z_k\)</span>和<span class="arithmatex">\(x_k\)</span>需要理解为一个常量，而不是服从某一个分布的随机变量。</p>
+</blockquote>
+<p>有上面的公式可以看出，对于上述线性系统的建模后，<span class="arithmatex">\(K_k\)</span>取任意值，都可以保证<strong>无偏性的传递</strong>。</p>
+<p>同时也可以看出，若后验估计保持了无偏性的传递性，先验估计<span class="arithmatex">\(\hat x^-_{k}\)</span>也是无偏的。</p>
+<blockquote>
+<p>一般的材料中，常说卡尔曼滤波的估计值是无偏估计，实际上这是由条件的，其中要求系统噪声和量测噪声为不相关、零期望的白噪声，且是线性系统，初始时刻的状态估计是无偏的。当这些条件不能满足时，Kalman滤波的估计结果是有偏的。</p>
+<p>我们这里是先给出了卡尔曼滤波的一般公式，然后再证明其无偏性。</p>
+<p>实际上也可以要求其无偏，设<span class="arithmatex">\(x^+_k = K_1 \hat x^-_{k} + K_2 x^{measure}_k\)</span>，从无偏性中推出<span class="arithmatex">\(K_1\)</span>与<span class="arithmatex">\(K_2\)</span>的关系。</p>
+</blockquote>
+<p>再回到原来的公式</p>
+<div class="arithmatex">\[
+\begin{align}
+\text{E}({|x_k - \hat x^+_k|}*{|x_k - \hat x^+_k|}^\text{T}) &amp;= \text{D}({x_k - \hat  x^+_k})
+\end{align}
+\]</div>
+<p>由此可以看出，<strong>估计值与真实值之间的均方误差就是估计误差的方差</strong>。</p>
+<p>我们继续化简</p>
+<div class="arithmatex">\[
+\begin{align}
+\text{E}({|x_k - \hat x^+_k|}*{|x_k - \hat x^+_k|}^\text{T}) &amp;= \text{E}(\hat x^+_k - x_k)^2 \\
+                  &amp;= \text{E}[(\hat x^+_k - \text{E}(\hat x^+_k)) + (\text{E}(\hat x^+_k) - x_k)]^2 \\
+                  &amp;= \text{E}[(\hat x^+_k - \text{E}(\hat x^+_k))]^2 \\
+                  &amp;= \text D(\hat x^+_k)
+\end{align}
+\]</div>
+<p>这里用用上了无偏估计的条件，<span class="arithmatex">\(\text{E}(\hat x^+_k) = x_k\)</span>，目标函数可以化简为</p>
+<div class="arithmatex">\[
+minimize\ \text{E}({|x_k - \hat x^+_k|}^2) = minimize\ \text{sum}(\text D(\hat x^+_k))
+\]</div>
+<p>这里又得出另外一个重要结论，<strong>在卡尔曼滤波中，最优估计值是无偏估计的条件下，最小化估计值与真实值之间的均方误差等价于最小化估计值的方差</strong>。</p>
+<p>因此，卡尔曼滤波的思想即线性融合所有数据来源的分布，求各个分布的系数K使融合后的分布方差最小。</p>
+<h2 id="_5">三、公式推导(法一)</h2>
+<p>在2.2节我们给出了卡尔曼滤波估计值公式的一般形式，也遗留了一个问题，即卡尔曼增益K如何去求。</p>
+<p>接着2.2节末尾，我们可以得到目标函数如下：</p>
+<div class="arithmatex">\[
+minimize\ \text D(\hat x^+_k)
+\]</div>
+<p>这里需要用到一个基础公式，<span class="arithmatex">\(\text{D}(\text{X}) = \text{E}(\text{X}^2) - (\text{E}\text{X})^2\)</span>  。若<span class="arithmatex">\(\text{E}(\text{X}) = 0\)</span>，则<span class="arithmatex">\(\text{D}(\text{X}) = \text{E}(\text{X}^2)\)</span> </p>
+<div class="arithmatex">\[
+\begin{align}
+\hat x^+_k &amp;= \hat x^-_{k} + K_k (z_k - \hat z^k) \\
+                     &amp;= \hat x^-_{k} + K_k (H_k x_k + v_k - H_k \hat x^-_k) \\
+                     &amp;= \hat x^-_{k} + K_k H_k( x_k - \hat x^-_k) + K_k v_k
+\end{align}
+\]</div>
+<p>由于真实值<span class="arithmatex">\(x_k\)</span>可以看做一个常数，不包含参数，则</p>
+<div class="arithmatex">\[
+\begin{align}
+minimize \text{E}({|x_k - \hat x^+_k|}^2) &amp;= minimize\ \text D(\hat x^+_k) \\
+&amp;= minimize\ \text D(\hat x^-_{k} + K_k H_k( x_k - \hat x^-_k) + K_k v_k) \\
+&amp;= minimize\ \text D(x^-_{k} - x_k - K_k H_k( x_k - \hat x^-_k) + K_k v_k) \\
+&amp;= minimize\ \text D((I - K_k H_k)(\hat x^-_k - x_k) + K_k v_k)
+\end{align}
+\]</div>
+<div class="arithmatex">\[
+\begin{align}
+&amp;\ D((I - K_k H_k)( \hat x^-_k - x_k) + K_k v_k) \\
+&amp;= D((I - K_k H_k)( \hat x^-_k - x_k)) + D(K_k v_k) \\
+&amp;= E((I - K_k H_k)( \hat x^-_k - x_k)( \hat x^-_k - x_k)^T(I - K_k H_k)^T) + E(K_k v_k v_k^T K_k^T ) \\
+&amp;= (I - K_k H_k)E(( \hat x^-_k - x_k )( \hat x^-_k - x_k )^T)(I - K_k H_k)^T + K_kD(v_k)K_k^T \\
+&amp;= (I - K_k H_k)E(| \hat x^-_k - x_k |^2)(I - K_k H_k)^T + K_kR_kK_k^T
+\end{align}
+\]</div>
+<p>为了最小化上述公式，我们将上式定义为<span class="arithmatex">\(P_k^+\)</span>（<span class="arithmatex">\(P_k^+ = \text{E}({| \hat x^+_k - x_k|}^2) = \text D(\hat x_k^+)\)</span> )，用于表示状态估计误差矩阵。记<span class="arithmatex">\(P_k^- = E(| \hat x^-_k - x_k |^2)\)</span></p>
+<p>我们定义<span class="arithmatex">\(k\)</span>时刻最优状态估计的方差和，即<span class="arithmatex">\(\text D(\hat x_k^+)\)</span>（<span class="arithmatex">\(\text{E}({|\hat x^+_k - x_k|}^2)\)</span>）的对角线之和（因为对角线上即为各个状态分类的方差），为最小化<span class="arithmatex">\(J_k\)</span>，我们有:</p>
+<div class="arithmatex">\[
+J_k = tr(P_k^+)
+\]</div>
+<p>下面会进入实数对矩阵的求导环节，先给出几个基本公式，具体证明读者可以查阅矩阵论相关书籍进行推导</p>
+<div class="arithmatex">\[
+\begin{align}
+&amp;\frac{\partial (ABA^T)}{\partial A} = 2AB \\
+&amp;tr(AB) = tr(BA) \\
+&amp;tr(A \pm B) = tr(A) \pm tr(B)
+\end{align}
+\]</div>
+<p>设Y = AXB,已知<span class="arithmatex">\(\frac{\partial f}{\partial Y}\)</span>, f为将Y转换为一个标量的函数，则 </p>
+<div class="arithmatex">\[
+\begin{align}
+d f &amp;= tr((\frac{\partial f}{\partial Y})^T d Y) \\
+    &amp;= tr((\frac{\partial f}{\partial Y})^T d(AXB)) \\
+    &amp;= tr((\frac{\partial f}{\partial Y})^T Ad(X)B) \\
+    &amp;= tr((\frac{\partial f}{\partial Y})^T Ad(X)B) \\
+    &amp;= tr(B(\frac{\partial f}{\partial Y})^T Ad(X)) \\
+    &amp;= tr(A^T (\frac{\partial f}{\partial Y}) B^T d(X))
+\end{align}
+\]</div>
+<div class="arithmatex">\[
+\begin{align}
+\frac{\partial f}{\partial X} = A^T (\frac{\partial f}{\partial Y}) B^T
+\end{align}
+\]</div>
+<p>下面进入求导实操环节</p>
+<div class="arithmatex">\[
+\begin{align}
+\frac{\partial J_k}{\partial K_k} &amp;= \frac{\partial  tr((I - K_k H_k)P_k^-(I - K_k H_k)^T)} {\partial K_k} + \frac{\partial tr(K_kR_kK_k^T) }{\partial K_k} \\
+&amp;= -\frac{\partial  tr((I - K_k H_k)P_k^-(I - K_k H_k)^T)} {\partial (I - K_k H_k)} H_k^T + 2K_kR_k \\
+&amp;= -2(I - K_k H_k)P_k^-H_k^T + 2K_kR_k
+\end{align}
+\]</div>
+<p>令上式为0，求得</p>
+<div class="arithmatex">\[
+K_k = P_k^- H_k^- (R_k + H_k P_k^- H_k^T)^{-1}
+\]</div>
+<p>将<span class="arithmatex">\(K_k\)</span>带入到<span class="arithmatex">\(P_k^+\)</span>求得</p>
+<div class="arithmatex">\[
+\begin{align}
+P_k^+ &amp;= (I - K_k H_k)P_k^-(I - K_k H_k)^T + K_kR_kK_k^T \\
+      &amp;= (I - K_k H_k)P_k^-(I - K_k H_k)^T + ((I - K_k H_k)P_k^-H_k^T)K_k^T \\
+      &amp;= (I - K_k H_k)P_k^- - (I - K_k H_k)P_k^-H_k^TK_k^T  + ((I - K_k H_k)P_k^-H_k^T)K_k^T \\
+      &amp;= (I - K_k H_k)P_k^-
+\end{align}
+\]</div>
+<p>下面再看<span class="arithmatex">\(P_k^-\)</span>的计算</p>
+<div class="arithmatex">\[
+\begin{align}
+P_k^- &amp;= E(| \hat x^-_k - x_k |^2) \\
+      &amp;= E(|(A_{k - 1}\hat x^{+}_{k - 1} + B_{k-1}u_{k-1}) - (A_{k - 1} x_{k - 1} + B_{k-1}u_{k-1} + w_{k-1})|^2) \\
+      &amp;= E(|A_{k - 1}(\hat x^{+}_{k - 1} - x_{k - 1}) - w_{k-1}|^2) \\
+      &amp;= E((A_{k - 1}(\hat x^{+}_{k - 1} - x_{k - 1}) - w_{k-1})(A_{k - 1}(\hat x^{+}_{k - 1} - x_{k - 1}) - w_{k-1})^T) \\
+      &amp;= A_{k - 1}E(|\hat x^{+}_{k - 1} - x_{k - 1}|^2)A_{k - 1}^T + E(w_{k-1} w_{k-1}^T) - E(w_{k-1})A_{k - 1}E(\hat x^{+}_{k - 1} - x_{k - 1}) - A_{k - 1}E(\hat x^{+}_{k - 1} - x_{k - 1})E(w_{k-1}) \\
+      &amp;= A_{k - 1}E(|\hat x^{+}_{k - 1} - x_{k - 1}|^2)A_{k - 1}^T + E(w_{k-1} w_{k-1}^T) \\
+      &amp;= A_{k - 1}P_{k-1}^{+}A_{k - 1}^T + Q_{k-1}
+\end{align}
+\]</div>
+<p>至此，我们终于推导完卡尔曼滤波中的关键参数<span class="arithmatex">\(K_k\)</span>和<span class="arithmatex">\(P_k^-\)</span></p>
+<p>下面整理一下，给出卡尔曼滤波的全部公式</p>
+<p>①状态预测方程</p>
+<div class="arithmatex">\[
+   \hat x^-_k = A_{k - 1}\hat x^{+}_{k - 1} + B_{k-1}u_{k-1}
+\]</div>
+<p>②最优状态估计迭代更新公式</p>
+<div class="arithmatex">\[
+   \hat x^+_k = \hat x^-_{k} + K_k (z_k - H_kx^-_k)
+\]</div>
+<p>③卡尔曼增益计算公式</p>
+<div class="arithmatex">\[
+   K_k = P_k^- H_k^- (R_k + H_k P_k^- H_k^T)^{-1}
+\]</div>
+<p>④最优(后验)估计误差协方差更新公式</p>
+<div class="arithmatex">\[
+   P_k^+ = (I - K_k H_k)P_k^-
+\]</div>
+<p>⑤先验估计误差协方差更新公式</p>
+<div class="arithmatex">\[
+   P_k^- = A_{k - 1}P_{k-1}^{+}A_{k - 1}^T + Q_{k-1}
+\]</div>
+<h2 id="_6">四、结语</h2>
+<p>我在标题和第三章的地方都写了“一”这样的字样，这代表着还有二三四....，毕竟还有一些证明方法没有总结，还有一些应用案例没有举例，不过总算开了个头。</p>
+<p>一直想总结下卡尔曼滤波相关的知识，看了网上好多资料后，决定也发表下自己的看法和证明方式。</p>
+<h2 id="_7">五、参考文献和链接</h2>
+<ul>
+<li>https://www.zhihu.com/question/331568328/answer/735287556</li>
+<li>https://zhuanlan.zhihu.com/p/134595781</li>
+<li>https://zhuanlan.zhihu.com/p/578920168</li>
+<li>https://zhuanlan.zhihu.com/p/341440139</li>
+<li>https://mp.weixin.qq.com/s/MQUFI6IlN6JrUz2aju7eWA</li>
+</ul>
 
   <hr>
 <div class="md-source-file">
@@ -1237,7 +1500,7 @@
     <nav class="md-footer__inner md-grid" aria-label="页脚" >
       
         
-        <a href="../2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 再谈自动微分：自动微分中的前向模式与反向模式" rel="prev">
+        <a href="../../python%26C%2B%2B/python%E5%92%8CC%E7%9A%84%E4%BA%A4%E4%BA%92/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 一文总结Python和C/C++的交互方式" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -1246,20 +1509,20 @@
               <span class="md-footer__direction">
                 上一页
               </span>
-              再谈自动微分：自动微分中的前向模式与反向模式
+              一文总结Python和C/C++的交互方式
             </div>
           </div>
         </a>
       
       
         
-        <a href="../../OCR%E7%9B%B8%E5%85%B3/2022%E5%B9%B403%E6%9C%8829%E6%97%A5%2022%E6%97%B651%E5%88%8611%E7%A7%92/" class="md-footer__link md-footer__link--next" aria-label="下一页: Pytorch中CTC Loss源码解析" rel="next">
+        <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2021%E5%B9%B412%E6%9C%8825%E6%97%A5%2016%E6%97%B604%E5%88%8649%E7%A7%92/" class="md-footer__link md-footer__link--next" aria-label="下一页: Network Slimming-神经网络剪枝的精细控制实现" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 下一页
               </span>
-              Pytorch中CTC Loss源码解析
+              Network Slimming-神经网络剪枝的精细控制实现
             </div>
           </div>
           <div class="md-footer__button md-icon">
