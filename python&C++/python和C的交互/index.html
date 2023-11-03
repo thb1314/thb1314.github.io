@@ -336,6 +336,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/%E4%BB%BB%E6%84%8F%E5%87%B8%E5%9B%9B%E8%BE%B9%E5%BD%A2iou%E7%9A%84%E8%AE%A1%E7%AE%97/" class="md-nav__link">
+        凸四边形IoU的计算
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -969,6 +983,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/mmyolo_tensorrt/" class="md-nav__link">
+        Yolo系列模型的部署、精度对齐与int8量化加速
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1101,6 +1129,20 @@
     <li class="md-nav__item">
       <a href="../../%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/ffmpeg%20GPU%E5%8A%A0%E9%80%9F%E7%89%88%E6%9C%AC%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95/" class="md-nav__link">
         FFMPEG Cuda版本编译安装方法
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/ubuntu%E5%AE%89%E5%8D%93%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" class="md-nav__link">
+        Ubuntu安卓开发环境安装
       </a>
     </li>
   
@@ -1983,9 +2025,11 @@
 <p>shell编译命令如下</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-28-1">1</a></span>
 <span class="normal"><a href="#__codelineno-28-2">2</a></span>
-<span class="normal"><a href="#__codelineno-28-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1"></a>gcc main.c -std<span class="o">=</span>c99 <span class="k">$(</span>python3-config --includes<span class="k">)</span> <span class="k">$(</span>python3-config --ldflags<span class="k">)</span> -fno-lto -o main
-<a id="__codelineno-28-2" name="__codelineno-28-2"></a>
-<a id="__codelineno-28-3" name="__codelineno-28-3"></a>./main
+<span class="normal"><a href="#__codelineno-28-3">3</a></span>
+<span class="normal"><a href="#__codelineno-28-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1"></a>gcc main.c -std<span class="o">=</span>c99 <span class="k">$(</span>python3-config --includes<span class="k">)</span> <span class="k">$(</span>python3-config --ldflags<span class="k">)</span> -fno-lto -o main
+<a id="__codelineno-28-2" name="__codelineno-28-2"></a><span class="c1"># python3.8版本及以上请在python3-config --ldflags后面再加入--embed选项</span>
+<a id="__codelineno-28-3" name="__codelineno-28-3"></a>
+<a id="__codelineno-28-4" name="__codelineno-28-4"></a>./main
 </code></pre></div></td></tr></table></div>
 <h3 id="32-pybind11python">3.2 采用Pybind11扩展调用python</h3>
 <p>pybind11通过简单的C++包装公开了Python类型和函数，这使得我们可以方便的在C++中调用Python代码，而无需借助Python C API。</p>
@@ -2122,11 +2166,11 @@
   <small>
     
       最后更新:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 11, 2023</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 3, 2023</span>
       
         <br>
         创建日期:
-        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">September 11, 2023</span>
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">November 3, 2023</span>
       
     
   </small>
