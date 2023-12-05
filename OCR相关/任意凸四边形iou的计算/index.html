@@ -1240,6 +1240,9 @@
 
 
 <h1 id="iou">凸四边形IoU的计算</h1>
+<blockquote>
+<p>本文写于2023年12月04日 晚上八点</p>
+</blockquote>
 <p>在目标检测任务中，相比于矩形，任意四边形可以将不规则形状物体描述的更为精确。</p>
 <p>在四边形范围内，有一类凸四边形在现实世界中较为常见。凸四边形是指没有角度数大于180°的四边形，主要包含平行四边形（矩形、菱形）、梯形等。</p>
 <p>“凸”这个实际上对应的是凸优化中的“凸集”的概念：</p>
@@ -5095,11 +5098,11 @@ y_1 \le y_p \le y_2
   <small>
     
       最后更新:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">December 4, 2023</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">December 5, 2023</span>
       
         <br>
         创建日期:
-        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">December 4, 2023</span>
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">December 5, 2023</span>
       
     
   </small>
@@ -5108,6 +5111,53 @@ y_1 \le y_p \le y_2
 
 
 
+
+  <h2 id="__comments">评论</h2>
+  <script src="https://giscus.app/client.js"
+        data-repo="thb1314/thb1314.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkyNDg0MTE1NTg="
+        data-category="Announcements"
+        data-category-id="DIC_kwDODs51ps4CSAxI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="0"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="light"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+  </script>
+  <!-- Synchronize Giscus theme with palette -->
+  <script>
+    var giscus = document.querySelector("script[src*=giscus]")
+
+    /* Set palette on initial load */
+    var palette = __md_get("__palette")
+    if (palette && typeof palette.color === "object") {
+      var theme = palette.color.scheme === "slate" ? "dark" : "light"
+      giscus.setAttribute("data-theme", theme) 
+    }
+
+    /* Register event handlers after documented loaded */
+    document.addEventListener("DOMContentLoaded", function() {
+      var ref = document.querySelector("[data-md-component=palette]")
+	  if(!ref) return
+      ref.addEventListener("change", function() {
+        var palette = __md_get("__palette")
+        if (palette && typeof palette.color === "object") {
+          var theme = palette.color.scheme === "slate" ? "dark" : "light"
+
+          /* Instruct Giscus to change theme */
+          var frame = document.querySelector(".giscus-frame")
+          frame.contentWindow.postMessage(
+            { giscus: { setConfig: { theme } } },
+            "https://giscus.app"
+          )
+        }
+      })
+    })
+  </script>
 
                 
               </article>
