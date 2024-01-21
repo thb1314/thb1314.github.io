@@ -1198,7 +1198,7 @@
 <p>本文写于2024-01-20/21下午</p>
 </blockquote>
 <h2 id="_1">一、前言</h2>
-<p>忙活了一个多月，终于腾出手来将这片文章安排进了TODO List，借着一个周末两个慵懒的下午梳理一下RoiAlign的具体实现步骤和原理。</p>
+<p>忙活了一个多月，终于腾出手来将这篇文章安排进了TODO List，借着一个周末两个慵懒的下午梳理一下RoiAlign的具体实现步骤和原理。</p>
 <p>只要是入门了目标检测的朋友就一定知道RoiAlign，只是了解程度不一样，曾经的我看源码都看的头疼，现在总算可以沉下心来深入研究一下。</p>
 <p>为什么研究它呢？实际上是我在看Grounding DINO的时候，一直向前追溯相关文献，从DINO、DETR、DCN系列再到RoiAlign，我不禁问自己：RoiAlign前向计算比较好理解，那么RoiAlign的反向传播过程是什么样子呢？</p>
 <p>于是，就有了这篇文章。</p>
@@ -1223,27 +1223,27 @@
 <p>先说一下什么是双线性插值。</p>
 <p>双线性插值是有两个变量的插值函数的线性插值扩展，其核心思想是在两个方向分别进行一次线性插值。</p>
 <p><img alt="img" src="../ROIAlign%E7%AE%97%E5%AD%90%E7%9A%84%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD.assets/watermark%2Ctype_ZHJvaWRzYW5zZmFsbGJhY2s%2Cshadow_50%2Ctext_Q1NETiBAd2VpeGluXzQ1NDkyNjM2%2Csize_19%2Ccolor_FFFFFF%2Ct_70%2Cg_se%2Cx_16.png" /></p>
-<p>假如我们想得到未知函数 <span class="arithmatex">\(f(z)\)</span>在点<span class="arithmatex">\(P = (x, y)\)</span> 的值，已知函数<span class="arithmatex">\(f(z)\)</span>在<span class="arithmatex">\(Q_{11} = (x_1, y_1)\)</span>、<span class="arithmatex">\(Q_{12}=(x_1, y_2)\)</span>，<span class="arithmatex">\(Q_{21}=(x_2,y_1)\)</span> 以及 <span class="arithmatex">\(Q_{22}=(x_2,y_2)\)</span> 四个点的值。最常见的情况，<span class="arithmatex">\(f(z)\)</span>就是一个像素点的像素值。首先在<span class="arithmatex">\(X\)</span>方向进行线性插值，得到
-$$
+<p>假如我们想得到未知函数 <span class="arithmatex">\(f(z)\)</span>在点<span class="arithmatex">\(P = (x, y)\)</span> 的值，已知函数<span class="arithmatex">\(f(z)\)</span>在<span class="arithmatex">\(Q_{11} = (x_1, y_1)\)</span>、<span class="arithmatex">\(Q_{12}=(x_1, y_2)\)</span>，<span class="arithmatex">\(Q_{21}=(x_2,y_1)\)</span> 以及 <span class="arithmatex">\(Q_{22}=(x_2,y_2)\)</span> 四个点的值。最常见的情况，<span class="arithmatex">\(f(z)\)</span>就是一个像素点的像素值。首先在<span class="arithmatex">\(X\)</span>方向进行线性插值，得到</p>
+<div class="arithmatex">\[
 \begin{align}
-&amp; f(R_1) \approx \frac{x_2 - x}{x_2 - x_1} f(Q_{11}) + \frac{x - x_1}{x_2 - x_1} f(Q_{21}) where R_1 = (x, y_1) \
-&amp; f(R_2) \approx \frac{x_2 - x}{x_2 - x_1} f(Q_{12}) + \frac{x - x_1}{x_2 - x_1} f(Q_{22}) where R_2 = (x, y_2)
+&amp; f(R_1) \approx \frac{x_2 - x}{x_2 - x_1} f(Q_{11}) + \frac{x - x_1}{x_2 - x_1} f(Q_{21})\ where\ R_1 = (x, y_1) \\
+&amp; f(R_2) \approx \frac{x_2 - x}{x_2 - x_1} f(Q_{12}) + \frac{x - x_1}{x_2 - x_1} f(Q_{22})\ where\ R_2 = (x, y_2)
 \end{align}
-$$
-然后在y方向进行线性插值，得到
-$$
+\]</div>
+<p>然后在y方向进行线性插值，得到</p>
+<div class="arithmatex">\[
 f(P) \approx \frac{y_2 - y}{y_2 - y_1} f(R_1) + \frac{y - y_1}{y_2 - y_1} f(R_2)
-$$
-综合起来就是双线性插值的结果：
-$$
+\]</div>
+<p>综合起来就是双线性插值的结果：</p>
+<div class="arithmatex">\[
 \begin{align}
-f(x, y) &amp;\approx \frac{(x_2 - x)(y_2 - y)}{(x_2 - x_1)(y_2 - y_1)}f(Q_{11})  \ 
-&amp;+ \frac{(x - x_1)(y_2 - y)}{(x_2 - x_1)(y_2 - y_1)}f(Q_{21}) \
-&amp;+ \frac{(x_2 - x)(y - y_1)}{(x_2 - x_1)(y_2 - y_1)}f(Q_{12})  \
-&amp;+ \frac{(x - x_1)(y - y_1)}{(x_2 - x_1)(y_2 - y_1)}f(Q_{22})</p>
-<p>\end{align}
-$$
-因此双线性插值的计算结果与八个值有关系，四个函数值和四个与之对应的系数值。</p>
+f(x, y) &amp;\approx \frac{(x_2 - x)(y_2 - y)}{(x_2 - x_1)(y_2 - y_1)}f(Q_{11})  \\ 
+&amp;+ \frac{(x - x_1)(y_2 - y)}{(x_2 - x_1)(y_2 - y_1)}f(Q_{21}) \\
+&amp;+ \frac{(x_2 - x)(y - y_1)}{(x_2 - x_1)(y_2 - y_1)}f(Q_{12})  \\
+&amp;+ \frac{(x - x_1)(y - y_1)}{(x_2 - x_1)(y_2 - y_1)}f(Q_{22})
+\end{align}
+\]</div>
+<p>因此双线性插值的计算结果与八个值有关系，四个函数值和四个与之对应的系数值。</p>
 <p>回过头我们看一下RoiAlign算子的计算过程，通过这图解释RoiAlign的工作原理</p>
 <p><img alt="img" src="../ROIAlign%E7%AE%97%E5%AD%90%E7%9A%84%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD.assets/75922-20180307164731751-1319745424.png" /></p>
 <p>针对上图</p>
