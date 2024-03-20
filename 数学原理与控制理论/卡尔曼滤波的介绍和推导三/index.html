@@ -13,7 +13,7 @@
     
     
       
-        <title>卡尔曼滤波的介绍和推导三 - 海滨的Blog</title>
+        <title>卡尔曼滤波的公式推导和应用举例(三) - 海滨的Blog</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#comments-true" class="md-skip">
+        <a href="#_1" class="md-skip">
           跳转至
         </a>
       
@@ -97,7 +97,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              卡尔曼滤波的介绍和推导三
+              卡尔曼滤波的公式推导和应用举例(三)
             
           </span>
         </div>
@@ -550,14 +550,16 @@
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
       
+        
+      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          卡尔曼滤波的介绍和推导三
+          卡尔曼滤波的公式推导和应用举例(三)
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        卡尔曼滤波的介绍和推导三
+        卡尔曼滤波的公式推导和应用举例(三)
       </a>
       
         
@@ -565,6 +567,8 @@
 <nav class="md-nav md-nav--secondary" aria-label="目录">
   
   
+  
+    
   
   
     <label class="md-nav__title" for="__toc">
@@ -574,71 +578,51 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#comments-true" class="md-nav__link">
-    `comments: true
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    卡尔曼滤波的公式推导和应用举例(三)
-  </a>
-  
-    <nav class="md-nav" aria-label="卡尔曼滤波的公式推导和应用举例(三)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     零、前言
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     一、卡尔曼滤波的公式回顾
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     二、卡尔曼滤波的实现解读
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     三、卡尔曼滤波的应用—滤波
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     四、卡尔曼滤波的应用—预测
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     五、总结
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     参考链接
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1124,6 +1108,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1132,71 +1118,51 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#comments-true" class="md-nav__link">
-    `comments: true
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    卡尔曼滤波的公式推导和应用举例(三)
-  </a>
-  
-    <nav class="md-nav" aria-label="卡尔曼滤波的公式推导和应用举例(三)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     零、前言
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     一、卡尔曼滤波的公式回顾
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     二、卡尔曼滤波的实现解读
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     三、卡尔曼滤波的应用—滤波
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
     四、卡尔曼滤波的应用—预测
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
     五、总结
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
     参考链接
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1215,8 +1181,6 @@
                   
 
 
-<hr />
-<h2 id="comments-true">`comments: true</h2>
 <h1 id="_1">卡尔曼滤波的公式推导和应用举例(三)</h1>
 <blockquote>
 <p>本文写于2024年2月14日上午十点、2024年3月19日晚上十点和2024年3月20日晚上十点</p>
@@ -1277,13 +1241,13 @@ K_k &amp;= P(k|k-1)H_k^T  [H_kP(k|k - 1)H_k^T + R_k]^{-1} \\
 P_k^- = A_{k - 1}P(k - 1|k - 1)A_{k - 1}^T + Q_{k-1}
 \]</div>
 <p>⑤最优(后验)估计误差协方差更新公式</p>
-<p>$$
+<div class="arithmatex">\[
 \begin{align}
-P_k^+ = P(k|k) &amp;= [I - K_kH_k] P(k|k-1) [I - K_kH_k]^T + K_k R_k K_k^T \ 
+P_k^+ = P(k|k) &amp;= [I - K_kH_k] P(k|k-1) [I - K_kH_k]^T + K_k R_k K_k^T \\ 
 &amp;= [I - K_kH_k] P(k|k-1)
 \end{align}
-$$
-第一行公式没有代入卡尔曼增益的<span class="arithmatex">\(K_k\)</span>计算公式，是最优估计误差协方差的一般形式，不要求<span class="arithmatex">\(K_k\)</span>必须为卡尔曼增益。</p>
+\]</div>
+<p>第一行公式没有代入卡尔曼增益的<span class="arithmatex">\(K_k\)</span>计算公式，是最优估计误差协方差的一般形式，不要求<span class="arithmatex">\(K_k\)</span>必须为卡尔曼增益。</p>
 <h2 id="_4">二、卡尔曼滤波的实现解读</h2>
 <p>下面本文对python中注明的滤波库<code>filterpy</code>中卡尔曼滤波部分进行解读。</p>
 <p>FilterPy是一个实现了各种滤波器的Python模块，它实现著名的卡尔曼滤波和粒子滤波器。我们可以直接调用该库完成卡尔曼滤波器实现。其中的主要模块包括：</p>
@@ -2963,65 +2927,65 @@ $$
 </code></pre></div></td></tr></table></div>
 <h2 id="_5">三、卡尔曼滤波的应用—滤波</h2>
 <p>在这个案例中，我们将使用卡尔曼滤波器来跟踪一辆汽车在二维空间中的匀速直线运动。我们假设汽车在 x 轴和 y 轴上以恒定速度移动，假设我们仅能测得当前位置，且位移传感器本身测量误差方差和过程误差方差分别为1和0.01。</p>
-<p>建模过程如下：
-$$
+<p>建模过程如下：</p>
+<div class="arithmatex">\[
 \begin{align}
-&amp;x_k = A_{k - 1}x_{k - 1} + B_{k-1}u_{k-1} + w_{k-1} \
+&amp;x_k = A_{k - 1}x_{k - 1} + B_{k-1}u_{k-1} + w_{k-1} \\
 &amp;z_k = H_k x_k + v_k
 \end{align}
-$$</p>
-<p>设<span class="arithmatex">\([x_1, x_2, x_3, x_4]\)</span>表示系统状态。<span class="arithmatex">\([x_1, x_2]\)</span>为汽车位移的值，<span class="arithmatex">\([x_3, x_4]\)</span>为汽车运行的两个方向的分速度。
-$$
+\]</div>
+<p>设<span class="arithmatex">\([x_1, x_2, x_3, x_4]\)</span>表示系统状态。<span class="arithmatex">\([x_1, x_2]\)</span>为汽车位移的值，<span class="arithmatex">\([x_3, x_4]\)</span>为汽车运行的两个方向的分速度。</p>
+<div class="arithmatex">\[
 x =\begin{bmatrix}
-x_1 \
-x_2 \
-x_3 \
+x_1 \\
+x_2 \\
+x_3 \\
 x_4
 \end{bmatrix}
-$$
-由于是匀速直线运动，状态转移矩阵<span class="arithmatex">\(A_{k - 1}\)</span>是一个常数矩阵，<span class="arithmatex">\(B_{k-1}\)</span>是全零矩阵。
-$$
+\]</div>
+<p>由于是匀速直线运动，状态转移矩阵<span class="arithmatex">\(A_{k - 1}\)</span>是一个常数矩阵，<span class="arithmatex">\(B_{k-1}\)</span>是全零矩阵。</p>
+<div class="arithmatex">\[
 A = \begin{bmatrix}
-1 &amp; 0 &amp; 1 &amp; 0 \
-0 &amp; 1 &amp; 0 &amp; 1 \
-0 &amp; 0 &amp; 1 &amp; 0 \
+1 &amp; 0 &amp; 1 &amp; 0 \\
+0 &amp; 1 &amp; 0 &amp; 1 \\
+0 &amp; 0 &amp; 1 &amp; 0 \\
 0 &amp; 0 &amp; 0 &amp; 1
 \end{bmatrix}
-$$</p>
+\]</div>
 <p><span class="arithmatex">\([1,0,1,0]\)</span>中第二个1表示时间间隔是1。</p>
-<p>过程噪声协方差矩阵Q为，
-$$
+<p>过程噪声协方差矩阵Q为，</p>
+<div class="arithmatex">\[
 Q = \begin{bmatrix}
-0.01 &amp; 0 &amp; 0 &amp; 0 \
-0 &amp; 0.01 &amp; 0 &amp; 0 \
-0 &amp; 0 &amp; 0.01 &amp; 0 \
+0.01 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0.01 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0.01 &amp; 0 \\
 0 &amp; 0 &amp; 0 &amp; 0.01
 \end{bmatrix}
-$$</p>
-<p>测量噪声协方差R为
-$$
+\]</div>
+<p>测量噪声协方差R为</p>
+<div class="arithmatex">\[
 R = \begin{bmatrix}
-1 &amp; 0  \
-0 &amp; 1  \
+1 &amp; 0  \\
+0 &amp; 1  \\
 \end{bmatrix}
-$$</p>
-<p>测量矩阵H表示为
-$$
+\]</div>
+<p>测量矩阵H表示为</p>
+<div class="arithmatex">\[
 H = \begin{bmatrix}
-1 &amp; 0 &amp; 0 &amp; 0 \
+1 &amp; 0 &amp; 0 &amp; 0 \\
 0 &amp; 1 &amp; 0 &amp; 0 
 \end{bmatrix}
-$$</p>
-<p>P是先验估计的协方差，对不可观察的初速度，给予高度不确定性
-$$
+\]</div>
+<p>P是先验估计的协方差，对不可观察的初速度，给予高度不确定性</p>
+<div class="arithmatex">\[
 P = \begin{bmatrix}
-10 &amp; 0 &amp; 0 &amp; 0 \
-0 &amp; 10 &amp; 0 &amp; 0 \
-0 &amp; 0 &amp; 1000 &amp; 0 \
+10 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 10 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 1000 &amp; 0 \\
 0 &amp; 0 &amp; 0 &amp; 1000
 \end{bmatrix}
-$$
-对于不可观察的<span class="arithmatex">\(x_3,x_4\)</span>，认为它的误差很大。</p>
+\]</div>
+<p>对于不可观察的<span class="arithmatex">\(x_3,x_4\)</span>，认为它的误差很大。</p>
 <p>下面是代码</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-3-2"> 2</a></span>
@@ -3835,6 +3799,53 @@ $$
 
 
 
+
+  <h2 id="__comments">评论</h2>
+  <script src="https://giscus.app/client.js"
+        data-repo="thb1314/thb1314.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkyNDg0MTE1NTg="
+        data-category="Announcements"
+        data-category-id="DIC_kwDODs51ps4CSAxI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="0"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="light"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+  </script>
+  <!-- Synchronize Giscus theme with palette -->
+  <script>
+    var giscus = document.querySelector("script[src*=giscus]")
+
+    /* Set palette on initial load */
+    var palette = __md_get("__palette")
+    if (palette && typeof palette.color === "object") {
+      var theme = palette.color.scheme === "slate" ? "dark" : "light"
+      giscus.setAttribute("data-theme", theme) 
+    }
+
+    /* Register event handlers after documented loaded */
+    document.addEventListener("DOMContentLoaded", function() {
+      var ref = document.querySelector("[data-md-component=palette]")
+	  if(!ref) return
+      ref.addEventListener("change", function() {
+        var palette = __md_get("__palette")
+        if (palette && typeof palette.color === "object") {
+          var theme = palette.color.scheme === "slate" ? "dark" : "light"
+
+          /* Instruct Giscus to change theme */
+          var frame = document.querySelector(".giscus-frame")
+          frame.contentWindow.postMessage(
+            { giscus: { setConfig: { theme } } },
+            "https://giscus.app"
+          )
+        }
+      })
+    })
+  </script>
 
                 
               </article>
