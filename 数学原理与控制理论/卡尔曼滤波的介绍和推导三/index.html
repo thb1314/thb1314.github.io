@@ -1200,12 +1200,12 @@
 <p><span class="arithmatex">\(w_{k-1}\)</span>是过程噪声，我们假定其符合均值为0，协方差矩阵为<span class="arithmatex">\(Q_{k-1}\)</span>的高斯噪声。</p>
 <p><span class="arithmatex">\(H_k\)</span>为测量矩阵（Measurement Matrix），描述了从系统状态到测量值的转换关系</p>
 <p><span class="arithmatex">\(v_k\)</span>是测量噪声，我们假定其符合均值为0，协方差为<span class="arithmatex">\(R_k\)</span>的高斯噪声。</p>
-<p><strong>状态预测方程</strong>是取得是每一项的概率最大值处对应的自变量的值，噪声<span class="arithmatex">\(w_{k-1}\)</span>是均值为0的高斯噪声，因此最大概率对应的值为0。
-$$
+<p><strong>状态预测方程</strong>是取得是每一项的概率最大值处对应的自变量的值，噪声<span class="arithmatex">\(w_{k-1}\)</span>是均值为0的高斯噪声，因此最大概率对应的值为0。</p>
+<div class="arithmatex">\[
 \begin{align}
-&amp;\hat x^-<em -="-" 1="1" k="k">k = A</em>\hat x^{+}<em k-1="k-1">{k - 1} + B</em>u_{k-1} + 0\
+&amp;\hat x^-_k = A_{k - 1}\hat x^{+}_{k - 1} + B_{k-1}u_{k-1} + 0\\
 \end{align}
-$$</p>
+\]</div>
 <p>对系统状态向量上面加上一个帽子符号表示这是一个估计量，也就是我们实际输出的量。</p>
 <p><span class="arithmatex">\(\hat x^{+}_{k - 1}\)</span>表示<span class="arithmatex">\(k-1\)</span>时刻时的卡尔曼滤波后的状态向量，也称为状态向量的后验估计。</p>
 <p><span class="arithmatex">\(\hat x^-_k\)</span>表示当前根据系统状态方程计算预测得到的状态向量，也称为状态向量的先验估计。</p>
@@ -3786,11 +3786,11 @@ P = \begin{bmatrix}
   <small>
     
       最后更新:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">March 20, 2024</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">March 21, 2024</span>
       
         <br>
         创建日期:
-        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">March 20, 2024</span>
+        <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">March 21, 2024</span>
       
     
   </small>
