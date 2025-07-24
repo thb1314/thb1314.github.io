@@ -1,0 +1,4824 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="海滨">
+      
+      
+      
+        <link rel="prev" href="../../python%26C%2B%2B/%E5%B5%8C%E5%85%A5%E5%BC%8Fso%E5%BC%80%E5%8F%91/">
+      
+      
+        <link rel="next" href="../../%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8E%A8%E5%AF%BC%E4%B8%80/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.10">
+    
+    
+      
+        <title>图文多模态数据集归纳（一） - 海滨的Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.4af4bdda.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="海滨的Blog" class="md-header__button md-logo" aria-label="海滨的Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            海滨的Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              图文多模态数据集归纳（一）
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/thb1314" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="海滨的Blog" class="md-nav__button md-logo" aria-label="海滨的Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    海滨的Blog
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/thb1314" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    DL框架原理与技巧
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            DL框架原理与技巧
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Pytorch下的多卡间变量同步操作
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8807%E6%97%A5%2020%E6%97%B633%E5%88%8650%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    自动微分autograd原理-简单demo
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8811%E6%97%A5%2015%E6%97%B614%E5%88%8655%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    再谈自动微分：自动微分中的前向模式与反向模式
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/distributed_ema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    分布式训练场景下ModelEMA的优化
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/gray_image_pretrained_on_imagenet/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    灰度图分类采用Imagenet预训练时卷积核压缩Trick
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    OCR相关
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            OCR相关
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/2022%E5%B9%B403%E6%9C%8829%E6%97%A5%2022%E6%97%B651%E5%88%8611%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Pytorch中CTC Loss源码解析
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/360%C2%B0%E6%97%8B%E8%BD%AC%E6%96%87%E5%AD%97%E5%8C%BA%E5%9F%9F%E6%A3%80%E6%B5%8B%E5%AE%9E%E6%88%981%EF%BC%9A%E5%85%A8%E6%99%AF%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%90%BD%E5%9C%B0%E6%80%9D%E8%B7%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    360°旋转文字区域检测实战1：全景架构设计与落地思路
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/360%C2%B0%E6%97%8B%E8%BD%AC%E6%96%87%E5%AD%97%E5%8C%BA%E5%9F%9F%E6%A3%80%E6%B5%8B%E5%AE%9E%E6%88%982%EF%BC%9A%E9%AB%98%E6%95%88%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7%E4%B8%8E%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%E6%8C%87%E5%8D%97/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    360°旋转文字区域检测实战2：高效标注工具与团队协作指南
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/%E4%BB%BB%E6%84%8F%E5%87%B8%E5%9B%9B%E8%BE%B9%E5%BD%A2iou%E7%9A%84%E8%AE%A1%E7%AE%97/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    凸四边形IoU的计算
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Cuda相关
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Cuda相关
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B406%E6%9C%8812%E6%97%A5%2021%E6%97%B613%E5%88%8644%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cublas中矩阵乘及其广播机制的实现与单元测试
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B407%E6%9C%8823%E6%97%A5%2023%E6%97%B617%E5%88%8614%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cuDNN API的使用与测试-以二维卷积+Relu激活函数为例
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cuda%E7%9B%B8%E5%85%B3/ROIAlign%E7%AE%97%E5%AD%90%E7%9A%84%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    RoiAlign算子的前向传播与反向传播解读
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    python&C++
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            python&C++
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/2022%E5%B9%B406%E6%9C%8807%E6%97%A5%2015%E6%97%B650%E5%88%8636%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    python与C/C++数据交互的陷阱：numpy/torch中的视图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/matrix_python_cpp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Numpy和Eigen—Python与C++中的矩阵运算库的联系
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/python%E5%92%8CC%E7%9A%84%E4%BA%A4%E4%BA%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    一文总结Python和C/C++的交互方式
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/%E5%B5%8C%E5%85%A5%E5%BC%8Fso%E5%BC%80%E5%8F%91/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    嵌入式开发采用so动态加载摆脱buildroot依赖
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    图文多模态
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            图文多模态
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    图文多模态数据集归纳（一）
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    图文多模态数据集归纳（一）
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      前言
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-caption" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Caption
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-general-qa" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. General QA
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-mathematics" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Mathematics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-ocr" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. OCR
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-kownledge" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Kownledge
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-grounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Grounding
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-document" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Document
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-science" class="md-nav__link">
+    <span class="md-ellipsis">
+      8. Science
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-conversation" class="md-nav__link">
+    <span class="md-ellipsis">
+      9. Conversation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-medical" class="md-nav__link">
+    <span class="md-ellipsis">
+      10. Medical
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-gui" class="md-nav__link">
+    <span class="md-ellipsis">
+      11. GUI
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      12. Evaluation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    数学原理与控制理论
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            数学原理与控制理论
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8E%A8%E5%AF%BC%E4%B8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    卡尔曼滤波的公式推导和应用举例(一)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8E%A8%E5%AF%BC%E4%B8%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    卡尔曼滤波的公式推导和应用举例(三)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8E%A8%E5%AF%BC%E4%BA%8C/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    卡尔曼滤波的公式推导和应用举例(二)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    模型轻量化
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            模型轻量化
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2021%E5%B9%B412%E6%9C%8825%E6%97%A5%2016%E6%97%B604%E5%88%8649%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Network Slimming-神经网络剪枝的精细控制实现
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B401%E6%9C%8817%E6%97%A5%2010%E6%97%B647%E5%88%8629%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    模型压缩框架nncf模型量化中QAT量化参数的梯度推导
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8805%E6%97%A5%2016%E6%97%B630%E5%88%8647%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    对模型量化框架mqbench添加openvino推理格式支持
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8821%E6%97%A5%2012%E6%97%B619%E5%88%8614%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    一文总结TensorRT下两种量化方式QAT和PTQ的部署
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/%E5%AF%B9%E5%9F%BA%E4%BA%8EKL%E6%95%A3%E5%BA%A6%E7%A1%AE%E5%AE%9A%E9%87%8F%E5%8C%96%E5%8F%82%E6%95%B0%E6%96%B9%E6%B3%95%E7%9A%84%E5%8E%9F%E7%90%86%E6%80%A7%E8%A7%A3%E8%AF%BB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    对基于KL散度确定量化参数方法的原理性解读
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    模型部署
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            模型部署
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2021%E5%B9%B412%E6%9C%8816%E6%97%A5%2014%E6%97%B626%E5%88%8600%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8806%E6%97%A5%2022%E6%97%B621%E5%88%8616%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    生产者消费者模式在多batch推理下的应用(延时队列)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8811%E6%97%A5%2023%E6%97%B612%E5%88%8655%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B405%E6%9C%8828%E6%97%A5%2017%E6%97%B623%E5%88%8651%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    计算图的优化-以onnx表示形式为例
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B408%E6%9C%8802%E6%97%A5%2023%E6%97%B628%E5%88%8628%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    TensorRT Plugin的实现、调试与验证：以实现Layernorm为例
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/20230114%E5%8D%95%E6%9C%BA%E5%A4%9A%E5%8D%A1%E8%AE%A1%E7%AE%97%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    对单机多卡AI模型推理场景下计算资源分配问题的思考
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/maskrcnn-tensorrt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于mmdet的maskrcnn在TensorRT上的端到端部署与精度对齐
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/mmyolo_tensorrt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Yolo系列模型的部署、精度对齐与int8量化加速
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    论文解读
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            论文解读
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/TOOD/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    TOOD论文和源码解读：目标检测中定位和分类任务一致性问题
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/convnext/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于ConvNext若干细节的解读与讨论
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/nanodet-plus-explain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Nanodet-Plus 从数据集、模型搭建到训练全流程解读
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/swin_transformer_relative_pos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    对Swin Transformer中的相对位置编码与attention mask的理解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    软件安装
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            软件安装
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/ffmpeg%20GPU%E5%8A%A0%E9%80%9F%E7%89%88%E6%9C%AC%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FFMPEG Cuda版本编译安装方法
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/ubuntu%E5%AE%89%E5%8D%93%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ubuntu安卓开发环境安装
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    项目总结
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            项目总结
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E8%A1%A8%E9%9D%A2%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%96%B9%E6%B3%95%E8%AE%BA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视觉类表面缺陷检测项目相关技术总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      前言
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-caption" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Caption
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-general-qa" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. General QA
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-mathematics" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Mathematics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-ocr" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. OCR
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-kownledge" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Kownledge
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-grounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Grounding
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-document" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Document
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-science" class="md-nav__link">
+    <span class="md-ellipsis">
+      8. Science
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-conversation" class="md-nav__link">
+    <span class="md-ellipsis">
+      9. Conversation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-medical" class="md-nav__link">
+    <span class="md-ellipsis">
+      10. Medical
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-gui" class="md-nav__link">
+    <span class="md-ellipsis">
+      11. GUI
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      12. Evaluation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="_1">图文多模态数据集归纳（一）<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>本文写于2025年7月24号 晚11点</p>
+</blockquote>
+<h2 id="_2">前言<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>在当今人工智能快速发展的时代，图文多模态技术正日益成为连接视觉与语言的重要桥梁。</p>
+<p>为了帮助研究者系统梳理现有数据资源，本归纳从十二大应用场景入手：从基础的图像描述（Caption）、通用问答（General QA）、数学题推理（Mathematics），到专注文字识别的 OCR，以及涵盖知识推理、视觉定位（Grounding）、文档解析、科学问答、对话系统、医疗影像、界面交互（GUI）与评估方法等方向。每一章节均汇集代表性数据集，深入剖析其特点与适用场景，助力大家快速定位所需资源、对比方法优劣，并为后续的模型设计与创新提供坚实的基石。</p>
+<blockquote>
+<p>之所以写一是因为后面还会有，本文中的数据集仅关注于单图QA，后续会增加多图和视频的总结放到二三。</p>
+<p>本文资料会一直更新，欢迎批评指正</p>
+</blockquote>
+<h2 id="1-caption">1. Caption<a class="headerlink" href="#1-caption" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>数据集名称</th>
+<th>简介</th>
+<th>领域</th>
+<th>年份</th>
+<th>语言</th>
+<th>规模</th>
+<th>发布机构</th>
+<th>用途</th>
+<th>数据集链接</th>
+<th>是否包含 Caption 数据</th>
+<th>是否包含多模态 QA Instructtion 数据</th>
+<th>训练还是评估</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TextCaps</td>
+<td>使用包含文字内容的图像进行图像描述的数据集，每张图像有 5 个描述，旨在提高模型对图像中文字的理解和描述能力</td>
+<td>计算机视觉、自然语言处理</td>
+<td>2020</td>
+<td>英文</td>
+<td>28408 张图像，142040 条描述</td>
+<td>Facebook AI Research 团队</td>
+<td>评估多模态模型的图像描述和阅读理解能力</td>
+<td><a href="https://huggingface.co/datasets/lmms-lab/TextCaps">Hugging Face</a></td>
+<td>是</td>
+<td>否</td>
+<td>训练/评估</td>
+</tr>
+<tr>
+<td>ShareGPT4o</td>
+<td>一个大规模的多模态数据集，包含20万张图像、1万段视频和1万份音频的详细描述，利用GPT-4o的多模态能力生成注释。</td>
+<td>自然语言处理、多模态</td>
+<td>2025</td>
+<td>中文、英文</td>
+<td>图像：20万张；视频：1万段；音频：1万份（即将推出）</td>
+<td>OpenGVLab、上海人工智能实验室等机构</td>
+<td>用于增强大型多模态模型的模态对齐和整体性能，提供高质量的图像、视频和音频描述。</td>
+<td><a href="https://huggingface.co/datasets/OpenGVLab/ShareGPT-4o">Hugging Face</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>ShareGPT4V</td>
+<td>基于ShareGPT和GPT-4V的多模态对话数据集，包含图像与文本交互指令及回复。</td>
+<td>多模态、视觉语言</td>
+<td>2023</td>
+<td>中文/英文</td>
+<td>数百万对话样本</td>
+<td>华科</td>
+<td>视觉语言模型训练</td>
+<td>https://github.com/InternLM/InternLM-XComposer/blob/main/projects/ShareGPT4V/docs/Data.md</td>
+<td>是</td>
+<td>是</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>OpenImages-Caption</td>
+<td>基于 OpenImages 数据集的图像描述数据集，提供了丰富的图像和对应的描述，涵盖多种物体类别和场景</td>
+<td>计算机视觉、自然语言处理</td>
+<td>2018</td>
+<td>英文</td>
+<td>训练集 500 万张图像，验证集 25000 张图像，测试集 100000 张图像，每张图像有多个描述</td>
+<td>Google</td>
+<td>用于图像描述生成任务，帮助模型理解复杂场景中的物体和关系</td>
+<td><a href="https://storage.googleapis.com/openimages/web/index.html">OpenImages</a></td>
+<td>是</td>
+<td>否</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>NewYorkerCaptionContest</td>
+<td>以《纽约客》杂志的卡通图片为素材，收集用户生成的幽默标题，用于研究幽默和创造力在图像描述中的应用</td>
+<td>计算机视觉、自然语言处理、幽默计算</td>
+<td>-</td>
+<td>英文</td>
+<td>约 2400 张图像，每张图像有多个用户生成的标题</td>
+<td>《纽约客》杂志及研究机构</td>
+<td>用于探索图像描述中的幽默元素和创造力，评估模型生成幽默描述的能力</td>
+<td>https://huggingface.co/datasets/jmhessel/newyorker_caption_contest</td>
+<td>是</td>
+<td>否</td>
+<td>评估</td>
+</tr>
+<tr>
+<td>LAION-400-M</td>
+<td>大规模图像-文本对数据集，包含4亿个图文对，用于训练视觉语言模型。</td>
+<td>图像与文本</td>
+<td>2021</td>
+<td>多语言</td>
+<td>4亿图文对</td>
+<td>LAION组织</td>
+<td>视觉语言模型训练</td>
+<td><a href="https://huggingface.co/datasets/laion/laion400m">HuggingFace</a></td>
+<td>是</td>
+<td>否</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>LAION-COCO</td>
+<td>LAION-COCO 是基于 COCO 数据集扩展的一个多模态数据集，包含图像与文本描述的配对，专注于大规模的图像-文本对生成任务。该数据集将 COCO 图像集与更多图像-文本对进行组合。</td>
+<td>多模态学习，图像描述，计算机视觉</td>
+<td>2022</td>
+<td>英文</td>
+<td>包含超过600万张图像与其文本描述</td>
+<td>LAION（德国）</td>
+<td>图像描述生成，图像-文本对匹配</td>
+<td><a href="https://huggingface.co/datasets/laion/laion-coco">Hugging Face LAION-COCO</a></td>
+<td>是</td>
+<td>否</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>LAION-5B</td>
+<td>LAION-5B 是一个超大规模多模态数据集，包含 58.5 亿个图像-文本对，涵盖多种语言，广泛用于多模态模型的预训练。</td>
+<td>一般</td>
+<td>2022</td>
+<td>多语言</td>
+<td>58.5亿个图像-文本对</td>
+<td>LAION</td>
+<td>预训练</td>
+<td>https://arxiv.org/abs/2210.08402</td>
+<td>是</td>
+<td>否</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>LLaVAR</td>
+<td>基于 LAION 数据集，专注于提升模型对含文本的图像（如电影海报、书籍封面等）的理解能力，使用 OCR 工具收集 422K 文本丰富图像的预训练数据，并通过与仅文本的 GPT-4 交互生成 16K 高质量指令遵循数据用于微调</td>
+<td>计算机视觉、自然语言处理</td>
+<td>2023</td>
+<td>中文、英文</td>
+<td>包括 422K 预训练数据和 16K（或 20K 更多样本的扩展集）微调数据点</td>
+<td>Georgia Tech、Adobe Research、Stanford University</td>
+<td>用于增强视觉指令调整模型对图像中文本细节的理解，在文本基础的视觉问答数据集（如 ST-VQA、OCR-VQA、TextVQA 和 DocVQA）和 ScienceQA 上显著提升模型性能</td>
+<td>https://llavar.github.io/#data</td>
+<td>是</td>
+<td>是</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>MMInstruct</td>
+<td>MMInstruct包含 973K 条来自 24 个领域的指令，旨在解决现有视觉指令微调数据集在指令注释质量、图像和指令多样性方面的不足，以提升视觉大型语言模型（VLLMs）的性能。</td>
+<td>知识、多学科</td>
+<td>2024</td>
+<td>英语</td>
+<td>指令数量为 973K 条</td>
+<td>上海AILab</td>
+<td>指令微调</td>
+<td>https://huggingface.co/datasets/yuecao0119/MMInstruct-GPT4V</td>
+<td>是</td>
+<td>是</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>CC12M</td>
+<td>CC12M 是一个包含 1200 万图像文本对的多模态数据集，与CC3M 相比，它更大，涵盖了更多的视觉概念集，该概念集广泛用于图像字幕模型的预训练和端到端训练。</td>
+<td>Caption</td>
+<td>2021</td>
+<td>英语</td>
+<td>1200万图像文本对</td>
+<td>Google</td>
+<td>预训练</td>
+<td>https://github.com/google-research-datasets/conceptual-12m</td>
+<td>是</td>
+<td>否</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>CC3M</td>
+<td>CC3M 提供了 300 万图像文本对，用于多模态预训练，帮助模型学习图像和文本之间的关联。</td>
+<td>一般</td>
+<td>2021</td>
+<td>英语</td>
+<td>300万图像文本对</td>
+<td>Google</td>
+<td>预训练</td>
+<td>https://huggingface.co/datasets/pixparse/cc3m-wds</td>
+<td>是</td>
+<td>否</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>SBU</td>
+<td>SBU 数据集包含 80 万张图像和 100 万条文本描述，广泛用于图像描述生成任务的训练和评估。</td>
+<td>Caption</td>
+<td>2011</td>
+<td>英语</td>
+<td>80万张图像，100万条描述</td>
+<td>纽约州立大学石溪分校</td>
+<td>图像描述</td>
+<td>https://opendatalab.com/OpenDataLab/SBU_Captions_Dataset/tree/main</td>
+<td>是</td>
+<td>否</td>
+<td>训练/评估</td>
+</tr>
+<tr>
+<td>WuKong</td>
+<td>WuKong是一个大规模的中文跨模态预训练数据集，包含 100 万对 &lt; 图像，文本 &gt;，图像和文本均经过过滤处理，考虑了隐私和敏感词等因素。</td>
+<td>Caption</td>
+<td>2022</td>
+<td>中文</td>
+<td>100 万对 &lt; 图像，文本</td>
+<td>华为诺亚方舟实验室与昇思 MindSpore 社区</td>
+<td>预训练</td>
+<td>https://wukong-dataset.github.io/wukong-dataset/</td>
+<td>是</td>
+<td>否</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>InternVL-SA-1B-Caption</td>
+<td>InternVL-SA-1B-Caption 是一个高质量的多模态交错数据集，包含 10 亿文本令牌和 30 亿图像，用于多模态模型的预训练。</td>
+<td>一般</td>
+<td>2024</td>
+<td>英语</td>
+<td>10亿文本令牌和30亿图像</td>
+<td>OpenGVLab</td>
+<td>预训练</td>
+<td>https://huggingface.co/datasets/OpenGVLab/InternVL-SA-1B-Caption</td>
+<td>是</td>
+<td>否</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>Multimodal C4</td>
+<td>Multimodal C4 是一个基于 C4 的多模态数据集，从 Common Crawl 数据中提取的多模态数据集，包含图文对等多种多模态内容。</td>
+<td>多领域，涵盖互联网上的各种主题和内容</td>
+<td>2023</td>
+<td>主要为英语，也有其他语言的数据</td>
+<td>-</td>
+<td>Google</td>
+<td>预训练</td>
+<td>https://github.com/allenai/mmc4</td>
+<td>是</td>
+<td>否</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>MINT-1T</td>
+<td>MINT-1T 是一个大规模多模态交错数据集，包含 1 万亿个文本token和34图片，用于多模态模型的预训练，提升模型的泛化能力。</td>
+<td>一般</td>
+<td>2024</td>
+<td>英语</td>
+<td>1万亿个图像和文本对</td>
+<td>新加坡管理学院 Green AI 实验室和韩国科学技术院（KAIST）等</td>
+<td>预训练</td>
+<td>https://github.com/mlfoundations/MINT-1T</td>
+<td>是</td>
+<td>否</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>Flickr30k</td>
+<td>Flickr30k 提供了 31,783 张图像，每张图像配有 5 个文本描述，广泛用于图像描述生成任务的评估。</td>
+<td>看图说话</td>
+<td>2014</td>
+<td>英语</td>
+<td>31,783张图像，158,915条描述</td>
+<td>-</td>
+<td>图像描述评估</td>
+<td>https://huggingface.co/datasets/nlphuji/flickr30k</td>
+<td>是</td>
+<td>否</td>
+<td>评估</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-general-qa">2. General QA<a class="headerlink" href="#2-general-qa" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">数据集名称</th>
+<th style="text-align: left;">简介</th>
+<th style="text-align: left;">领域</th>
+<th style="text-align: left;">年份</th>
+<th style="text-align: left;">语言</th>
+<th style="text-align: left;">规模</th>
+<th style="text-align: left;">发布机构</th>
+<th style="text-align: left;">用途</th>
+<th style="text-align: left;">数据集链接</th>
+<th style="text-align: left;">是否包含 Caption 数据</th>
+<th style="text-align: left;">是否包含多模态 QA Instructtion 数据</th>
+<th style="text-align: left;">训练还是评估</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">VQAv2</td>
+<td style="text-align: left;">VQAv2 是一个大规模的视觉问答数据集，包含超过 20 万张图像和 110 万个问题，用于训练和评估模型的视觉问答能力。</td>
+<td style="text-align: left;">一般 QA</td>
+<td style="text-align: left;">2017</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">超过20万张图像，110万个问题，1100万个答案（单个问题十个答案）</td>
+<td style="text-align: left;">弗吉尼亚理工大学</td>
+<td style="text-align: left;">视觉问答</td>
+<td style="text-align: left;"><a href="https://visualqa.org/">VQAv2 链接</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练/评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">OK-VQA/A-OKVQA</td>
+<td style="text-align: left;">OK-VQA/A-OKVQA 是一个开放式视觉问答数据集，包含复杂的问答对，用于评估模型在视觉问答任务中的表现。</td>
+<td style="text-align: left;">一般 QA</td>
+<td style="text-align: left;">2019</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">CMU</td>
+<td style="text-align: left;">视觉问答评估</td>
+<td style="text-align: left;">https://okvqa.allenai.org/download.html <br/>https://github.com/allenai/aokvqa?tab=readme-ov-file#downloading-the-dataset</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">GQA</td>
+<td style="text-align: left;">GQA 着重真实世界图像的推理和组合式问题回答，包含复杂的问题和答案，用于提升模型的推理能力。</td>
+<td style="text-align: left;">推理</td>
+<td style="text-align: left;">2019</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">113K images and 22M questions</td>
+<td style="text-align: left;">斯坦福大学</td>
+<td style="text-align: left;">视觉问答</td>
+<td style="text-align: left;"><a href="https://cs.stanford.edu/people/dorarad/gqa/download.html">GQA 链接</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: left;">IconQA</td>
+<td style="text-align: left;">IconQA 是一个抽象图表视觉问答基准，包含图表和相关问题，用于评估模型在图表理解方面的能力。</td>
+<td style="text-align: left;">图表理解</td>
+<td style="text-align: left;">2021</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">10万个图表及相关问题</td>
+<td style="text-align: left;">新加坡科技设计大学</td>
+<td style="text-align: left;">图标理解评估</td>
+<td style="text-align: left;">https://opendatalab.com/OpenDataLab/IconQA</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">Visual7W</td>
+<td style="text-align: left;">一个大规模的视觉问答（QA）数据集，具有对象级基础和多模态答案。每个问题都以七个 W 之一开始。</td>
+<td style="text-align: left;">计算机视觉</td>
+<td style="text-align: left;">2015</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">327,929 个 QA 对，1,311,756 个人工生成的多项选择，561,459 个对象基础</td>
+<td style="text-align: left;">斯坦福大学</td>
+<td style="text-align: left;">视觉问答任务的研究与评估</td>
+<td style="text-align: left;"><a href="https://opendatalab.com/OpenDataLab/Visual7W">OpenDataLab</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">VisText</td>
+<td style="text-align: left;">VisText是一个包含12,441个图表及其描述的数据集，用于生成语义丰富的图表标题。</td>
+<td style="text-align: left;">数据可视化</td>
+<td style="text-align: left;">2023</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">12,441对图表和标题</td>
+<td style="text-align: left;">MIT CSAIL</td>
+<td style="text-align: left;">图表描述生成、语义分析</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/delen/vistext">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">VSR</td>
+<td style="text-align: left;">VSR（Visual Spatial Reasoning）是一个包含超过 10k 自然文本 - 图像对的数据集，涵盖 66 种空间关系，用于测试视觉 - 语言模型（VLMs）在理解图像中的空间关系方面的能力。</td>
+<td style="text-align: left;">机器学习、计算机视觉、自然语言处理</td>
+<td style="text-align: left;">2022 年</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">包含超过 10k 数据点，使用 6,940 张来自 MS COCO 的图片，涵盖 66 种空间关系</td>
+<td style="text-align: left;">剑桥大学</td>
+<td style="text-align: left;">在理解图像中两个对象之间空间关系方面的能力</td>
+<td style="text-align: left;">https://huggingface.co/datasets/juletxara/visual-spatial-reasoning</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">TallyQA</td>
+<td style="text-align: left;">世界上最大的开放性计数问题数据集，包含简单和复杂计数问题，用于研究视觉问答中的计数问题</td>
+<td style="text-align: left;">计算机视觉</td>
+<td style="text-align: left;">2019</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">287K问题/165K图像</td>
+<td style="text-align: left;">Rochester Institute of Technology</td>
+<td style="text-align: left;">训练和评估复杂计数问题的视觉问答模型</td>
+<td style="text-align: left;"><a href="https://github.com/manoja328/TallyQA_dataset">GitHub</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">VisDial</td>
+<td style="text-align: left;">VisDial 数据集基于 MS COCO 图像数据集，精心筛选了 120 000 张多样化的日常场景图片，并通过 Amazon Mechanical Turk 平台收集了对应的对话数据。每张图片对应一条对话，对话长度固定为 10 轮，包含提问与回答两部分，总计约 1.2 百万 (1,200,000) 个问答对，既涵盖了对显而易见视觉属性（如颜色、位置、物体类别）的提问，也涉及对场景语义、物体关系甚至主体意图的深入追问</td>
+<td style="text-align: left;">计算机视觉</td>
+<td style="text-align: left;">2017</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">1.2 百万 (1,200,000) 个问答对</td>
+<td style="text-align: left;">Georgia Institute of Technology</td>
+<td style="text-align: left;">训练和评估视觉对话模型</td>
+<td style="text-align: left;"><a href="https://github.com/davidnvq/visdial">GitHub</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">Hateful-Memes</td>
+<td style="text-align: left;">用于检测多模态仇恨言论的数据集，包含带有文本的图像（网络迷因）</td>
+<td style="text-align: left;">计算机视觉、自然语言处理</td>
+<td style="text-align: left;">2020</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">约10,000个样本</td>
+<td style="text-align: left;">Facebook AI、DrivenData</td>
+<td style="text-align: left;">训练和评估多模态仇恨言论检测模型</td>
+<td style="text-align: left;"><a href="https://github.com/drivendataorg/hateful-memes">GitHub</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">FSC147</td>
+<td style="text-align: left;">用于少样本目标计数任务的数据集，包含147个类别、6,135张图像，提供点注释和示例框</td>
+<td style="text-align: left;">计算机视觉</td>
+<td style="text-align: left;">2021</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">6,135图像/147类别</td>
+<td style="text-align: left;">VinAI Research、石溪大学</td>
+<td style="text-align: left;">训练和评估少样本目标计数模型</td>
+<td style="text-align: left;"><a href="https://github.com/VinAIResearch/Counting-DETR">GitHub</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">MMInstruct</td>
+<td style="text-align: left;">MMInstruct包含 973K 条来自 24 个领域的指令，旨在解决现有视觉指令微调数据集在指令注释质量、图像和指令多样性方面的不足，以提升视觉大型语言模型（VLLMs）的性能。</td>
+<td style="text-align: left;">知识、多学科</td>
+<td style="text-align: left;">2024</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">指令数量为 973K 条</td>
+<td style="text-align: left;">上海AILab</td>
+<td style="text-align: left;">指令微调</td>
+<td style="text-align: left;">https://huggingface.co/datasets/yuecao0119/MMInstruct-GPT4V</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: left;">VisualGenome</td>
+<td style="text-align: left;">VisualGenome 是一个大规模的视觉数据集，包含了图像、对象、属性和关系等信息，目的是为计算机视觉和语言理解任务提供支持。</td>
+<td style="text-align: left;">计算机视觉，图像理解，语言理解</td>
+<td style="text-align: left;">2016</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">包含超过10万张图像，超过500万个标注</td>
+<td style="text-align: left;">VisualGenome团队</td>
+<td style="text-align: left;">视觉推理、视觉问答、图像描述生成</td>
+<td style="text-align: left;">https://huggingface.co/datasets/ranjaykrishna/visual_genome</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">ShareGPT4V</td>
+<td style="text-align: left;">基于ShareGPT和GPT-4V的多模态对话数据集，包含图像与文本交互指令及回复。</td>
+<td style="text-align: left;">多模态、视觉语言</td>
+<td style="text-align: left;">2023</td>
+<td style="text-align: left;">中文/英文</td>
+<td style="text-align: left;">数百万对话样本</td>
+<td style="text-align: left;">华科</td>
+<td style="text-align: left;">视觉语言模型训练</td>
+<td style="text-align: left;">https://github.com/InternLM/InternLM-XComposer/blob/main/projects/ShareGPT4V/docs/Data.md</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: left;">LLaVa</td>
+<td style="text-align: left;">LLaVa 是一个用于多模态视觉问答和推理的大型数据集，结合了语言和视觉信息，支持大规模的视觉语言理解。</td>
+<td style="text-align: left;">多模态学习，视觉问答，语言理解</td>
+<td style="text-align: left;">2023</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">包含约150,000个问答对和图像数据</td>
+<td style="text-align: left;">LLaVa团队</td>
+<td style="text-align: left;">视觉问答，视觉推理，语言理解</td>
+<td style="text-align: left;">https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">CogVLM-SFT-311K</td>
+<td style="text-align: left;">CogVLM‑SFT‑311K 是用于 CogVLM v1.0 初始训练的主对齐语料，包含中英文双语的视觉指令–响应对。它旨在提升模型的视觉理解与多轮对话能力，尤其针对图像描述和图像问答场景。</td>
+<td style="text-align: left;">多模态预训练模型</td>
+<td style="text-align: left;">2023</td>
+<td style="text-align: left;">中英双语</td>
+<td style="text-align: left;">总计约 31 万样本，包括图片和描述、多轮对话、单轮对话等数据</td>
+<td style="text-align: left;">清华大学</td>
+<td style="text-align: left;">视觉语言模型的监督微调、多模态对话系统开发等</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/THUDM/CogVLM-SFT-311K">huggingface</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">主要用于训练</td>
+</tr>
+<tr>
+<td style="text-align: left;">LVIS-Instruct4V</td>
+<td style="text-align: left;">包含通过使用 LVIS 中的图像提示强大的 GPT-4V 生成的 22 万个视觉对齐和上下文感知的指令</td>
+<td style="text-align: left;">计算机视觉等</td>
+<td style="text-align: left;">2023</td>
+<td style="text-align: left;">未明确</td>
+<td style="text-align: left;">包含 22 万个视觉对齐和上下文感知的指令</td>
+<td style="text-align: left;">复旦大学、马里兰大学等</td>
+<td style="text-align: left;">用于多模态模型的指令微调，提升模型在视觉问答等任务中的性能</td>
+<td style="text-align: left;"><a href="https://github.com/X2FD/LVIS-INSTRUCT4V">github</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">用于训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">MMIF-23k</td>
+<td style="text-align: left;">一个大规模的多模态指令跟随训练数据集，包含高质量的图像-指令对，用于提升多模态大语言模型的指令跟随能力。</td>
+<td style="text-align: left;">多模态（图像、文本）</td>
+<td style="text-align: left;">2025</td>
+<td style="text-align: left;">中文、英文</td>
+<td style="text-align: left;">23,000 条数据</td>
+<td style="text-align: left;">上海人工智能实验室等机构</td>
+<td style="text-align: left;">用于多模态指令跟随任务的监督式微调（SFT）和直接偏好优化（DPO）</td>
+<td style="text-align: left;"><a href="https://github.com/SYuan03/MM-IFEngine">GitHub</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: left;">M3IT</td>
+<td style="text-align: left;">一个大规模的多模态多语言指令微调数据集，包含 240 万条数据和 400 条手动编写的任务指令，覆盖 40 种任务类型。</td>
+<td style="text-align: left;">多模态（图像、文本、视频）</td>
+<td style="text-align: left;">2023</td>
+<td style="text-align: left;">英语、中文、80 种语言</td>
+<td style="text-align: left;">240 万条数据</td>
+<td style="text-align: left;">北京大学、香港大学、上海人工智能实验室</td>
+<td style="text-align: left;">用于多模态指令微调，提升模型在多语言和多任务上的表现</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/MMInstruction/M3IT">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: left;">Infinity-MM</td>
+<td style="text-align: left;">一个大规模的多模态指令数据集，包含超过 4000 万条数据，涵盖图像描述、视觉问答、推理等多种任务，支持多语言和数据合成。</td>
+<td style="text-align: left;">多模态（图像、文本）</td>
+<td style="text-align: left;">2024</td>
+<td style="text-align: left;">英语、中文</td>
+<td style="text-align: left;">4000 万条数据</td>
+<td style="text-align: left;">北京人工智能研究院</td>
+<td style="text-align: left;">用于训练多模态大语言模型，提升其在多任务上的表现</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/BAAI/Infinity-MM">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-mathematics">3. Mathematics<a class="headerlink" href="#3-mathematics" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">数据集名称</th>
+<th style="text-align: left;">简介</th>
+<th style="text-align: left;">领域</th>
+<th style="text-align: right;">年份</th>
+<th style="text-align: left;">语言</th>
+<th style="text-align: left;">规模</th>
+<th style="text-align: left;">发布机构</th>
+<th style="text-align: left;">用途</th>
+<th style="text-align: left;">数据集链接</th>
+<th style="text-align: left;">包含多模态Caption数据</th>
+<th style="text-align: left;">包含多模态QA数据</th>
+<th style="text-align: left;">训练/评估</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Super-CLEVR</td>
+<td style="text-align: left;">Super‑CLEVR 是一个合成视觉问答诊断基准，通过可控的视觉复杂度、问题冗余、概念分布和概念组合性四个域偏移因素，评估模型的泛化能力。</td>
+<td style="text-align: left;">视觉推理</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">30k 图像，10k 问题</td>
+<td style="text-align: left;">Johns Hopkins University</td>
+<td style="text-align: left;">用于视觉问答模型的测试和研究</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/super-clevr">Hugging Face</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">CMM-Math</td>
+<td style="text-align: left;">用于评估和增强大型多模态模型数学推理能力的中文多模态数学数据集</td>
+<td style="text-align: left;">数学推理</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: left;">中文</td>
+<td style="text-align: left;">28k+ 训练样本，5k+ 评估样本</td>
+<td style="text-align: left;">华东师范大学</td>
+<td style="text-align: left;">用于数学问题的多模态推理研究</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/ecnu-icalk/cmm-math">Hugging Face</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">MAVIS</td>
+<td style="text-align: left;">用于多模态大语言模型的数学视觉指令微调数据集，包含数学视觉问题和解决方案</td>
+<td style="text-align: left;">数学视觉问题解决</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: left;">中文</td>
+<td style="text-align: left;">MAVIS-Caption 558k 图像-标题对，MAVIS-Instruct 834k 问题</td>
+<td style="text-align: left;">中国科学技术大学等</td>
+<td style="text-align: left;">用于数学视觉问题的多模态推理研究</td>
+<td style="text-align: left;"><a href="https://github.com/ZrrSkywalker/MAVIS">GitHub</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">GeomVerse</td>
+<td style="text-align: left;">一个用于评估视觉数学问题解决能力的多模态基准数据集，包含几何问题和图表</td>
+<td style="text-align: left;">数学</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">2612个高质量数学问题，每个问题有6种不同版本，总计约15000个测试样本</td>
+<td style="text-align: left;">AI4Math</td>
+<td style="text-align: left;">评估多模态大语言模型的数学推理能力</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/AI4Math/MathVerse">Hugging Face</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">MetaMath-Rendered</td>
+<td style="text-align: left;">MetaMathQA 数据集通过答案增强、问题重述、自我验证与正反向推理等多视角自举策略，生成近 39.5 万条格式化 JSON 数学问答对</td>
+<td style="text-align: left;">数学</td>
+<td style="text-align: right;">2023</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">39.5 万</td>
+<td style="text-align: left;">MetaMath</td>
+<td style="text-align: left;">提高大语言模型的数学推理能力</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/meta-math/MetaMathQA">Hugging Face</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">MapQA</td>
+<td style="text-align: left;">一个用于问答的地理信息图表数据集，包含多种地图风格和问题类型</td>
+<td style="text-align: left;">地理信息</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">约800K问题-答案对，覆盖约60K地图图像，分为3个子集（MapQA-U、MapQA-R、MapQA-S）</td>
+<td style="text-align: left;">The Ohio State University</td>
+<td style="text-align: left;">评估模型对地理信息图表的理解能力</td>
+<td style="text-align: left;"><a href="https://github.com/OSU-slatelab/MapQA">GitHub</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">GeoQA+</td>
+<td style="text-align: left;">基于 GeoQA 的增强型几何问题解答基准数据集，包含更丰富类型和更高难度的问题</td>
+<td style="text-align: left;">几何问题解答</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">训练集 6,027 个问题，测试集 7,528 个问题，数据增强后训练集扩展到 12,054</td>
+<td style="text-align: left;">SCNU203 团队</td>
+<td style="text-align: left;">用于几何问题的自动解答研究，支持模型训练和评估</td>
+<td style="text-align: left;"><a href="https://github.com/SCNU203/GeoQA-Plus">GitHub</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">训练 + 评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">Geometry3K</td>
+<td style="text-align: left;">大规模几何问题解答数据集，包含多选几何问题及图表和文本的形式语言注释</td>
+<td style="text-align: left;">几何问题解答</td>
+<td style="text-align: right;">2021</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">3,002 个多选几何问题，27,213 个图表逻辑形式，6,293 个文本逻辑形式</td>
+<td style="text-align: left;">InterGPS 团队</td>
+<td style="text-align: left;">用于几何问题的自动解答研究，支持模型训练和评估</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/hiyouga/geometry3k">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练 + 评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">UniGeo</td>
+<td style="text-align: left;">统一几何问题基准，包含计算和证明问题，支持多任务几何问题解答</td>
+<td style="text-align: left;">几何问题解答</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">4,998 个计算问题和 9,543 个证明问题</td>
+<td style="text-align: left;">中山大学</td>
+<td style="text-align: left;">用于几何问题的统一逻辑推理研究，支持多任务模型训练和评估</td>
+<td style="text-align: left;"><a href="https://github.com/chen-judge/UniGeo">GitHub</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练 + 评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">GeoS</td>
+<td style="text-align: left;">用于自动解决数学问题的数据集，包含 SAT 平面几何问题，每个问题有英文文本描述、图表和多项选择</td>
+<td style="text-align: left;">数学</td>
+<td style="text-align: right;">2015</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">未明确具体规模，包含一定数量的 SAT 几何问题</td>
+<td style="text-align: left;">University of Washington</td>
+<td style="text-align: left;">训练和评估自动解题模型</td>
+<td style="text-align: left;"><a href="https://opendatalab.com/OpenDataLab/GeoS">OpenDataLab</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练 + 评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">CLEVR-Math</td>
+<td style="text-align: left;">用于组合语言、视觉和数学推理的多模态数学问题数据集，包含简单的加减法问题，部分由文本描述，部分由图像展示</td>
+<td style="text-align: left;">数学</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">包含约 5000 个测试场景（多模态问题）</td>
+<td style="text-align: left;">Umeå University 和 Örebro University</td>
+<td style="text-align: left;">训练和评估多模态推理模型</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/dali-does/clevr-math">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是（包含文本和图像的多模态问题）</td>
+<td style="text-align: left;">训练 + 评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">TallyQA</td>
+<td style="text-align: left;">世界上最大的开放性计数问题数据集，包含简单和复杂计数问题，用于研究视觉问答中的计数问题</td>
+<td style="text-align: left;">计算机视觉</td>
+<td style="text-align: right;">2019</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">287K问题/165K图像</td>
+<td style="text-align: left;">Rochester Institute of Technology</td>
+<td style="text-align: left;">训练和评估复杂计数问题的视觉问答模型</td>
+<td style="text-align: left;"><a href="https://github.com/manoja328/TallyQA_dataset">GitHub</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-ocr">4. OCR<a class="headerlink" href="#4-ocr" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">数据集名称</th>
+<th style="text-align: center;">简介</th>
+<th style="text-align: center;">领域</th>
+<th style="text-align: center;">年份</th>
+<th style="text-align: center;">语言</th>
+<th style="text-align: center;">规模</th>
+<th style="text-align: center;">发布机构</th>
+<th style="text-align: center;">用途</th>
+<th style="text-align: center;">数据集链接</th>
+<th>包含多模态Caption数据</th>
+<th style="text-align: center;">包含多模态QA数据</th>
+<th style="text-align: left;">训练/评估</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">LaionCOCO-OCR</td>
+<td style="text-align: center;">从Laion-5B-en数据集中生成的6亿条高质量合成图像描述数据，用于视觉文档理解</td>
+<td style="text-align: center;">计算机视觉</td>
+<td style="text-align: center;">2022</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">6亿条描述</td>
+<td style="text-align: center;">LAION</td>
+<td style="text-align: center;">训练视觉文档理解模型</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/laion/laion-coco">Hugging Face</a></td>
+<td>是</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: center;">ParsynthOCR</td>
+<td style="text-align: center;">20万条合成OCR数据，用于多语言OCR任务</td>
+<td style="text-align: center;">计算机视觉</td>
+<td style="text-align: center;">2024</td>
+<td style="text-align: center;">多语言</td>
+<td style="text-align: center;">20万条数据</td>
+<td style="text-align: center;">HezarAI</td>
+<td style="text-align: center;">训练OCR模型</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/hezarai/parsynth-ocr-200k">Hugging Face</a></td>
+<td>是</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: center;">SynthDoG-EN</td>
+<td style="text-align: center;">用于视觉文档理解的合成文档数据集，包含图像和文本对</td>
+<td style="text-align: center;">OCR</td>
+<td style="text-align: center;">2024</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">未明确</td>
+<td style="text-align: center;">Naver Clova IX</td>
+<td style="text-align: center;">训练视觉文档理解模型</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/naver-clova-ix/synthdog-en">Hugging Face</a></td>
+<td>是</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: center;">SynthDoG-ZH</td>
+<td style="text-align: center;">用于OCR训练的合成中文文档图像数据集，包含多种文档样式和文本内容</td>
+<td style="text-align: center;">OCR</td>
+<td style="text-align: center;">2024</td>
+<td style="text-align: center;">中文</td>
+<td style="text-align: center;">50万样本</td>
+<td style="text-align: center;">Naver Clova</td>
+<td style="text-align: center;">用于OCR模型训练和文档理解</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/naver-clova-ix/synthdog-zh">Hugging Face</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: center;">SynthDoG-RU</td>
+<td style="text-align: center;">用于OCR训练的合成俄语文档图像数据集，包含多种文档样式和文本内容</td>
+<td style="text-align: center;">OCR</td>
+<td style="text-align: center;">2022</td>
+<td style="text-align: center;">俄语</td>
+<td style="text-align: center;">50万样本</td>
+<td style="text-align: center;">Naver Clova</td>
+<td style="text-align: center;">用于OCR模型训练和文档理解</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/naver-clova-ix/synthdog-ru">Hugging Face</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: center;">SynthDoG-JP</td>
+<td style="text-align: center;">用于OCR训练的合成日语文档图像数据集，包含多种文档样式和文本内容</td>
+<td style="text-align: center;">OCR</td>
+<td style="text-align: center;">2022</td>
+<td style="text-align: center;">日语</td>
+<td style="text-align: center;">50万样本</td>
+<td style="text-align: center;">Naver Clova</td>
+<td style="text-align: center;">用于OCR模型训练和文档理解</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/naver-clova-ix/synthdog-ja">Hugging Face</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: center;">SynthDoG-KO</td>
+<td style="text-align: center;">用于OCR训练的合成韩语文档图像数据集，包含多种文档样式和文本内容</td>
+<td style="text-align: center;">OCR</td>
+<td style="text-align: center;">2022</td>
+<td style="text-align: center;">韩语</td>
+<td style="text-align: center;">50万样本</td>
+<td style="text-align: center;">Naver Clova</td>
+<td style="text-align: center;">用于OCR模型训练和文档理解</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/naver-clova-ix/synthdog-ko">Hugging Face</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: center;">IAM</td>
+<td style="text-align: center;">包含13,353张手写文本行图像，由657名作者书写，标注到句子、行和单词级别</td>
+<td style="text-align: center;">手写文本识别</td>
+<td style="text-align: center;">2021</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">13,353张图像</td>
+<td style="text-align: center;">IAM团队</td>
+<td style="text-align: center;">用于手写文本识别研究</td>
+<td style="text-align: center;">https://fki.tic.heia-fr.ch/databases/iam-handwriting-database</td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">EST-VQA</td>
+<td style="text-align: center;">用于双语场景文本视觉问答的数据集，包含中英文问题和答案，强调多模态信息融合</td>
+<td style="text-align: center;">计算机视觉与自然语言处理</td>
+<td style="text-align: center;">2020</td>
+<td style="text-align: center;">中英双语</td>
+<td style="text-align: center;">25,239图像/28,062问题</td>
+<td style="text-align: center;">University of Adelaide</td>
+<td style="text-align: center;">视觉问答、模型评估</td>
+<td style="text-align: center;"><a href="https://github.com/xinke-wang/EST-VQA">GitHub</a></td>
+<td>否</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练 + 评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">ST-VQA</td>
+<td style="text-align: center;">强调利用图像中的文本信息进行视觉问答，包含场景文本问答任务</td>
+<td style="text-align: center;">计算机视觉与自然语言处理</td>
+<td style="text-align: center;">2019</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">23,038 张图片，31,791 个问答对</td>
+<td style="text-align: center;">西班牙巴塞罗那自治大学</td>
+<td style="text-align: center;">视觉问答、模型评估</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/vikhyatk/st-vqa">Hugging Face</a></td>
+<td>否</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练 + 评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">NAF</td>
+<td style="text-align: center;">提供表单图像数据集，包含文本边界框、类别、关系和转录信息</td>
+<td style="text-align: center;">文档分析与表单理解</td>
+<td style="text-align: center;">2019</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">708 张训练图像，75 张验证图像，77 张测试图像；</td>
+<td style="text-align: center;">美国国家档案馆、FamilySearch、Brian Davis（个人研究者）</td>
+<td style="text-align: center;">表单解析、文档理解</td>
+<td style="text-align: center;"><a href="https://github.com/herobd/NAF_dataset">GitHub</a></td>
+<td>否</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练 + 评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">InfoVQA</td>
+<td style="text-align: center;">用于信息图表视觉问答的数据集，包含多样化信息图表及问答注释</td>
+<td style="text-align: center;">信息可视化与问答</td>
+<td style="text-align: center;">2021</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">5,485 张图片，30,035 个问答对（训练集 4,406 张图片，23,946 个问答对；验证集 500 张图片，2,801 个问答对；测试集 579 张图片，3,288 个问答对）</td>
+<td style="text-align: center;">Minesh Mathew 等研究者</td>
+<td style="text-align: center;">信息图表理解、视觉问答</td>
+<td style="text-align: center;"><a href="https://www.docvqa.org/datasets/infographicvqa">DocVQA</a></td>
+<td>否</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练 + 评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">HME100K</td>
+<td style="text-align: center;">大规模手写数学表达式数据集，用于评估手写数学表达式识别任务</td>
+<td style="text-align: center;">数学表达式识别</td>
+<td style="text-align: center;">2022</td>
+<td style="text-align: center;">中英双语</td>
+<td style="text-align: center;">10 万张手写数学表达式图像，包含 245 个符号类别（训练集 74,502 张图像，测试集 24,607 张图像）</td>
+<td style="text-align: center;">Ye Yuan</td>
+<td style="text-align: center;">手写数学表达式识别</td>
+<td style="text-align: center;"><a href="https://github.com/Phymond/HME100K">GitHub</a></td>
+<td>是</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练 + 评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">OCRVQA</td>
+<td style="text-align: center;">OCR‑VQA‑200K含20万封面和100万问答，模板生成改写问题，标注文本块并划分训练验证测试</td>
+<td style="text-align: center;">场景文本理解</td>
+<td style="text-align: center;">2019</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">207k QA对/92k图像</td>
+<td style="text-align: center;">佐治亚理工学院</td>
+<td style="text-align: center;">OCR问答、视觉推理</td>
+<td style="text-align: center;">https://ocr-vqa.github.io/</td>
+<td>否</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练/评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">SROIE</td>
+<td style="text-align: center;">扫描收据文本检测与识别任务</td>
+<td style="text-align: center;">文档理解</td>
+<td style="text-align: center;">2019</td>
+<td style="text-align: center;">英文/中文</td>
+<td style="text-align: center;">1k 收据图像</td>
+<td style="text-align: center;">ICDAR竞赛</td>
+<td style="text-align: center;">KIE (关键信息抽取)</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/priyank-m/SROIE_2019_text_recognition">HuggingFace</a>  <a href="https://arxiv.org/abs/2103.10213">论文</a></td>
+<td>否</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">评估基准</td>
+</tr>
+<tr>
+<td style="text-align: center;">POIE</td>
+<td style="text-align: center;">面向POI-Query的新颖文档级信息抽取数据集</td>
+<td style="text-align: center;">地理文本理解</td>
+<td style="text-align: center;">2023</td>
+<td style="text-align: center;">英文+多语言</td>
+<td style="text-align: center;">72k 图像</td>
+<td style="text-align: center;">阿里/中山大学</td>
+<td style="text-align: center;">文档信息抽取</td>
+<td style="text-align: center;"><a href="https://github.com/jfkuang/CFAM">GitHub</a>  <a href="https://arxiv.org/pdf/2305.07498">论文</a></td>
+<td>否</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练/评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">CTW</td>
+<td style="text-align: center;">中文街景文本检测数据集</td>
+<td style="text-align: center;">场景文本检测</td>
+<td style="text-align: center;">2017</td>
+<td style="text-align: center;">中文</td>
+<td style="text-align: center;">32.5k 图像  1M+字符</td>
+<td style="text-align: center;">华中科技大学</td>
+<td style="text-align: center;">端到端文本识别</td>
+<td style="text-align: center;"><a href="https://ctwdataset.github.io/">官网</a>  <a href="https://arxiv.org/abs/1703.06520">论文</a></td>
+<td>是</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">评估基准</td>
+</tr>
+<tr>
+<td style="text-align: center;">SynthText</td>
+<td style="text-align: center;">合成场景文本图像数据集</td>
+<td style="text-align: center;">场景文本检测</td>
+<td style="text-align: center;">2016</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">80万张合成图像</td>
+<td style="text-align: center;">牛津大学VGG</td>
+<td style="text-align: center;">文本检测预训练</td>
+<td style="text-align: center;"><a href="https://github.com/ankush-me/SynthText">GitHub</a>  <a href="https://www.robots.ox.ac.uk/~vgg/publications/2016/Gupta16/">论文</a></td>
+<td>是</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: center;">Art</td>
+<td style="text-align: center;">包含与艺术相关的故事性问题和答案对，涉及艺术作品的视觉和知识理解</td>
+<td style="text-align: center;">艺术</td>
+<td style="text-align: center;">2020</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">QA对数量：训练集69,812对，验证集5,124对，测试集4,912对</td>
+<td style="text-align: center;">Allen Institute for AI</td>
+<td style="text-align: center;">视觉问答任务研究</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/allenai/art">Hugging Face</a></td>
+<td>否</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">LSVT</td>
+<td style="text-align: center;">大规模街景视图文本数据集，包含部分标注的文本检测和识别挑战数据</td>
+<td style="text-align: center;">场景文本识别</td>
+<td style="text-align: center;">2019</td>
+<td style="text-align: center;">中文</td>
+<td style="text-align: center;">450,000张图像，其中30,000张全标注，400,000张弱标注</td>
+<td style="text-align: center;">华为诺亚方舟实验室、华中科技大学</td>
+<td style="text-align: center;">场景文本检测和识别研究</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/1398listener/LSVT-2019">Hugging Face</a></td>
+<td>是</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">RCTW-17</td>
+<td style="text-align: center;">用于读取图像中中文文本的竞赛数据集，包含街景、海报、菜单等多种场景图像</td>
+<td style="text-align: center;">场景文本识别</td>
+<td style="text-align: center;">2017</td>
+<td style="text-align: center;">中文</td>
+<td style="text-align: center;">12,263张标注图像</td>
+<td style="text-align: center;">华中科技大学、Megvii Technology Inc.、Cornell University等</td>
+<td style="text-align: center;">中文场景文本检测和识别</td>
+<td style="text-align: center;"><a href="https://rctw.vlrlab.net/">RCTW官网</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">ReCTS</td>
+<td style="text-align: center;">多方向自然场景文本数据集，包含招牌上的文本行和字符位置及字符代码标注</td>
+<td style="text-align: center;">场景文本识别</td>
+<td style="text-align: center;">2019</td>
+<td style="text-align: center;">中文</td>
+<td style="text-align: center;">25,000张图像，约200,000条文本行和600,000个字符标注</td>
+<td style="text-align: center;">华中科技大学、加州大学洛杉矶分校、微软亚洲研究院</td>
+<td style="text-align: center;">中文场景文本检测和识别</td>
+<td style="text-align: center;"><a href="https://opendatalab.com/OpenDataLab/rects">OpenDataLab</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">MTWI</td>
+<td style="text-align: center;">多样式网络图像文字检测与识别数据集，包含中英文标注</td>
+<td style="text-align: center;">场景文本识别</td>
+<td style="text-align: center;">2022</td>
+<td style="text-align: center;">中英</td>
+<td style="text-align: center;">10万+图像，包含中英文标注，训练集和测试集划分</td>
+<td style="text-align: center;">阿里巴巴</td>
+<td style="text-align: center;">OCR检测与识别研究</td>
+<td style="text-align: center;"><a href="https://www.modelscope.cn/datasets/damo/MTWI">ModelScope</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">TextVQA</td>
+<td style="text-align: center;">需要模型读取图像中的文字以回答问题的数据集</td>
+<td style="text-align: center;">视觉问答</td>
+<td style="text-align: center;">2019</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">45,336个问题，28,408张图像</td>
+<td style="text-align: center;">Facebook AI Research</td>
+<td style="text-align: center;">视觉问答任务研究</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/facebook/textvqa">Hugging Face</a></td>
+<td>是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">CASIA</td>
+<td style="text-align: center;">图像篡改检测数据集，包含真实和篡改图像的标注</td>
+<td style="text-align: center;">图像篡改检测</td>
+<td style="text-align: center;">2013</td>
+<td style="text-align: center;">中英</td>
+<td style="text-align: center;">5,123张篡改图像，1,701张真实图像</td>
+<td style="text-align: center;">CASIA实验室</td>
+<td style="text-align: center;">图像篡改检测研究</td>
+<td style="text-align: center;"><a href="https://github.com/namtpham/casia2groundtruth">GitHub</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">TextOCR</td>
+<td style="text-align: center;">针对任意形状场景文本的检测和识别数据集</td>
+<td style="text-align: center;">场景文本识别</td>
+<td style="text-align: center;">2021</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">28,000张图像，900,000个单词标注</td>
+<td style="text-align: center;">Facebook AI Research</td>
+<td style="text-align: center;">OCR检测与识别研究</td>
+<td style="text-align: center;"><a href="https://www.kaggle.com/datasets/robikscube/textocr-text-extraction-from-images-dataset">Kaggle</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">Chinese-OCR</td>
+<td style="text-align: center;">包含丰富拍摄场景的中文OCR数据集，涵盖杂志、报纸等多种采集环境</td>
+<td style="text-align: center;">自然语言处理、OCR</td>
+<td style="text-align: center;">2024</td>
+<td style="text-align: center;">中文</td>
+<td style="text-align: center;">5027 张图片</td>
+<td style="text-align: center;">北京安捷智合科技有限公司</td>
+<td style="text-align: center;">中文OCR识别</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/longmaodata/Chinese-OCR">Hugging Face</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">EATEN</td>
+<td style="text-align: center;">提供实体感知的单次视觉文本提取数据集，包含真实和合成票据、护照等图像</td>
+<td style="text-align: center;">自然语言处理、OCR</td>
+<td style="text-align: center;">2019</td>
+<td style="text-align: center;">中/英/数字</td>
+<td style="text-align: center;">60 万合成图像，300k 真实图像</td>
+<td style="text-align: center;">百度视觉技术部</td>
+<td style="text-align: center;">实体提取、OCR后校正</td>
+<td style="text-align: center;"><a href="https://github.com/beacandler/EATEN">GitHub</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练/评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">COCO-Text</td>
+<td style="text-align: center;">大规模自然场景文本检测和识别数据集，标注了文本的细粒度分类和转录信息</td>
+<td style="text-align: center;">计算机视觉、OCR</td>
+<td style="text-align: center;">2016</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">63,686 张图片，173,589 个标注文本实例</td>
+<td style="text-align: center;">Microsoft COCO</td>
+<td style="text-align: center;">场景文本检测与识别</td>
+<td style="text-align: center;"><a href="https://bgshih.github.io/cocotext/">COCO-Text</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练/评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">Synthetic Arxiv OCR</td>
+<td style="text-align: center;">从arXiv挖掘的科学文献合成OCR数据集，用于OCR后校正模型训练</td>
+<td style="text-align: center;">自然语言处理、OCR</td>
+<td style="text-align: center;">2023</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">2.03 亿字符对</td>
+<td style="text-align: center;">University of Illinois</td>
+<td style="text-align: center;">OCR后校正</td>
+<td style="text-align: center;"><a href="https://github.com/ReadingTimeMachine/ocr_post_correction">GitHub</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: center;">ChartQA</td>
+<td style="text-align: center;">用于图表问答的数据集，包含视觉和逻辑推理问题，涵盖柱状图、折线图等</td>
+<td style="text-align: center;">数据可视化、问答</td>
+<td style="text-align: center;">2022</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">20,882 张图表，32,719 个问答对</td>
+<td style="text-align: center;">York University, Nanyang Technological University</td>
+<td style="text-align: center;">图表问答、视觉推理</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/HuggingFaceM4/ChartQA">Hugging Face</a></td>
+<td>是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练/评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">MMTab</td>
+<td style="text-align: center;">学术文档中表格图像与其结构化LaTeX源码的对齐数据集</td>
+<td style="text-align: center;">表格图像处理</td>
+<td style="text-align: center;">2024</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">22,081 table images</td>
+<td style="text-align: center;">复旦大学</td>
+<td style="text-align: center;">表格图像识别、表格结构重建</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/SpursgoZmy/MMTab">HuggingFace</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练 + 评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">PlotQA</td>
+<td style="text-align: center;">含复杂真实世界图表（折线/柱状/饼图）的可视化问答数据集</td>
+<td style="text-align: center;">图表理解</td>
+<td style="text-align: center;">2019</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">224,377 图表 (28.9M QA pairs)</td>
+<td style="text-align: center;">IBM Research</td>
+<td style="text-align: center;">评估模型对图表内容的理解与推理能力</td>
+<td style="text-align: center;"><a href="https://github.com/NiteshMethani/PlotQA">GitHub</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">主要评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">FigureQA</td>
+<td style="text-align: center;">基于合成图表的二分类视觉问答数据集</td>
+<td style="text-align: center;">图表理解</td>
+<td style="text-align: center;">2017</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">1,327,368 QA pairs (100k+ images)</td>
+<td style="text-align: center;">Maluuba/Microsoft</td>
+<td style="text-align: center;">测试模型对基本图表元素（条形图/折线图）的理解</td>
+<td style="text-align: center;"><a href="https://www.microsoft.com/en-us/research/project/figureqa-dataset/">Official</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">主要评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">VisText</td>
+<td style="text-align: center;">文本密集型图像（海报、截图、文档）的端到端文本识别 &amp; 图文问答数据集</td>
+<td style="text-align: center;">文本识别 &amp; 视觉问答</td>
+<td style="text-align: center;">2023</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">646,605 图像（3.2M QA pairs）</td>
+<td style="text-align: center;">MIT &amp; Google</td>
+<td style="text-align: center;">场景文本识别(VQA)、端到端文档理解</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/delen/vistext">HuggingFace</a></td>
+<td>是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练 + 评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">LRV-Instruction</td>
+<td style="text-align: center;">文档密集型多模态指令调优数据集（文档、图表、表格、图示等）</td>
+<td style="text-align: center;">多模态指令微调</td>
+<td style="text-align: center;">2023</td>
+<td style="text-align: center;">多语言</td>
+<td style="text-align: center;">738k 视觉文档指令样本</td>
+<td style="text-align: center;">苏黎世联邦理工学院</td>
+<td style="text-align: center;">提升大模型在视觉文档理解任务中的指令遵循与推理能力</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/VictorSanh/LrvInstruction">HuggingFace</a></td>
+<td>是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练（指令微调）</td>
+</tr>
+<tr>
+<td style="text-align: center;">ArxivQA</td>
+<td style="text-align: center;">从arXiv论文提取的图表问答数据集，包含科学图表理解任务</td>
+<td style="text-align: center;">多模态科学图表理解</td>
+<td style="text-align: center;">2024</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">60万+图像/问题</td>
+<td style="text-align: center;">香港中文大学、微软等</td>
+<td style="text-align: center;">训练与评估大模型对科学图表的理解能力</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/MMInstruction/ArxivQA">Hugging Face</a></td>
+<td>否</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练/评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">TabMWP</td>
+<td style="text-align: center;">表格数学推理数据集，需结合表格和文本进行数学推理</td>
+<td style="text-align: center;">半结构化数学推理</td>
+<td style="text-align: center;">2023</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">3.8万问题</td>
+<td style="text-align: center;">UCLA、艾伦人工智能研究所等</td>
+<td style="text-align: center;">评估模型对表格数据的数学推理能力</td>
+<td style="text-align: center;"><a href="https://github.com/lupantech/PromptPG">GitHub</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">MMC-Inst</td>
+<td style="text-align: center;">大规模多模态图表指令数据集，覆盖多种图表类型和任务</td>
+<td style="text-align: center;">通用图表理解</td>
+<td style="text-align: center;">2024</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">60万指令样本</td>
+<td style="text-align: center;">微软、华盛顿大学等</td>
+<td style="text-align: center;">训练图表多模态大模型（如MMCA）</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/xywang1/MMC">Hugging Face</a></td>
+<td>是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: center;">DVQA</td>
+<td style="text-align: center;">柱状图问答数据集，测试图表结构理解能力</td>
+<td style="text-align: center;">计算机视觉/图表理解</td>
+<td style="text-align: center;">2018</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">3.5万图像/问答</td>
+<td style="text-align: center;">罗切斯特理工学院等</td>
+<td style="text-align: center;">评估图表解析算法的鲁棒性</td>
+<td style="text-align: center;"><a href="https://github.com/kushalkafle/DVQA_dataset">GitHub</a></td>
+<td>否</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">UniChart</td>
+<td style="text-align: center;">通用图表理解预训练模型，支持多种下游任务（QA/摘要/表格提取等）</td>
+<td style="text-align: center;">多模态图表理解</td>
+<td style="text-align: center;">2023</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">未公开具体规模</td>
+<td style="text-align: center;">科克大学、西蒙菲莎大学等</td>
+<td style="text-align: center;">提供预训练模型和微调能力</td>
+<td style="text-align: center;"><a href="https://github.com/vis-nlp/UniChart">Gitging Face</a></td>
+<td>是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练/评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">SimChart9K</td>
+<td style="text-align: center;">合成的图表数据集，通过LLM生成统计数据和绘图代码，用于增强图表感知和推理</td>
+<td style="text-align: center;">图表理解、多模态</td>
+<td style="text-align: center;">2024</td>
+<td style="text-align: center;">英文为主</td>
+<td style="text-align: center;">9,536张图表</td>
+<td style="text-align: center;">上海人工智能实验室、上海交通大学</td>
+<td style="text-align: center;">图表预训练/微调</td>
+<td style="text-align: center;"><a href="https://github.com/UniModal4Reasoning/SimChart9K">GitHub</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">预训练</td>
+</tr>
+<tr>
+<td style="text-align: center;">Chart2Text</td>
+<td style="text-align: center;">从Statista抓取的统计图表数据集，用于自动生成图表摘要</td>
+<td style="text-align: center;">图表摘要、自然语言生成</td>
+<td style="text-align: center;">2019</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">8,305张图表</td>
+<td style="text-align: center;">滑铁卢大学</td>
+<td style="text-align: center;">图表摘要生成训练与评估</td>
+<td style="text-align: center;"><a href="https://github.com/JasonObeid/Chart2Text">GitHub</a></td>
+<td>是</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练/评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">FinTabNet</td>
+<td style="text-align: center;">针对表格识别的合成数据集，含复杂表格结构</td>
+<td style="text-align: center;">表格识别、OCR</td>
+<td style="text-align: center;">2024</td>
+<td style="text-align: center;">中英双语</td>
+<td style="text-align: center;">112,332张表格</td>
+<td style="text-align: center;">华南理工大学、腾讯优图</td>
+<td style="text-align: center;">表格结构识别训练与评估</td>
+<td style="text-align: center;"><a href="https://huggingface.co/datasets/bsmock/FinTabNet.c">HuggingFace</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练/评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">SciTSR</td>
+<td style="text-align: center;">用于复杂表格结构识别的数据集，包含PDF格式的表格及其结构标签，从LaTeX源文件中获取</td>
+<td style="text-align: center;">文档分析</td>
+<td style="text-align: center;">2019</td>
+<td style="text-align: center;">英文</td>
+<td style="text-align: center;">15,000 (训练12,000/测试3,000)</td>
+<td style="text-align: center;">北京理工大学计算机科学技术系</td>
+<td style="text-align: center;">表格结构识别和模型训练</td>
+<td style="text-align: center;"><a href="https://github.com/Academic-Hammer/SciTSR">GitHub</a></td>
+<td>否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: left;">训练/评估</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-kownledge">5. Kownledge<a class="headerlink" href="#5-kownledge" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>数据集名称</th>
+<th>简介</th>
+<th>领域</th>
+<th>年份</th>
+<th>语言</th>
+<th>规模</th>
+<th>发布机构</th>
+<th>用途</th>
+<th>数据集链接</th>
+<th>包含多模态Caption数据</th>
+<th>包含多模态QA数据</th>
+<th>训练/评估</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KVQA</td>
+<td>世界上第一个基于世界知识的视觉问答数据集，包含 183K 问答对，涉及 18K 命名实体和 24K 图像</td>
+<td>计算机视觉、自然语言处理、人工智能</td>
+<td>2019</td>
+<td>英语</td>
+<td>183K 问答对，24K 图像</td>
+<td>IISC</td>
+<td>用于视觉问答任务，特别是需要世界知识的问答</td>
+<td><a href="https://malllabiisc.github.io/resources/kvqa/">KVQA 官方网站</a></td>
+<td>是</td>
+<td>是</td>
+<td>用于训练和评估</td>
+</tr>
+<tr>
+<td>A-OKVQA</td>
+<td>一个需要广泛常识和世界知识来回答的视觉问答数据集，包含约 25K 问题，要求模型进行常识推理</td>
+<td>计算机视觉、自然语言处理</td>
+<td>2022</td>
+<td>英语</td>
+<td>约 25K 问题，23.7K 图像</td>
+<td>Allen Institute for AI</td>
+<td>用于视觉问答任务，特别是需要常识和世界知识的问答</td>
+<td><a href="https://huggingface.co/datasets/HuggingFaceM4/A-OKVQA">Hugging Face A-OKVQA</a></td>
+<td>是</td>
+<td>是</td>
+<td>用于训练和评估</td>
+</tr>
+<tr>
+<td>ViQuAE</td>
+<td>一个关于命名实体的知识型视觉问答数据集，包含 1190 个训练样本、1250 个验证样本和 1257 个测试样本</td>
+<td>计算机视觉、自然语言处理</td>
+<td>2022</td>
+<td>英语</td>
+<td>1190 训练样本，1250 验证样本，1257 测试样本</td>
+<td>Paul Lerner 等人</td>
+<td>用于知识型视觉问答任务，特别是关于命名实体的问答</td>
+<td><a href="https://github.com/PaulLerner/ViQuAE">GitHub ViQuAE</a></td>
+<td>是</td>
+<td>是</td>
+<td>用于训练和评估</td>
+</tr>
+<tr>
+<td>IconQA</td>
+<td>IconQA 是一个抽象图表视觉问答基准，包含图表和相关问题，用于评估模型在图表理解方面的能力。</td>
+<td>图表理解</td>
+<td>2021</td>
+<td>英语</td>
+<td>10万个图表及相关问题</td>
+<td>新加坡科技设计大学</td>
+<td>图标理解评估</td>
+<td>https://opendatalab.com/OpenDataLab/IconQA</td>
+<td>否</td>
+<td>是</td>
+<td>评估</td>
+</tr>
+<tr>
+<td>VisualMRC</td>
+<td>机器阅读理解任务，给定问题和文档图像，模型需生成自然语言答案</td>
+<td>文档理解</td>
+<td>2021</td>
+<td>中/英</td>
+<td>10,197张图像，30,562个问答对</td>
+<td>NTT Media Intelligence Laboratories</td>
+<td>用于机器阅读理解和文档理解研究</td>
+<td><a href="https://huggingface.co/datasets/nttmdlab-nlp/VisualMRC">HuggingFace</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>ChemVLM Data</td>
+<td>用于化学领域的多模态语言模型，包含化学图像和文本信息</td>
+<td>化学</td>
+<td>2024</td>
+<td>中/英</td>
+<td>数据规模未明确，包含多种化学图像和文本数据</td>
+<td>Shanghai Artificial Intelligence Laboratory 等</td>
+<td>用于化学领域的多模态理解和推理</td>
+<td><a href="https://github.com/AI4Chem/ChemVLM-26B">GitHub</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>ScienceQA</td>
+<td>包含科学主题的多模态多项选择题，涵盖自然科学、社会科学和语言科学</td>
+<td>科学教育</td>
+<td>2022</td>
+<td>英文</td>
+<td>21,208个问题，涵盖多种科学主题和多模态上下文</td>
+<td>UCLA 和 Allen Institute for AI</td>
+<td>用于科学问题解答和多模态推理研究</td>
+<td><a href="https://huggingface.co/datasets/scienceqa">HuggingFace</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>AI2D</td>
+<td>包含超过5000张小学科学图表和超过150000个丰富注释的多模态数据集</td>
+<td>科学教育</td>
+<td>2016</td>
+<td>英文</td>
+<td>5000+张图像，150000+个注释，15000+个多项选择题</td>
+<td>Allen Institute for AI</td>
+<td>用于视觉问答和图表理解研究</td>
+<td><a href="https://huggingface.co/datasets/lmms-lab/ai2d">HuggingFace</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>TQA</td>
+<td>用于解决教科书问答任务的数据集，包含文本和图像的多模态输入。</td>
+<td>教育/科学</td>
+<td>2017</td>
+<td>英语</td>
+<td>1076 课，26,260 个问题，78,338 个句子，3,455 张图像</td>
+<td>AI2 (Allen Institute for AI)</td>
+<td>训练和评估多模态问答模型</td>
+<td><a href="https://huggingface.co/datasets/yyyyifan/TQA">Hugging Face</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练/评估</td>
+</tr>
+<tr>
+<td>Wikipedia-QA</td>
+<td>用于开放域问答研究的问答语料库，从维基百科中收集的问题和句子对。</td>
+<td>开放域问答</td>
+<td>2015</td>
+<td>英语</td>
+<td>训练集 20,360 个样本，验证集 2,733 个样本，测试集 6,165 个样本</td>
+<td>Microsoft Research</td>
+<td>训练和评估开放域问答模型</td>
+<td><a href="https://huggingface.co/datasets/microsoft/wiki_qa">Hugging Face</a></td>
+<td>否</td>
+<td>否</td>
+<td>训练/评估</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-grounding">6. Grounding<a class="headerlink" href="#6-grounding" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>数据集名称</th>
+<th>简介</th>
+<th>领域</th>
+<th>年份</th>
+<th>语言</th>
+<th>规模</th>
+<th>发布机构</th>
+<th>用途</th>
+<th>数据集链接</th>
+<th>包含多模态Caption数据</th>
+<th>包含多模态QA数据</th>
+<th>训练/评估</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GRIT</td>
+<td>GRIT是一个大规模的多模态数据集，支持多种位置感知的单模态/多模态任务，如短语定位、指代表达式理解和生成等。</td>
+<td>计算机视觉、自然语言处理</td>
+<td>2024</td>
+<td>中文、英文</td>
+<td>约9061万张图像，1.15亿个文本片段，1.37亿个关联的边界框</td>
+<td>Microsoft Research</td>
+<td>用于提升模型在细粒度多模态理解和生成任务中的表现</td>
+<td><a href="https://huggingface.co/datasets/zzliang/GRIT">Hugging Face</a></td>
+<td>是</td>
+<td>否</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>gRefCOCO</td>
+<td>gRefCOCO 数据集主要用于图像中对象的引用表达，包含了图像和自然语言中的指令，通过这些指令来定位图像中的对象。</td>
+<td>计算机视觉，图像检索，视觉问答</td>
+<td>2016</td>
+<td>英文</td>
+<td>约20,000张图像，包含超过142,000条引用</td>
+<td>UC Berkeley</td>
+<td>对象定位，图像检索，视觉问答</td>
+<td><a href="http://tamer.khanlab.org/datasets/grefcoco/">链接</a></td>
+<td>否</td>
+<td>是</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>Objects365</td>
+<td>一个大规模、高质量的目标检测数据集，包含365个类别、200万张图片和3000万个边界框</td>
+<td>计算机视觉</td>
+<td>2019</td>
+<td>中文/英文</td>
+<td>365个类别，200万张图片，3000万个边界框</td>
+<td>Objects365 Consortium</td>
+<td>目标检测、特征学习等</td>
+<td><a href="https://www.objects365.org/">Objects365官网</a></td>
+<td>否</td>
+<td>否</td>
+<td>训练/评估</td>
+</tr>
+<tr>
+<td>RefCOCO</td>
+<td>一个自然语言引用表达数据集，包含19,894张照片中的96,654个对象的130,525个表达</td>
+<td>计算机视觉</td>
+<td>2014</td>
+<td>英文</td>
+<td>19,894张照片，96,654个对象，130,525个表达</td>
+<td>UNC（北卡罗来纳大学教堂山分校）</td>
+<td>自然语言引用表达研究等</td>
+<td><a href="https://huggingface.co/datasets/lmms-lab/RefCOCO">Hugging Face</a></td>
+<td>是</td>
+<td>否</td>
+<td>评估</td>
+</tr>
+<tr>
+<td>RefCOCO+/g</td>
+<td>RefCOCO的扩展版本，排除了位置介词，包含更丰富语义的表达</td>
+<td>计算机视觉</td>
+<td>2015</td>
+<td>英文</td>
+<td>基于RefCOCO扩展，具体规模未明确，但包含更复杂的语义表达</td>
+<td>UNC（北卡罗来纳大学教堂山分校）</td>
+<td>自然语言引用表达研究等</td>
+<td><a href="https://github.com/lichengunc/refer">GitHub - refer</a></td>
+<td>是</td>
+<td>否</td>
+<td>评估</td>
+</tr>
+<tr>
+<td>GPT4Gen-RD-BoxCoT</td>
+<td>用于多模态对话和指代任务的数据集，包含指代对话和带框的CoT数据</td>
+<td>多模态对话、视觉问答</td>
+<td>2023</td>
+<td>英语</td>
+<td>未明确具体规模，但包含指代对话和带框的CoT数据</td>
+<td>-</td>
+<td>用于训练和评估多模态对话模型，支持指代理解和生成任务</td>
+<td><a href="https://github.com/shikras/shikra/blob/main/docs/data.md">GitHub</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>All-Seeing-V1</td>
+<td>用于泛视觉识别和理解的大规模数据集，包含超过10亿个区域的语义标签等</td>
+<td>泛视觉识别、多模态理解</td>
+<td>2023</td>
+<td>英语</td>
+<td>超过10亿个区域标注，1100万张图像，350万概念，1322亿个标记的语义信息</td>
+<td>OpenGVLab</td>
+<td>用于训练和评估多模态视觉语言模型，支持多种视觉语言任务</td>
+<td><a href="https://huggingface.co/datasets/OpenGVLab/AS-100M">Hugging Face</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>All-Seeing-V2</td>
+<td>提供关系对话（ReC）数据集，用于理解和生成图像中对象之间的关系</td>
+<td>泛视觉识别、关系理解</td>
+<td>2024</td>
+<td>英语</td>
+<td>包含127K高质量关系对话样本，涵盖详细描述、区域描述和对话任务</td>
+<td>OpenGVLab</td>
+<td>用于训练和评估多模态模型在关系理解任务上的性能</td>
+<td><a href="https://huggingface.co/datasets/OpenGVLab/AS-V2">Hugging Face</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>V3Det</td>
+<td>大规模视觉检测数据集，包含13204个类别的精确标注的边界框</td>
+<td>视觉目标检测</td>
+<td>2023</td>
+<td>英语</td>
+<td>243k图像，13204个类别，1753k边界框，提供类别描述和示例图像</td>
+<td>上海人工智能实验室等</td>
+<td>用于训练和评估大规模词汇量的视觉检测模型，支持开放词汇检测任务</td>
+<td><a href="https://github.com/V3Det/V3Det">GitHub</a></td>
+<td>否</td>
+<td>否</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>TolokaVQA</td>
+<td>一个众包的多模态数据集，用于评估机器学习系统在视觉问答任务中的表现，给定图像和文本问题，需要绘制包围框作为答案</td>
+<td>计算机视觉与自然语言处理</td>
+<td>2023</td>
+<td>英语</td>
+<td>45,199 张图像和问题对，分为训练集、公共测试集和私有测试集</td>
+<td>Toloka</td>
+<td>用于评估机器学习模型在视觉问答任务中的表现，也可用于视觉搜索、增强现实、机器人等领域</td>
+<td><a href="https://huggingface.co/datasets/sajjadrauf/tolokaVQA/tree/main">Hugging Face</a></td>
+<td>是（通过 BLIP-2 生成）</td>
+<td>是</td>
+<td>既有训练也有评估</td>
+</tr>
+<tr>
+<td>DsLMF</td>
+<td>用于智能识别地下长壁采矿工作面异常工况的图像数据集，包含 6 类目标的标注</td>
+<td>采矿业</td>
+<td>2024</td>
+<td>无（图像数据集）</td>
+<td>138,004 张图像</td>
+<td>未明确提及具体发布机构，但由相关研究人员开发</td>
+<td>支持地下采矿中异常状态的智能识别与分类研究</td>
+<td><a href="https://springernature.figshare.com/collections/DsLMF_An_open_dataset_for_intelligent_recognition_of_abnormal_condition_in_underground_longwall_mining_face/6307599">figshare</a></td>
+<td>否</td>
+<td>否</td>
+<td>主要用于评估</td>
+</tr>
+<tr>
+<td>COCO-ReM</td>
+<td>对 COCO 数据集的实例标注进行了改进，提供了更高质量的掩码标注</td>
+<td>计算机视觉</td>
+<td>2024</td>
+<td>无（图像数据集）</td>
+<td>约 118 万张训练图像和 5,000 张验证图像，带有更精细的实例掩码</td>
+<td>由相关研究人员开发</td>
+<td>用于目标检测和实例分割任务的基准测试</td>
+<td><a href="https://huggingface.co/datasets/kdexd/coco-rem">Hugging Face</a></td>
+<td>否</td>
+<td>否</td>
+<td>主要用于评估，也可用于训练</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-document">7. Document<a class="headerlink" href="#7-document" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>数据集名称</th>
+<th>简介</th>
+<th>领域</th>
+<th>年份</th>
+<th>语言</th>
+<th>规模</th>
+<th>发布机构</th>
+<th>用途</th>
+<th>数据集链接</th>
+<th>包含多模态Caption数据</th>
+<th>包含多模态QA数据</th>
+<th>训练/评估</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DocReason25K</td>
+<td>用于文档领域推理的指令微调训练集，包含详细推理解释，由 GPT3.5 或 GPT4V 产生</td>
+<td>文档</td>
+<td>2024</td>
+<td>英语</td>
+<td>2.5 万样本</td>
+<td>Institute for Intelligent Computing</td>
+<td>多模态指令微调、推理能力提升</td>
+<td><a href="https://huggingface.co/datasets/mPLUG/DocReason25K">Hugging Face</a></td>
+<td>否</td>
+<td>是</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>DocVQA</td>
+<td>文档图像上的视觉问答数据集，包含 5 万个问题，覆盖多种文档类型和内容</td>
+<td>文档</td>
+<td>2020</td>
+<td>英语</td>
+<td>12,767 图像，50,000 问题</td>
+<td>CVIT, IIIT Hyderabad 等</td>
+<td>文档图像的视觉问答研究</td>
+<td><a href="https://huggingface.co/datasets/lmms-lab/DocVQA">Hugging Face</a></td>
+<td>否</td>
+<td>是</td>
+<td>评估</td>
+</tr>
+<tr>
+<td>Docmatix</td>
+<td>大规模文档视觉问答数据集，包含 240 万图像和 950 万问答对</td>
+<td>文档</td>
+<td>2024</td>
+<td>英语</td>
+<td>240 万图像，950 万问答对</td>
+<td>Hugging Face M4 等</td>
+<td>文档视觉问答模型的微调</td>
+<td><a href="https://huggingface.co/datasets/HuggingFaceM4/Docmatix">Hugging Face</a></td>
+<td>否</td>
+<td>是</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>Sujet-Finance-QA-Vision</td>
+<td>该数据集包含超过 10 万个基于 9,800 多张金融文档图像的问答对，用于金融文档分析和视觉问答研究</td>
+<td>金融</td>
+<td>2024</td>
+<td>英语</td>
+<td>9,801 张图像，107,050 个问答对</td>
+<td>Sujet AI</td>
+<td>训练和评估视觉问答模型</td>
+<td><a href="https://huggingface.co/datasets/sujet-ai/Sujet-Finance-QA-Vision-100k">Hugging Face</a></td>
+<td>是，包含图像描述</td>
+<td>是，包含基于图像的问答对</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>BigDocs-7.5M</td>
+<td>一个大型文档级数据集，适用于文本分类和信息检索任务。</td>
+<td>信息检索、文本分类</td>
+<td>2022</td>
+<td>英语</td>
+<td>7.5M 文档</td>
+<td>Microsoft</td>
+<td>文档分类、信息检索、文本处理</td>
+<td>https://bigdocs.github.io/</td>
+<td>否</td>
+<td>否</td>
+<td>训练</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-science">8. Science<a class="headerlink" href="#8-science" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>数据集名称</th>
+<th>简介</th>
+<th>领域</th>
+<th>年份</th>
+<th>语言</th>
+<th>规模</th>
+<th>发布机构</th>
+<th>用途</th>
+<th>数据集链接</th>
+<th>包含多模态Caption数据</th>
+<th>包含多模态QA数据</th>
+<th>训练/评估</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI2D</td>
+<td>包含超过5000张小学科学图表和超过150000个丰富注释的多模态数据集</td>
+<td>科学教育</td>
+<td>2016</td>
+<td>英文</td>
+<td>5000+张图像，150000+个注释，15000+个多项选择题</td>
+<td>Allen Institute for AI</td>
+<td>用于视觉问答和图表理解研究</td>
+<td><a href="https://huggingface.co/datasets/lmms-lab/ai2d">HuggingFace</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>ScienceQA</td>
+<td>包含科学主题的多模态多项选择题，涵盖自然科学、社会科学和语言科学</td>
+<td>科学教育</td>
+<td>2022</td>
+<td>英文</td>
+<td>21,208个问题，涵盖多种科学主题和多模态上下文</td>
+<td>UCLA 和 Allen Institute for AI</td>
+<td>用于科学问题解答和多模态推理研究</td>
+<td><a href="https://huggingface.co/datasets/scienceqa">HuggingFace</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>TQA</td>
+<td>用于解决教科书问答任务的数据集，包含文本和图像的多模态输入。</td>
+<td>教育/科学</td>
+<td>2017</td>
+<td>英语</td>
+<td>1076 课，26,260 个问题，78,338 个句子，3,455 张图像</td>
+<td>AI2 (Allen Institute for AI)</td>
+<td>训练和评估多模态问答模型</td>
+<td><a href="https://huggingface.co/datasets/yyyyifan/TQA">Hugging Face</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练/评估</td>
+</tr>
+<tr>
+<td>ChemVLM Data</td>
+<td>用于化学领域的多模态语言模型，包含化学图像和文本信息</td>
+<td>化学</td>
+<td>2024</td>
+<td>中/英</td>
+<td>数据规模未明确，包含多种化学图像和文本数据</td>
+<td>Shanghai Artificial Intelligence Laboratory 等</td>
+<td>用于化学领域的多模态理解和推理</td>
+<td><a href="https://github.com/AI4Chem/ChemVLM-26B">GitHub</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练和评估</td>
+</tr>
+</tbody>
+</table>
+<h2 id="9-conversation">9. Conversation<a class="headerlink" href="#9-conversation" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>数据集名称</th>
+<th>简介</th>
+<th>领域</th>
+<th>年份</th>
+<th>语言</th>
+<th>规模</th>
+<th>发布机构</th>
+<th>用途</th>
+<th>数据集链接</th>
+<th>包含多模态Caption数据</th>
+<th>包含多模态QA数据</th>
+<th>训练/评估</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ALiLaVA</td>
+<td>提供了140万条由GPT-4V合成的高质量数据，用于训练轻量级视觉语言模型</td>
+<td>视觉语言模型</td>
+<td>2024</td>
+<td>英语</td>
+<td>1.4M</td>
+<td>Freedom Intelligence</td>
+<td>训练轻量级视觉语言模型</td>
+<td><a href="https://huggingface.co/datasets/FreedomIntelligence/ALLaVA-4V">Hugging Face</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>SVIT</td>
+<td>提供了420万条视觉指令调优数据，包括对话问答、复杂推理问答等</td>
+<td>视觉指令调优</td>
+<td>2023</td>
+<td>英语</td>
+<td>4.2M</td>
+<td>Beijing Academy of Artificial Intelligence</td>
+<td>视觉指令调优研究</td>
+<td><a href="https://huggingface.co/datasets/BAAI/SVIT">Hugging Face</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>Cambrian-10M</td>
+<td>提供了1000万条多模态数据，包括图像和对应的文本描述</td>
+<td>多模态语言模型</td>
+<td>2024</td>
+<td>英语</td>
+<td>10M</td>
+<td>NYU VisionX</td>
+<td>训练多模态语言模型</td>
+<td><a href="https://huggingface.co/datasets/nyu-visionx/Cambrian-10M">Hugging Face</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>TextOCR-GPT4V</td>
+<td>提供了基于GPT-4V的文本OCR数据，包含场景文本识别、手写文本识别等任务</td>
+<td>光学字符识别（OCR）</td>
+<td>2023</td>
+<td>多语言</td>
+<td>规模未明确</td>
+<td>Jimmy Carter</td>
+<td>OCR任务研究</td>
+<td><a href="https://huggingface.co/datasets/jimmycarter/textocr-gpt4v">Hugging Face</a></td>
+<td>是</td>
+<td>是</td>
+<td>评估</td>
+</tr>
+<tr>
+<td>MMDU</td>
+<td>多轮多图像对话理解基准，用于评估和改进 LVLM 的多轮对话能力</td>
+<td>人工智能、对话系统</td>
+<td>2024</td>
+<td>英语</td>
+<td>110个对话，421张图片，1645个问答对，最大20张图片、17轮对话，18k tokens</td>
+<td>上海人工智能实验室等</td>
+<td>用于评估和改进 LVLM 在多轮多图像对话中的理解能力</td>
+<td><a href="https://github.com/Liuziyu77/MMDU">GitHub</a></td>
+<td>是</td>
+<td>是</td>
+<td>评估</td>
+</tr>
+<tr>
+<td>Viet-ShareGPT4o</td>
+<td>用于视觉问答任务的越南语数据集，包含图像和相关问题及答案</td>
+<td>人工智能、视觉问答</td>
+<td>2024</td>
+<td>越南语</td>
+<td>未明确具体规模，但包含图像和问答对</td>
+<td>5CD-AI</td>
+<td>用于视觉问答任务，提升模型对越南语的理解和生成能力</td>
+<td><a href="https://huggingface.co/datasets/5CD-AI/Viet-ShareGPT-4o-Text-VQA">Hugging Face</a></td>
+<td>是</td>
+<td>是</td>
+<td>未明确</td>
+</tr>
+<tr>
+<td>RLAIF-V</td>
+<td>通过开源 AI 反馈提升 MLLM 的可信度，包含高质量反馈数据和推理学习算法</td>
+<td>人工智能、多模态语言模型</td>
+<td>2024</td>
+<td>英语</td>
+<td>包含83,132个高质量比较对，涵盖多种任务和领域</td>
+<td>RLHF-V 团队</td>
+<td>用于提升 MLLM 的可信度，减少幻觉，增强推理能力</td>
+<td><a href="https://github.com/RLHF-V/RLAIF-V">GitHub</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练和评估</td>
+</tr>
+<tr>
+<td>Laion-GPT4V</td>
+<td>由 GPT-4V 生成的视觉语言合成数据集，包含高质量的描述、指令和答案</td>
+<td>人工智能、视觉语言模型</td>
+<td>2024</td>
+<td>英语</td>
+<td>130万样本，涵盖多种视觉任务和指令对</td>
+<td>Freedom Intelligence</td>
+<td>用于训练轻量级视觉语言模型，提升其性能和效率</td>
+<td><a href="https://huggingface.co/datasets/laion/gpt4v-dataset">Hugging Face</a></td>
+<td>是</td>
+<td>是</td>
+<td>训练</td>
+</tr>
+<tr>
+<td>WildVision-GPT4o</td>
+<td>用于评估视觉语言模型 (VLMs) 在真实场景中的表现，基于人类偏好的在线平台</td>
+<td>多领域</td>
+<td>2024</td>
+<td>英语</td>
+<td>20k+ 聊天记录，8k+ 投票</td>
+<td>Allen Institute of AI 等</td>
+<td>评估视觉语言模型性能</td>
+<td><a href="https://huggingface.co/datasets/WildVision/wildvision-arena">Hugging Face</a></td>
+<td>是</td>
+<td>是</td>
+<td>评估</td>
+</tr>
+</tbody>
+</table>
+<h2 id="10-medical">10. Medical<a class="headerlink" href="#10-medical" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">数据集名称</th>
+<th style="text-align: left;">简介</th>
+<th style="text-align: left;">领域</th>
+<th style="text-align: left;">年份</th>
+<th style="text-align: left;">语言</th>
+<th style="text-align: left;">规模</th>
+<th style="text-align: left;">发布机构</th>
+<th style="text-align: left;">用途</th>
+<th style="text-align: left;">数据集链接</th>
+<th style="text-align: left;">包含多模态Caption数据</th>
+<th style="text-align: left;">包含多模态QA数据</th>
+<th style="text-align: left;">训练/评估</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">PMC-VQA</td>
+<td style="text-align: left;">一个大规模医学视觉问答数据集，包含227k问答对，涉及149k张图像，涵盖多种模态和疾病</td>
+<td style="text-align: left;">医学</td>
+<td style="text-align: left;">2023</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">包含227k问答对，149k张图像，覆盖多种模态和疾病</td>
+<td style="text-align: left;">上海交通大学、上海人工智能实验室</td>
+<td style="text-align: left;">医学视觉问答模型训练与评估</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练、评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">VQA-RAD</td>
+<td style="text-align: left;">一个关于放射学图像的视觉问答数据集，包含2248个问答对，315张图像</td>
+<td style="text-align: left;">医学</td>
+<td style="text-align: left;">2018</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">包含2248个问答对，315张图像，分为训练集和测试集</td>
+<td style="text-align: left;">Open Science Framework</td>
+<td style="text-align: left;">医学视觉问答模型训练与评估</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/flaviagiammarino/vqa-rad">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练、评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">ImageCLEF</td>
+<td style="text-align: left;">包含多个图像检索和分类任务的数据集，用于多模态信息检索研究</td>
+<td style="text-align: left;">医学</td>
+<td style="text-align: left;">2008-2011</td>
+<td style="text-align: left;">多语言</td>
+<td style="text-align: left;">包含多个子数据集，如VCDT、Wikipedia图像检索等</td>
+<td style="text-align: left;">ImageCLEF/LifeCLEF</td>
+<td style="text-align: left;">图像检索、分类等任务研究</td>
+<td style="text-align: left;"><a href="https://www.imageclef.org/datasets">ImageCLEF官网</a></td>
+<td style="text-align: left;">部分子数据集包含</td>
+<td style="text-align: left;">部分子数据集包含</td>
+<td style="text-align: left;">训练、评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">SLAKE</td>
+<td style="text-align: left;">一个双语的医学视觉问答数据集，包含14k问答对，642张图像，涵盖多种模态和疾病</td>
+<td style="text-align: left;">医学</td>
+<td style="text-align: left;">2021</td>
+<td style="text-align: left;">中英双语</td>
+<td style="text-align: left;">包含14k问答对，642张图像，涵盖多种模态和疾病</td>
+<td style="text-align: left;">香港理工大学、四川大学华西医院</td>
+<td style="text-align: left;">医学视觉问答模型训练与评估</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/BoKelvin/SLAKE">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练、评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">Medical-Diff-VQA</td>
+<td style="text-align: left;">用于胸部X光图像差异视觉问答的大型医学数据集，包含164,324对图像和700,703个问答对</td>
+<td style="text-align: left;">医学影像</td>
+<td style="text-align: left;">2025</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">164,324对图像，700,703个问答对</td>
+<td style="text-align: left;">PhysioNet</td>
+<td style="text-align: left;">用于医学视觉问答任务，特别是比较同一患者不同时间的胸部X光图像的变化</td>
+<td style="text-align: left;"><a href="https://physionet.org/content/medical-diff-vqa/">PhysioNet</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">PMC-CaseReport</td>
+<td style="text-align: left;">基于PubMed Central的病例报告数据集，包含317K训练对和121K测试图像的VQA对</td>
+<td style="text-align: left;">医学文本</td>
+<td style="text-align: left;">2023</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">317K训练对，121K测试图像的VQA对</td>
+<td style="text-align: left;">Hugging Face</td>
+<td style="text-align: left;">用于医学视觉问答任务，基于病例报告生成问题和答案</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/chaoyi-wu/PMC-CaseReport">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">GMAI-VL (subset)</td>
+<td style="text-align: left;">用于通用医学AI的大型视觉语言模型和多模态数据集，包含5.5M样本的子集</td>
+<td style="text-align: left;">医学多模态</td>
+<td style="text-align: left;">2024</td>
+<td style="text-align: left;">英文/中文</td>
+<td style="text-align: left;">5.5M样本的子集</td>
+<td style="text-align: left;">上海交通大学、上海人工智能实验室等机构</td>
+<td style="text-align: left;">用于医学视觉问答、医学图像诊断等多模态任务</td>
+<td style="text-align: left;"><a href="https://github.com/uni-medical/GMAI-VL">GitHub</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练</td>
+</tr>
+<tr>
+<td style="text-align: left;">PMC</td>
+<td style="text-align: left;">包含1.65M图像-文本对的大型数据集，涵盖多种模态和疾病类型</td>
+<td style="text-align: left;">医学多模态</td>
+<td style="text-align: left;">2023</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">1.65M图像-文本对</td>
+<td style="text-align: left;">上海交通大学、上海人工智能实验室等机构</td>
+<td style="text-align: left;">用于医学视觉问答、图像分类、图像-文本检索等任务</td>
+<td style="text-align: left;"><a href="https://github.com/openmedlab/Awesome-Medical-Dataset/blob/main/resources/PMC-OA.md">GitHub</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">VQA-Med</td>
+<td style="text-align: left;">专注于放射学图像的医学视觉问答数据集，包含模态、平面、器官系统和异常等类别问题</td>
+<td style="text-align: left;">医疗</td>
+<td style="text-align: left;">2019</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">包含 4,200 张放射学图像和 15,292 个问答对，分为训练集、验证集和测试集</td>
+<td style="text-align: left;">ImageCLEF 2019 组织团队，由 Asma Ben Abacha 等人创建</td>
+<td style="text-align: left;">训练和评估医学视觉问答系统</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/VQAMed">Hugging Face</a>（无）<br><a href="https://github.com/abachaa/VQA-Med-2019">GitHub</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">PathVQA</td>
+<td style="text-align: left;">基于病理图像的视觉问答数据集，旨在开发能够通过美国病理学委员会考试的 AI 系统</td>
+<td style="text-align: left;">医疗</td>
+<td style="text-align: left;">2020</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">包含 4,998 张病理图像和 32,799 个问答对，分为训练集、验证集和测试集</td>
+<td style="text-align: left;">University of California San Diego 等机构，由 Xuehai He 等人创建</td>
+<td style="text-align: left;">训练和评估医学视觉问答系统</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/flaviagiammarino/path-vqa">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">MedTrinity-25M</td>
+<td style="text-align: left;">MedTrinity-25M 是一个医学多模态数据集，包含 2500 万对高质量的医学图像和文本，用于医学领域的多模态研究和应用。</td>
+<td style="text-align: left;">医学Caption</td>
+<td style="text-align: left;">2024</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">2500万对医学图像和文本</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">医学多模态研究</td>
+<td style="text-align: left;">-</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练/评估</td>
+</tr>
+</tbody>
+</table>
+<h2 id="11-gui">11. GUI<a class="headerlink" href="#11-gui" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">数据集名称</th>
+<th style="text-align: left;">简介</th>
+<th style="text-align: left;">领域</th>
+<th style="text-align: left;">年份</th>
+<th style="text-align: left;">语言</th>
+<th style="text-align: left;">规模</th>
+<th style="text-align: left;">发布机构</th>
+<th style="text-align: left;">用途</th>
+<th style="text-align: left;">数据集链接</th>
+<th style="text-align: left;">包含多模态Caption数据</th>
+<th style="text-align: left;">包含多模态QA数据</th>
+<th style="text-align: left;">训练/评估</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Screen2Words</td>
+<td style="text-align: left;">自动生成移动 UI 屏幕的功能性语言描述，用于语言交互和屏幕理解任务。</td>
+<td style="text-align: left;">移动 UI</td>
+<td style="text-align: left;">2021</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">22,417 个 Android UI 屏幕，112,085 个语言描述</td>
+<td style="text-align: left;">Google Research</td>
+<td style="text-align: left;">训练和评估自动屏幕总结模型，用于语言交互、屏幕阅读器增强等应用</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/google-research/screen2words">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">WebSight</td>
+<td style="text-align: left;">将网页截图转换为 HTML 代码，用于简化网页开发过程。</td>
+<td style="text-align: left;">网页开发</td>
+<td style="text-align: left;">2024</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">200 万对 HTML 代码和对应的截图</td>
+<td style="text-align: left;">Hugging Face</td>
+<td style="text-align: left;">训练视觉语言模型，将网页设计快速转换为功能代码，支持无代码开发工具</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/HuggingFaceM4/WebSight">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">Widget-Caption</td>
+<td style="text-align: left;">自动生成移动 UI 元素的语言描述，用于提高移动应用的无障碍性和语言交互能力。</td>
+<td style="text-align: left;">移动 UI</td>
+<td style="text-align: left;">2020</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">21,750 个独特屏幕，61,285 个 UI 元素，162,859 个语言描述</td>
+<td style="text-align: left;">Google Research</td>
+<td style="text-align: left;">训练和评估用于生成移动 UI 元素描述的模型，提高无障碍性</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/google-research/widget-caption">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">RICOSCA</td>
+<td style="text-align: left;">用于移动 UI 自动化和无障碍技术研究的合成数据集，包含 UI 元素的描述和截图。</td>
+<td style="text-align: left;">移动 UI</td>
+<td style="text-align: left;">2017</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">18,000 个屏幕，70,000 个 UI 元素，170,000 个描述</td>
+<td style="text-align: left;">Google Research</td>
+<td style="text-align: left;">训练模型以理解屏幕、解释移动界面，并在自动化和无障碍技术中应用</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/rootsautomation/RICO-SCA">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">SeeClick</td>
+<td style="text-align: left;">一个基于视觉的GUI代理，仅依赖于界面截图来执行点击和输入等操作。</td>
+<td style="text-align: left;">GUI代理</td>
+<td style="text-align: left;">2024</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">包含约600张截图、1200条指令，涵盖iOS、Android、macOS、Windows和网页环境</td>
+<td style="text-align: left;">南京大学、上海AI实验室</td>
+<td style="text-align: left;">用于训练和评估视觉GUI代理，提升GUI元素定位能力。</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/Yuxiang007/AMEX">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">ScreenQA</td>
+<td style="text-align: left;">一个大规模的移动应用截图问答数据集，包含约86K问答对和35K截图。</td>
+<td style="text-align: left;">移动应用</td>
+<td style="text-align: left;">2022</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">包含约86,025个问答对，35,352张截图。</td>
+<td style="text-align: left;">Google Research</td>
+<td style="text-align: left;">用于训练和评估屏幕内容理解模型，通过问答验证理解能力。</td>
+<td style="text-align: left;"><a href="https://github.com/google-research-datasets/screen_qa">GitHub</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">AMEX</td>
+<td style="text-align: left;">一个大规模的Android设备控制数据集，包含多层级注释和复杂任务指令。</td>
+<td style="text-align: left;">移动设备控制</td>
+<td style="text-align: left;">2024</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">包含约104K截图、711K元素功能描述、3K复杂指令。</td>
+<td style="text-align: left;">中科大、上海AI实验室</td>
+<td style="text-align: left;">用于训练和评估通用移动GUI代理，提升对复杂任务的理解和执行能力。</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/Yuxiang007/AMEX">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">AITW</td>
+<td style="text-align: left;">一个大规模的Android设备控制数据集，包含人类演示的设备交互和指令。</td>
+<td style="text-align: left;">移动设备控制</td>
+<td style="text-align: left;">2023</td>
+<td style="text-align: left;">英文</td>
+<td style="text-align: left;">包含715k演示，30k唯一指令，涵盖多种Android版本和设备类型。</td>
+<td style="text-align: left;">Google Research</td>
+<td style="text-align: left;">用于训练和评估设备控制模型，支持多步任务和复杂交互。</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/Yuxiang007/AitW-HE/viewer">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">Odyssey</td>
+<td style="text-align: left;">用于训练和评估跨应用导航代理的综合性数据集，涵盖多种跨应用任务</td>
+<td style="text-align: left;">移动设备GUI</td>
+<td style="text-align: left;">2024</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">包含7,735个来自6种移动设备的导航序列，涉及201个应用和1,399种应用组合</td>
+<td style="text-align: left;">OpenGVLab</td>
+<td style="text-align: left;">训练和评估跨应用导航代理，提升用户体验</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/OpenGVLab/GUI-Odyssey">Hugging Face</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">UIBert</td>
+<td style="text-align: left;">用于学习通用多模态UI表示的数据集，包含UI元素的图像、文本和结构化元数据</td>
+<td style="text-align: left;">用户界面</td>
+<td style="text-align: left;">2021</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">包含72k移动应用UI数据，扩展为相似UI组件检索和引用表达式组件检索任务</td>
+<td style="text-align: left;">Google Research</td>
+<td style="text-align: left;">学习通用多模态UI表示，提升UI理解和任务性能</td>
+<td style="text-align: left;"><a href="https://github.com/google-research-datasets/uibert">GitHub</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">AndroidControl</td>
+<td style="text-align: left;">用于训练和评估Android设备控制代理的数据集，包含真实用户任务演示</td>
+<td style="text-align: left;">移动设备控制</td>
+<td style="text-align: left;">2024</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">包含15,283个Android应用任务演示，涵盖833个应用和14,548个独特任务</td>
+<td style="text-align: left;">Google DeepMind</td>
+<td style="text-align: left;">训练和评估基于LLM的UI控制代理，提升任务执行性能</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/smolagents/android-control">Hugging Face</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">Mind2Web</td>
+<td style="text-align: left;">用于开发和评估能够遵循语言指令在任何网站上完成复杂任务的通用网络代理</td>
+<td style="text-align: left;">网络自动化</td>
+<td style="text-align: left;">2023</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">包含2,000个来自137个网站的任务，涵盖31个领域，提供众包动作序列</td>
+<td style="text-align: left;">The Ohio State University</td>
+<td style="text-align: left;">开发和评估通用网络代理，提升网络可访问性和任务执行能力</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/osunlp/Mind2Web">Hugging Face</a></td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">训练和评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">OmniACT</td>
+<td style="text-align: left;">用于评估多模态自主代理执行计算机任务能力的数据集，包含桌面和网页应用</td>
+<td style="text-align: left;">人机交互</td>
+<td style="text-align: left;">2024</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">9802 数据点</td>
+<td style="text-align: left;">Carnegie Mellon University, Writer.com</td>
+<td style="text-align: left;">评估多模态自主代理的执行能力</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/Writer/omniact">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: left;">WaveUI</td>
+<td style="text-align: left;">包含 25k 标注的 UI 元素，用于增强视觉 UI 理解和交互任务</td>
+<td style="text-align: left;">人机交互</td>
+<td style="text-align: left;">2024</td>
+<td style="text-align: left;">英语</td>
+<td style="text-align: left;">25k 数据点</td>
+<td style="text-align: left;">AgentSea</td>
+<td style="text-align: left;">研究 UI 理解和交互任务</td>
+<td style="text-align: left;"><a href="https://huggingface.co/datasets/agentsea/wave-ui">Hugging Face</a></td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">训练/评估</td>
+</tr>
+</tbody>
+</table>
+<h2 id="12-evaluation">12. Evaluation<a class="headerlink" href="#12-evaluation" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">数据集名称</th>
+<th style="text-align: center;">简介</th>
+<th style="text-align: center;">领域</th>
+<th style="text-align: center;">年份</th>
+<th style="text-align: center;">语言</th>
+<th style="text-align: center;">规模</th>
+<th style="text-align: center;">发布机构</th>
+<th style="text-align: center;">用途</th>
+<th style="text-align: center;">数据集链接</th>
+<th>包含多模态Caption数据</th>
+<th style="text-align: center;">包含多模态QA数据</th>
+<th style="text-align: left;">训练/评估</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">MME</td>
+<td style="text-align: center;">MME 是一个多模态视频评估基准，包含视频、字幕和音频，用于评估模型在视频分析任务中的表现。</td>
+<td style="text-align: center;">视频</td>
+<td style="text-align: center;">2024</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">900个视频，256小时时长</td>
+<td style="text-align: center;">北京大学、香港大学等</td>
+<td style="text-align: center;">视频分析评估</td>
+<td style="text-align: center;"><a href="https://video-mme.github.io/">MME 链接</a></td>
+<td>是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">训练/评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">MMBench</td>
+<td style="text-align: center;">MMBench 是一个多模态大模型评估基准，包含多种任务类型，用于全面评估多模态模型的性能。</td>
+<td style="text-align: center;">知识、多学科</td>
+<td style="text-align: center;">2023</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">多模态模型评估</td>
+<td style="text-align: center;">https://github.com/open-compass/MMBench</td>
+<td>是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">SEED-Bench-1</td>
+<td style="text-align: center;">SEED-Bench-1 是一个多模态模型评估基准，包含多种任务类型，用于评估多模态模型的性能和能力。</td>
+<td style="text-align: center;">知识、多学科</td>
+<td style="text-align: center;">2024</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">多模态模型评估</td>
+<td style="text-align: center;">https://github.com/AILab-CVC/SEED-Bench</td>
+<td>是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">MMMU</td>
+<td style="text-align: center;">MMMU 是一个多学科多模态理解与推理评估基准，包含各种问题类型，用于评估模型的多学科理解和推理能力。</td>
+<td style="text-align: center;">知识、多学科</td>
+<td style="text-align: center;">2023</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">11500个问题</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">多学科理解评估</td>
+<td style="text-align: center;">https://mmmu-benchmark.github.io/</td>
+<td>是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">POPE</td>
+<td style="text-align: center;">POPE 是一个多模态视觉语言模型评估基准，包含各种任务类型，用于评估模型在多模态任务中的表现。</td>
+<td style="text-align: center;">知识、多学科</td>
+<td style="text-align: center;">2024</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">多模态模型评估</td>
+<td style="text-align: center;">https://huggingface.co/datasets/lmms-lab/POPE</td>
+<td>是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">MMBench-Chinese</td>
+<td style="text-align: center;">MMBench-Chinese 是一个中文多模态大模型评估基准，包含多种任务类型，用于评估中文多模态模型的性能。</td>
+<td style="text-align: center;">知识、多学科</td>
+<td style="text-align: center;">2023</td>
+<td style="text-align: center;">中文</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">中文多模态模型评估</td>
+<td style="text-align: center;">https://huggingface.co/datasets/lmms-lab/MMBench_CN</td>
+<td>是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">评估</td>
+</tr>
+<tr>
+<td style="text-align: center;">MMSci</td>
+<td style="text-align: center;">MMSci 是一个多模态科学数据集，包含科学文章和图表，用于科学理解和图表生成任务。</td>
+<td style="text-align: center;">知识、多学科</td>
+<td style="text-align: center;">2024</td>
+<td style="text-align: center;">英语</td>
+<td style="text-align: center;">131,393篇文章，742,273个图表</td>
+<td style="text-align: center;">加利福尼亚大学等</td>
+<td style="text-align: center;">科学理解和图表生成</td>
+<td style="text-align: center;"><a href="https://github.com/Leezekun/MMSci">MMSci 链接</a></td>
+<td>是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: left;">评估</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="最后更新">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="2025年7月25日 00:24:26">2025年7月25日</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="创建日期">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="2025年7月25日 00:24:26">2025年7月25日</span>
+  </span>
+
+    
+    
+    
+  </aside>
+
+
+
+
+
+  <h2 id="__comments">评论</h2>
+  <script src="https://giscus.app/client.js"
+        data-repo="thb1314/thb1314.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkyNDg0MTE1NTg="
+        data-category="Announcements"
+        data-category-id="DIC_kwDODs51ps4CSAxI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="0"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="light"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+  </script>
+
+  <!-- Synchronize Giscus theme with palette -->
+  <script>
+    var giscus = document.querySelector("script[src*=giscus]")
+
+    // Set palette on initial load
+    var palette = __md_get("__palette")
+    if (palette && typeof palette.color === "object") {
+      var theme = palette.color.scheme === "slate"
+        ? "transparent_dark"
+        : "light"
+
+      // Instruct Giscus to set theme
+      giscus.setAttribute("data-theme", theme) 
+    }
+
+    // Register event handlers after documented loaded
+    document.addEventListener("DOMContentLoaded", function() {
+      var ref = document.querySelector("[data-md-component=palette]")
+      ref.addEventListener("change", function() {
+        var palette = __md_get("__palette")
+        if (palette && typeof palette.color === "object") {
+          var theme = palette.color.scheme === "slate"
+            ? "transparent_dark"
+            : "light"
+
+          // Instruct Giscus to change theme
+          var frame = document.querySelector(".giscus-frame")
+          frame.contentWindow.postMessage(
+            { giscus: { setConfig: { theme } } },
+            "https://giscus.app"
+          )
+        }
+      })
+    })
+  </script>
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../../python%26C%2B%2B/%E5%B5%8C%E5%85%A5%E5%BC%8Fso%E5%BC%80%E5%8F%91/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 嵌入式开发采用so动态加载摆脱buildroot依赖">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                嵌入式开发采用so动态加载摆脱buildroot依赖
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8E%A8%E5%AF%BC%E4%B8%80/" class="md-footer__link md-footer__link--next" aria-label="下一页: 卡尔曼滤波的公式推导和应用举例(一)">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                卡尔曼滤波的公式推导和应用举例(一)
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/thb1314" target="_blank" rel="noopener" title="Github" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="mailto:haibintian@foxmail.com" target="_blank" rel="noopener" title="email to me" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M64 112c-8.8 0-16 7.2-16 16v22.1l172.5 141.6c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16zM48 212.2V384c0 8.8 7.2 16 16 16h384c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0zM0 128c0-35.3 28.7-64 64-64h384c35.3 0 64 28.7 64 64v256c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.code.select", "content.footnote.tooltips", "navigation.footer"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+        <script src="../../themes/js/mathjax.js"></script>
+      
+        <script src="https://cdn.bootcdn.net/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+      
+        <script src="../../themes/js/social_share.js"></script>
+      
+    
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
+</html>
