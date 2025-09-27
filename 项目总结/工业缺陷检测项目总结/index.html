@@ -1,0 +1,3580 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="海滨">
+      
+      
+      
+        <link rel="prev" href="../../%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/ubuntu%E5%AE%89%E5%8D%93%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/">
+      
+      
+        <link rel="next" href="../%E8%A1%A8%E9%9D%A2%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%96%B9%E6%B3%95%E8%AE%BA/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.10">
+    
+    
+      
+        <title>工业缺陷检测项目经验总结 - 海滨的Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.4af4bdda.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="海滨的Blog" class="md-header__button md-logo" aria-label="海滨的Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            海滨的Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              工业缺陷检测项目经验总结
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/thb1314" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="海滨的Blog" class="md-nav__button md-logo" aria-label="海滨的Blog" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    海滨的Blog
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/thb1314" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    DL框架原理与技巧
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            DL框架原理与技巧
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Pytorch下的多卡间变量同步操作
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8807%E6%97%A5%2020%E6%97%B633%E5%88%8650%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    自动微分autograd原理-简单demo
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8811%E6%97%A5%2015%E6%97%B614%E5%88%8655%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    再谈自动微分：自动微分中的前向模式与反向模式
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/distributed_ema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    分布式训练场景下ModelEMA的优化
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/gray_image_pretrained_on_imagenet/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    灰度图分类采用Imagenet预训练时卷积核压缩Trick
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    OCR相关
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            OCR相关
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/2022%E5%B9%B403%E6%9C%8829%E6%97%A5%2022%E6%97%B651%E5%88%8611%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Pytorch中CTC Loss源码解析
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/360%C2%B0%E6%97%8B%E8%BD%AC%E6%96%87%E5%AD%97%E5%8C%BA%E5%9F%9F%E6%A3%80%E6%B5%8B%E5%AE%9E%E6%88%981%EF%BC%9A%E5%85%A8%E6%99%AF%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%90%BD%E5%9C%B0%E6%80%9D%E8%B7%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    360°旋转文字区域检测实战1：全景架构设计与落地思路
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/360%C2%B0%E6%97%8B%E8%BD%AC%E6%96%87%E5%AD%97%E5%8C%BA%E5%9F%9F%E6%A3%80%E6%B5%8B%E5%AE%9E%E6%88%982%EF%BC%9A%E9%AB%98%E6%95%88%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7%E4%B8%8E%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%E6%8C%87%E5%8D%97/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    360°旋转文字区域检测实战2：高效标注工具与团队协作指南
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/%E4%BB%BB%E6%84%8F%E5%87%B8%E5%9B%9B%E8%BE%B9%E5%BD%A2iou%E7%9A%84%E8%AE%A1%E7%AE%97/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    凸四边形IoU的计算
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Cuda相关
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Cuda相关
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B406%E6%9C%8812%E6%97%A5%2021%E6%97%B613%E5%88%8644%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cublas中矩阵乘及其广播机制的实现与单元测试
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B407%E6%9C%8823%E6%97%A5%2023%E6%97%B617%E5%88%8614%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cuDNN API的使用与测试-以二维卷积+Relu激活函数为例
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cuda%E7%9B%B8%E5%85%B3/ROIAlign%E7%AE%97%E5%AD%90%E7%9A%84%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    RoiAlign算子的前向传播与反向传播解读
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    python&C++
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            python&C++
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/2022%E5%B9%B406%E6%9C%8807%E6%97%A5%2015%E6%97%B650%E5%88%8636%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    python与C/C++数据交互的陷阱：numpy/torch中的视图
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/matrix_python_cpp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Numpy和Eigen—Python与C++中的矩阵运算库的联系
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/python%E5%92%8CC%E7%9A%84%E4%BA%A4%E4%BA%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    一文总结Python和C/C++的交互方式
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/%E5%B5%8C%E5%85%A5%E5%BC%8Fso%E5%BC%80%E5%8F%91/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    嵌入式开发采用so动态加载摆脱buildroot依赖
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    图文多模态
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            图文多模态
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%9B%BE%E6%96%87%E5%A4%9A%E6%A8%A1%E6%80%81/01%E6%95%B0%E6%8D%AE%E9%9B%86%E5%BD%92%E7%BA%B31/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    图文多模态数据集归纳（一）
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    数学原理与控制理论
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            数学原理与控制理论
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8E%A8%E5%AF%BC%E4%B8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    卡尔曼滤波的公式推导和应用举例(一)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8E%A8%E5%AF%BC%E4%B8%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    卡尔曼滤波的公式推导和应用举例(三)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8E%A8%E5%AF%BC%E4%BA%8C/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    卡尔曼滤波的公式推导和应用举例(二)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    模型轻量化
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            模型轻量化
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2021%E5%B9%B412%E6%9C%8825%E6%97%A5%2016%E6%97%B604%E5%88%8649%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Network Slimming-神经网络剪枝的精细控制实现
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B401%E6%9C%8817%E6%97%A5%2010%E6%97%B647%E5%88%8629%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    模型压缩框架nncf模型量化中QAT量化参数的梯度推导
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8805%E6%97%A5%2016%E6%97%B630%E5%88%8647%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    对模型量化框架mqbench添加openvino推理格式支持
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8821%E6%97%A5%2012%E6%97%B619%E5%88%8614%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    一文总结TensorRT下两种量化方式QAT和PTQ的部署
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/%E5%AF%B9%E5%9F%BA%E4%BA%8EKL%E6%95%A3%E5%BA%A6%E7%A1%AE%E5%AE%9A%E9%87%8F%E5%8C%96%E5%8F%82%E6%95%B0%E6%96%B9%E6%B3%95%E7%9A%84%E5%8E%9F%E7%90%86%E6%80%A7%E8%A7%A3%E8%AF%BB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    对基于KL散度确定量化参数方法的原理性解读
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    模型部署
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            模型部署
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2021%E5%B9%B412%E6%9C%8816%E6%97%A5%2014%E6%97%B626%E5%88%8600%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8806%E6%97%A5%2022%E6%97%B621%E5%88%8616%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    生产者消费者模式在多batch推理下的应用(延时队列)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8811%E6%97%A5%2023%E6%97%B612%E5%88%8655%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B405%E6%9C%8828%E6%97%A5%2017%E6%97%B623%E5%88%8651%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    计算图的优化-以onnx表示形式为例
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B408%E6%9C%8802%E6%97%A5%2023%E6%97%B628%E5%88%8628%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    TensorRT Plugin的实现、调试与验证：以实现Layernorm为例
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/20230114%E5%8D%95%E6%9C%BA%E5%A4%9A%E5%8D%A1%E8%AE%A1%E7%AE%97%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    对单机多卡AI模型推理场景下计算资源分配问题的思考
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/maskrcnn-tensorrt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    基于mmdet的maskrcnn在TensorRT上的端到端部署与精度对齐
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/mmyolo_tensorrt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Yolo系列模型的部署、精度对齐与int8量化加速
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    论文解读
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            论文解读
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/TOOD/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    TOOD论文和源码解读：目标检测中定位和分类任务一致性问题
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/convnext/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    关于ConvNext若干细节的解读与讨论
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/nanodet-plus-explain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Nanodet-Plus 从数据集、模型搭建到训练全流程解读
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/swin_transformer_relative_pos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    对Swin Transformer中的相对位置编码与attention mask的理解
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    软件安装
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            软件安装
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/ffmpeg%20GPU%E5%8A%A0%E9%80%9F%E7%89%88%E6%9C%AC%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FFMPEG Cuda版本编译安装方法
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/ubuntu%E5%AE%89%E5%8D%93%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ubuntu安卓开发环境安装
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    项目总结
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            项目总结
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    工业缺陷检测项目经验总结
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    工业缺陷检测项目经验总结
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      零、前言
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      一、视觉缺陷检测概述
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一、视觉缺陷检测概述">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1 应用背景
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2 相关定义与分类
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      二、缺陷检测难点
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、缺陷检测难点">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 没有缺陷数据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 少量缺陷数据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3 缺陷太小
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.4 缺陷对比度差
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.5 分辨率大要求时延段
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.6 缺陷标准难以量化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      三、常用缺陷检测算法
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、常用缺陷检测算法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 常规分类算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 少样本分类算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.3 常规目标检测算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.4 小目标检测算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.5 对比度低目标检测算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#36" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.6 常规语义分割算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#37" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.7 常规实例分割算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#38" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.8 异常检测算法
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      四、算法评估指标
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="四、算法评估指标">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.1 准确率 (Accuracy)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-precision" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.2 精确率 (Precision)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-recall" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.3 召回率 (Recall)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-confusion-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.4 混淆矩阵（confusion matrix）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.5 mAP
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#46-auc" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.6 AUC
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      五、新项目如何选择合适算法
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="五、新项目如何选择合适算法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.1 视觉系统基础硬件组成
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2 成像硬件选择
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.3 改善成像质量
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.4 综合考虑检测缺陷类型
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.5 检测速度的要求
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#56-pepleline" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.6 pepleline多算法组合
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      六、算法部署
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      七、总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E8%A1%A8%E9%9D%A2%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%96%B9%E6%B3%95%E8%AE%BA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    视觉类表面缺陷检测项目相关技术总结
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      零、前言
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      一、视觉缺陷检测概述
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一、视觉缺陷检测概述">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.1 应用背景
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      1.2 相关定义与分类
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      二、缺陷检测难点
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、缺陷检测难点">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 没有缺陷数据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 少量缺陷数据
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3 缺陷太小
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.4 缺陷对比度差
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.5 分辨率大要求时延段
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.6 缺陷标准难以量化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      三、常用缺陷检测算法
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、常用缺陷检测算法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 常规分类算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 少样本分类算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.3 常规目标检测算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.4 小目标检测算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.5 对比度低目标检测算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#36" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.6 常规语义分割算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#37" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.7 常规实例分割算法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#38" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.8 异常检测算法
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      四、算法评估指标
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="四、算法评估指标">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.1 准确率 (Accuracy)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-precision" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.2 精确率 (Precision)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-recall" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.3 召回率 (Recall)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-confusion-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.4 混淆矩阵（confusion matrix）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.5 mAP
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#46-auc" class="md-nav__link">
+    <span class="md-ellipsis">
+      4.6 AUC
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      五、新项目如何选择合适算法
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="五、新项目如何选择合适算法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.1 视觉系统基础硬件组成
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.2 成像硬件选择
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.3 改善成像质量
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.4 综合考虑检测缺陷类型
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.5 检测速度的要求
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#56-pepleline" class="md-nav__link">
+    <span class="md-ellipsis">
+      5.6 pepleline多算法组合
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      六、算法部署
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      七、总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="_1">工业缺陷检测项目经验总结<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>本文写于2025年9月26日晚十点和2025年9月27日上午十一点</p>
+</blockquote>
+<h2 id="_2">零、前言<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>最近看了一个工业检测领域项目经验的课程，尽管内容相对简单，但作者总结的挺系统的，所以想把该教程整理为文字，起到一个抛砖引玉的作用；</p>
+<p>我希望的是，读者看到这篇文章后，能够按照本文（视频作者）给出的问题划分方式与对应的解决方案，在需求评审与沟通、项目立项、算法POC等阶段起到参考性作用。</p>
+<p>本文涉及的算法不是最新的，但足够经典，且工作足够solid，建议读者在方案选取时可以选择本文说的算法作为baseline，之后逐步对比优化；</p>
+<h2 id="_3">一、视觉缺陷检测概述<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="11">1.1 应用背景<a class="headerlink" href="#11" title="Permanent link">&para;</a></h3>
+<p><strong>为什么需要视觉缺陷检测？</strong></p>
+<ol>
+<li>提升产品品质，反馈改善工艺流程<br />
+  通过自动检测发现缺陷，有助于提高最终产品质量，并将缺陷数据反馈回生产环节，用于优化和改进制造工艺。</li>
+<li>降低人工成本（降本增效）<br />
+  自动化检测可以替代部分人工检查工作，从而减少人力投入，实现降低成本、提高效率的目标。</li>
+<li>提升安全性<br />
+  特别适用于高温冶炼、有毒化学品生产等危险环境，用机器代替人工检测，可有效保障人员安全。</li>
+<li>提高生产效率、保证产品质量<br />
+  自动化检测速度快、精度高，能在不中断生产的情况下实时监控质量，确保生产效率与产品合格率。</li>
+<li>适应大规模生产<br />
+  视觉缺陷检测系统具备高吞吐量和一致性，非常适合现代工业中大批量、高速度的生产需求。</li>
+</ol>
+<p><strong>缺陷检测有行业应用？</strong></p>
+<p>目前缺陷检测广泛应用于工业领域，包括如下几类：  </p>
+<ol>
+<li>半导体行业  <ul>
+<li>检测对象：晶圆  </li>
+<li>常见缺陷：划伤、颗粒污染、脏污等  </li>
+</ul>
+</li>
+<li>3C电子行业（计算机、通信、消费电子）  <ul>
+<li>检测对象：PCB板（印刷电路板）  </li>
+<li>常见缺陷：破损、氧化、污染、孔破、孔偏、漏打孔等  </li>
+</ul>
+</li>
+<li>新能源行业（锂电池、光伏行业）  <ul>
+<li>检测对象：锂电池表面  </li>
+<li>常见缺陷：褶皱、开裂、气泡、凹凸、折痕、掉料等  </li>
+</ul>
+</li>
+<li>交通行业  <ul>
+<li>检测对象：新能源汽车内外饰件  </li>
+<li>应用目的：外观缺陷检测，确保产品美观与装配质量  </li>
+</ul>
+</li>
+<li>医疗行业  <ul>
+<li>检测对象：医学影像（如脑部MRI/CT图像）  </li>
+<li>应用场景：脑肿瘤分割（辅助诊断），属于医学图像分析中的“缺陷”或异常区域识别  </li>
+</ul>
+</li>
+<li>食品行业  <ul>
+<li>检测对象：各类食品  </li>
+<li>应用目的：外观分拣（如按大小、颜色、瑕疵等进行分级或剔除不合格品）  </li>
+</ul>
+</li>
+</ol>
+<h3 id="12">1.2 相关定义与分类<a class="headerlink" href="#12" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>任务定义</strong>：工业缺陷检测是指在工业生产过程中使用各种技术和方法来检测产品中的缺陷或异常。  </li>
+<li><strong>任务目的</strong>：缺陷检测旨在确保产品质量，减少次品率，并提高生产效率。    </li>
+<li><strong>成像方式</strong>：根据检测目标是产品“表面”还是“内部”，成像方式分为两类，    <ol>
+<li>外观缺陷检测  <ul>
+<li>这是最常见的检测形式。它使用工业相机对产品表面进行成像，获取的是清晰、有纹理和语义信息的图像（比如颜色、形状、划痕等），因此特征非常丰富，便于后续分析。   </li>
+<li>处理方式：一般使用常规的图像处理算法，比如图像分类、图像分割、缺陷定位等通用计算机视觉方法，这些算法成熟、适用范围广。   </li>
+</ul>
+</li>
+<li>内部探伤  <ul>
+<li>针对产品内部结构或隐藏缺陷的检测，常用的技术包括核磁成像、CT成像、X光成像、热成像等。这类成像方式虽然也能提供一定的语义信息（如病变区域、裂纹位置），但通常图像分辨率较低、特征不够明显，且成像结果会略显模糊，不如外观图像直观。  </li>
+<li>处理方式：由于数据更复杂、特征更抽象，通常需要使用特定行业定制化的算法。例如，在医疗影像领域（如CT或MRI图像分析）中，常使用UNet系列深度学习网络来实现高精度的病灶或缺陷分割。  </li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>外观检测分类</strong>：  </p>
+<ul>
+<li>自然光成像检测： 这是一种使用常见相机和图像处理算法来捕捉和分析产品图像的方法。通过采集产品图像并应用图像处理算法，可以检测出各种缺陷，如表面瑕疵、裂纹、错位、缺失等。常见的技术包括边缘检测、颜色分析、形状识别和纹理分析等。  </li>
+<li>X射线检测： 这种方法利用X射线的穿透特性，对产品进行检测。通过将产品暴露于X射线源下，然后使用探测器来接收通过产品的X射线，可以检测出产品内部的缺陷或异物。这种方法通常用于金属或其他密度较高的材料的缺陷检测。  </li>
+<li>热成像检测： 这种方法使用红外热像仪来检测产品表面的温度分布。通过分析温度分布图像，可以发现可能存在的缺陷，如热漏、热裂等。热成像检测在电子、电力、建筑等领域广泛应用。  </li>
+</ul>
+<p>这些工业缺陷检测方法结合了传感器技术、图像处理、信号处理和机器学习等技术，以实现高效准确的缺陷检测，并帮助企业提高产品质量。</p>
+</li>
+</ol>
+<h2 id="_4">二、缺陷检测难点<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h3 id="21">2.1 没有缺陷数据<a class="headerlink" href="#21" title="Permanent link">&para;</a></h3>
+<p>在缺乏标注缺陷数据的情况下，如何应对工业检测需求。分为两类：  </p>
+<ol>
+<li>完全未知型 —— 不仅没有缺陷样本，也不知道未来可能出现什么类型的缺陷 → 需采用“新颖检测”（Novelty Detection）方法，即通过正常样本学习“什么是正常”，从而识别出所有“异常”。  </li>
+<li>经验预知型 —— 虽然没有现成缺陷数据，但工程师凭借经验清楚可能产生的缺陷种类 → 可通过合成数据、模拟或迁移学习等方式构建训练集，进行有针对性的缺陷检测模型开发。</li>
+</ol>
+<p>怎么解决？</p>
+<ol>
+<li>从数据层面解决  <ul>
+<li>根据实际项目需求，人为制造一些缺陷类型</li>
+<li>根据实际项目需求，人为PS一些缺陷类型  </li>
+</ul>
+</li>
+<li>从算法层面解决<ul>
+<li>传统算法<br />
+  指不依赖深度学习、基于图像处理规则或手工特征的传统机器视觉方法，例如边缘检测、纹理分析、阈值分割等。</li>
+<li>深度学习半监督、无监督学习算法<br />
+    指在缺乏标注数据的情况下，利用未标注数据进行模型训练的方法，如自编码器（AutoEncoder）、生成对抗网络（GAN）、对比学习（Contrastive Learning）等，适用于“新颖检测”或“异常检测”场景。</li>
+</ul>
+</li>
+</ol>
+<h3 id="22">2.2 少量缺陷数据<a class="headerlink" href="#22" title="Permanent link">&para;</a></h3>
+<p>少量缺陷分两种情况讨论：</p>
+<ol>
+<li>少量缺陷数据，且对生产过程中产生缺陷类型未知，也就是 Novelty Detection，需要异常检测算法  </li>
+<li>少量缺陷数据，但是生成过程中生成的缺陷类型固定，可以尝试小样本学习</li>
+</ol>
+<p>解决方案：<br />
+1. 从数据层面解决<br />
+    - 根据实际项目需求，人为制造一些缺陷类型<br />
+    - 根据实际项目需求，人为PS一些缺陷类型
+    - 根据已有缺陷数据进行扩增
+2. 从算法层面解决<br />
+    - 未知新缺陷，使用异常检测算法
+    - 缺陷类型固定，使用小样本学习算法</p>
+<h3 id="23">2.3 缺陷太小<a class="headerlink" href="#23" title="Permanent link">&para;</a></h3>
+<p>小缺陷的定义：小缺陷是相对于原图尺寸来定义的。  </p>
+<table>
+<thead>
+<tr>
+<th>原图Size</th>
+<th>大缺陷Size (/8)</th>
+<th>中缺陷Size(/16)</th>
+<th>小缺陷Size (/32)</th>
+<th>微小缺陷Size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2500W (5000*5000)</td>
+<td>大于625*625</td>
+<td>大于317<em>317 小于625</em>625</td>
+<td>小于156<em>156 大于78</em>78</td>
+<td>大于3<em>3 小于78</em>78</td>
+</tr>
+<tr>
+<td>50W(640*640)</td>
+<td>大于80*80</td>
+<td>大于40<em>40 小于80</em>80</td>
+<td>小于20<em>20 大于10</em>10</td>
+<td>大于3<em>3 小于10</em>10</td>
+</tr>
+</tbody>
+</table>
+<p>解决方案1（算法层面解决）：
+- 超分
+- 多级特征融合
+- 稠密的anchor
+- GAN 先生成放大小缺陷再检测
+- 注意力机制
+- 上下文信息</p>
+<p>可以在一定程度上解决小图片上的小缺陷甚至微小缺陷，但是解决不了大图小缺陷（需要缩放到网络size训练）。</p>
+<p>解决方案2（策略层面解决）：
+- 图片切块
+- 小缺陷上采样</p>
+<p>综合方案1、2，可以解决大图小缺陷，甚至微小缺陷，但是会增加推理时间。</p>
+<h3 id="24">2.4 缺陷对比度差<a class="headerlink" href="#24" title="Permanent link">&para;</a></h3>
+<p>对比度差的定义：缺陷和背景的像素差小于10，并且中间是过渡像素。
+- “像素差小于10”指缺陷区域与周围背景在灰度或颜色值上的差异非常小（通常在0~255范围内），导致人眼或算法难以分辨。<br />
+- “中间是过渡像素”表示缺陷边缘不是突变的，而是存在模糊、渐变的过渡区域，进一步加剧了检测难度。</p>
+<p><a class="glightbox" href="03.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="对比度差" src="03.png" /></a></p>
+<p>解决方案1：</p>
+<ol>
+<li>传统算法的图像增强<br />
+    使用经典图像处理技术（如直方图均衡化、锐化、对比度拉伸等）提升图像质量，使缺陷更易被检测。  </li>
+<li>深度学习算法的增强<br />
+    利用深度学习模型（如CNN、U-Net等）对图像进行特征增强或预处理，以强化缺陷区域与背景的区分度。  </li>
+<li>直接使用深度学习算法检测<br />
+    伪装物体检测方向，专门解决前景和背景像素几乎一致的算法</li>
+</ol>
+<p><a class="glightbox" href="07.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="伪装物体检测方向" src="07.png" /></a></p>
+<p>深度学习算法的增强进一步细分为两种具体方向：</p>
+<ol>
+<li>超分算法
+    即“超分辨率算法”，通过深度学习模型将低分辨率图像重建为高分辨率图像，从而提升缺陷细节的可见性，辅助后续检测。  </li>
+<li>特定领域的增强：比如水下增强，雨雾天增强<br />
+    针对特殊环境或应用场景（如水下拍摄、雨雾天气成像），使用专门设计的深度学习模型对图像进行去模糊、去噪、对比度恢复等处理，以改善图像质量，适应复杂工况下的缺陷检测需求。
+<a class="glightbox" href="05.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="水下拍摄" src="05.png" /></a></li>
+</ol>
+<p>解决方案2：</p>
+<p>该方案从“策略层面”出发，提出两种图像处理策略来提升缺陷检测效果：</p>
+<ol>
+<li>转换到不同颜色空间检测（HSV, LAB等等）<br />
+    不直接在原始RGB色彩空间中处理图像，而是将其转换为其他颜色空间（如HSV、LAB等），这些空间能更好地分离亮度、色度、饱和度等信息，有助于突出缺陷与背景之间的差异。</li>
+<li>不同通道的融合<br />
+    利用多个颜色通道（如H、S、V、L、A、B等）分别提取特征，再将各通道的信息进行融合，综合判断缺陷区域，从而提高检测鲁棒性和准确性。</li>
+</ol>
+<h3 id="25">2.5 分辨率大要求时延段<a class="headerlink" href="#25" title="Permanent link">&para;</a></h3>
+<p>假设有这样一个项目需求：
+（1）检测微小缺陷
+（2）为使得缺陷明显，需要大尺寸图像，比如2500w像素的图
+（3）客户要求整体检测系统是500ms，请问你怎么解决？</p>
+<p>首先：明确硬件性能（CPU,GPU，处理器等）（边缘设备、本地主机、服务器？）；
+其次：明确缺陷类型和缺陷大小，选择合适算法（原则上：能用分类不用检测，能用检测不用分割）；
+最后：选择合适的部署框架，CPU 选择openvino量化压缩部署，GPU选择tensorrt量化压缩部署，原生的pytorch框架肯定满足不了时延要求；</p>
+<blockquote>
+<p>这里推荐看一下本文作者的其他文章：<a href="../%E8%A1%A8%E9%9D%A2%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%96%B9%E6%B3%95%E8%AE%BA/">表面缺陷检测项目的方法论</a></p>
+</blockquote>
+<h3 id="26">2.6 缺陷标准难以量化<a class="headerlink" href="#26" title="Permanent link">&para;</a></h3>
+<p><strong>缺陷没量化统一标准弊端：</strong><br />
+(1) 标注无从下手，造成数据混乱，模型学习能力差。<br />
+(2) 千人千面，每个人看缺陷的角度和方法不同，结果不同，和客户天天扯皮。  </p>
+<p><strong>缺陷数据4大难点</strong><br />
+1. 难分
+    - 界限难定
+    - 类间差异小
+    - 类内差异大
+2. 多样性
+    - 形态、颜色
+    - 纹理、位置不固定
+3. 不均衡
+    - 样本层面
+    - 缺陷层面
+4. 数据脏
+    - 异常数据混入
+    - OK数据混入</p>
+<p><strong>如何把缺陷归纳量化统一？</strong></p>
+<p>做好缺陷的归类，才容易下手，这里给出两种归纳方法。 
+方案1：<br />
+(1) 纹理缺陷：替代原始样本纹路，特点是位置、大小、形态不固定，比如划痕、脏污等；<br />
+(2) 结构缺陷：与目标结构有关，特点是其位置、形态较固定，可能不存在量化的概念；<br />
+(3) 其他缺陷：例如医学图像、一些红外热成像、超声波成像等，可能无法靠肉眼建立精准的对应关系。  </p>
+<p>方案二（形态上）：<br />
+(1) 加法：脏污、异物、附着<br />
+(2) 减法：残缺、划痕、破损<br />
+(3) 替换：混色、异色、杂质、混淆<br />
+(4) 变形：扭曲、尺寸、褶皱  </p>
+<blockquote>
+<p>在缺陷类型划分上，不要被客户影响，在满足客户的基础上，按照有利于缺陷算法设计的分类看；原则是保证类内相似，类间差异大；</p>
+</blockquote>
+<h2 id="_5">三、常用缺陷检测算法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h3 id="31">3.1 常规分类算法<a class="headerlink" href="#31" title="Permanent link">&para;</a></h3>
+<p>1.什么样的工业场景适合图像分类算法？  </p>
+<p>① 不需要知道具体异常位置信息，只判断具体类别<br />
+<a class="glightbox" href="08.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="常用缺陷检测" src="08.png" /></a><br />
+② 异常的信息占据整个图片30%以上<br />
+下图的划痕不适合分类算法，特征区域太小且不明显<br />
+<a class="glightbox" href="09.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="常用缺陷检测" src="09.png" /></a>
+③ 作为异常检测算法pipeline 后处理模块，精细判断缺陷类别
+<a class="glightbox" href="10.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="常用缺陷检测" src="10.png" /></a></p>
+<p>2.如何选择合适的算法？</p>
+<p>分类算法从CNN的lenet、vgg、resnet……到现在transformer系列mobilevit等，选择合适算法标准是什么？  </p>
+<p>① 检测指标（准确率和召回率）越高越好（工业场景相对自然场景简单，一般差异不大）<br />
+② 客户对CT的需求，选择推理时间越短越好<br />
+③ 方便部署（算子支持tensorrt、openvino、nnfc等等推理框架）<br />
+④ 根据原始图像尺寸选择合适的算法（比如你的图像是48*48，没有必要选择大输入尺寸模型）<br />
+⑤ 基于什么硬件部署？嵌入式、主机、服务器</p>
+<h3 id="32">3.2 少样本分类算法<a class="headerlink" href="#32" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>什么是小样本分类？<br />
+    只有少数训练样本和监督数据的情况下对新数据进行分类，只需少量的训练样本，我们创建的模型就可以相当好地执行。  </p>
+<p>考虑以下场景：<br />
+① 在医疗领域，对于一些不常见的疾病，可能没有足够的x光图像用于训练，对于这样的场景，构建一个小样本学习分类器是完美的解决方案。<br />
+② 对于工业领域，前期产线生产没有足够的缺陷数据用于训练，对于这样的场景可以使用小样本分类。  </p>
+<p>小样本分四类：<br />
+- N-Shot Learning (NSL)<br />
+- Few-Shot Learning (FSL)<br />
+- One-Shot Learning (OSL)<br />
+- Zero-Shot Learning (ZSL)  </p>
+<p>小样本学习主流方法：<br />
+① 基于度量的学习：度量学习也指相似度学习，衡量在嵌入空间中两个目标特征或者多个相似度或者距离，相同的类特征距离较近，反之不同的类特征距离较远，最终根据相似度得分获得分类结果<br />
+<a class="glightbox" href="11.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="基于度量的学习" src="11.png" /></a><br />
+② 基于Pretraining+Fine Tuning的方法：基本想法是在大规模数据集D_base上预训练模型，然后在小规模的支持集D_support上做Fine Tuning<br />
+③ 基于元学习的小样本学习：元学习指利用以往的知识经验指导新任务的学习，当学习了很多这样的任务之后，元学习模型便学会了举一反三，之后用这个分类任务来测试元学习模型，从而完成任务  </p>
+</li>
+<li>
+<p>什么样的工业场景适合小样本分类算法？<br />
+    ① 当数据集中的样本数量非常有限，无法支持传统深度学习模型进行训练时，可以考虑使用少样本图像分类算法。<br />
+    ② 在一些特定领域或任务中，获取大量标记数据成本较高或困难，这时少样本图像分类算法可以发挥作用。<br />
+    ③ 需要快速部署模型并进行预测，但数据采集和标注时间有限的情况下，少样本图像分类算法可以提供一种有效的解决方案。<br />
+    ④ 对于一些小规模数据集，少样本图像分类算法可以在保持良好性能的同时减少过拟合的风险</p>
+</li>
+<li>
+<p>如何选择合适的算法？
+选择合适算法标准是什么？<br />
+① 少量训练数据的模型，检测指标（准确率和召回率）越高越好<br />
+② 客户对CT的需求，选择推理时间越短越好<br />
+③ 方便部署（算子支持tensorrt、openvino，nncf等等推理框架）<br />
+④ 基于什么硬件部署？嵌入式、主机、服务器<br />
+推荐般使用孪生网络。</p>
+</li>
+</ol>
+<h3 id="33">3.3 常规目标检测算法<a class="headerlink" href="#33" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>什么样的工业场景适合目标检测算法？<br />
+① 一张图上有一个或者多个目标<br />
+② 只需要输出每个目标的大概位置信息，不需要精确位置、角度等信息。<br />
+③ 检测目标尺寸不能太小<br />
+说明：图1待检测目标大小适中可以使用普通目标检测算法；但是图2图像尺寸比较大而待检测目标比较小，所以不适合普通目标检测，需要特殊的目标检测算法或者特殊处理之后使用普通目标检测。<br />
+<a class="glightbox" href="13.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="常规目标检测算法" src="13.png" /></a><br />
+④ 检测目标特征明显<br />
+说明：图1待检测目标特征明显可以使用普通目标检测算法；但是图2图像待检测目标对比度很低，所以不适合普通目标检测，需要特殊的目标检测算法或者特殊处理之后使用普通目标检测。
+<a class="glightbox" href="14.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="常规目标检测算法" src="14.png" /></a><br />
+⑤ 数据集丰富<br />
+    单一场景下：<br />
+    (1) 在使用预训练权重的条件下，每一类缺陷的数据量要在300+，且每一类数据尽量均衡。<br />
+    (2) 在不使用预训练权重的条件下，每一类的缺陷数据要在500+，且每一类数据尽量均衡<br />
+    复杂自然场景下：<br />
+    (1) 在使用预训练权重的条件下，每一类缺陷的数据量要在1000+，且每一类数据尽量均衡。<br />
+    (2) 在不使用预训练权重的条件下，每一类的缺陷数据要在2000+，且每一类数据量尽量均衡<br />
+    普通目标检测算法适用80%以上的工业缺陷检测应用场景。  </p>
+</li>
+<li>
+<p>如何选择合适的算法？<br />
+目标检测算法从CNN的ssd、yolo系列……到现在transformer系列detr等，选择合适算法标准是什么？<br />
+① 客户检测指标需求（准确率和召回率）越高越好<br />
+② 客户对时延的需求，选择推理时间越短越好<br />
+③ 方便部署（算子支持tensorrt、openvino、nncf等等推理框架）<br />
+④ 基于什么硬件部署？嵌入式、主机、服务器  </p>
+</li>
+</ol>
+<h3 id="34">3.4 小目标检测算法<a class="headerlink" href="#34" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>小目标检测分为普通图片尺寸的小目标和超大尺寸图片的小目标检测<br />
+    （1）大和小都是相对的关系，不同的图像尺寸大小缺陷有不同的定义。<br />
+    （2）目标检测算法的卷积算法通常是下采样 2, 4, 8, 16, 32 倍，然后进行特征融合。  </p>
+<table>
+<thead>
+<tr>
+<th>图像尺寸</th>
+<th>大缺陷</th>
+<th>中等缺陷</th>
+<th>小缺陷</th>
+<th>超小缺陷</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>512*512</td>
+<td>64*64</td>
+<td>32*32</td>
+<td>16*16</td>
+<td>8*8 以下</td>
+</tr>
+<tr>
+<td>1024*1024</td>
+<td>128*128</td>
+<td>64*64</td>
+<td>32*32</td>
+<td>16*16 以下</td>
+</tr>
+<tr>
+<td>2048*2048</td>
+<td>256*256</td>
+<td>128*128</td>
+<td>64*64</td>
+<td>32*32 以下</td>
+</tr>
+<tr>
+<td>4096*4096</td>
+<td>512*512</td>
+<td>256*256</td>
+<td>128*128</td>
+<td>64*64 以下</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>什么样的工业场景适合普通图像尺寸的小目标检测算法？<br />
+    ① 图片尺寸一般不超 1024×1024<br />
+    ② 小目标一般尺寸需大于 16×16，检测不了超小目标，比如 5×5、3×3 的目标  </p>
+</li>
+<li>什么样的工业场景适合大尺寸图像的小目标检测算法？<br />
+    ① 图片尺寸一般超1024×1024大小，比如500W像素，1000W像素，2000W像素，等等<br />
+    ② 超小目标，比如5×5、3×3的目标，低于3×3误漏回比较高；<br />
+<a class="glightbox" href="01.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="pcb图片用于说明大图切小图" src="01.png" /></a><br />
+<a class="glightbox" href="02.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="pcb图片用于说明大图切小图" src="02.png" /></a></li>
+<li>解决方案？<br />
+    所以工业领域通常是对大图切块，比如把4096×4096切成10×10=100块，每块640×640，中间有overlap区域，基于小图检测微小缺陷，基本可以解决此类问题。  </li>
+<li>切块之后引申两个问题：<ol>
+<li>大缺陷切碎了，怎么解决？
+    小图标小缺陷，大缺陷不标注；大图标大缺陷，小缺陷不标注；</li>
+<li>推理时间 N×N 倍增长，怎么解决？
+    GPU：tensorrt、多线程推理、batch推理、模型量化、压缩等等方案；<br />
+    CPU：Openvino、多线程推理、batch推理、模型量化、压缩等方案；<br />
+    并行多卡推理（堆算力）：推荐 <a href="../%E8%A1%A8%E9%9D%A2%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%96%B9%E6%B3%95%E8%AE%BA/">表面缺陷检测项目的方法论</a></li>
+</ol>
+</li>
+<li>如何选择合适的算法？<br />
+    基于大图切块可以解决小图小缺陷，选择合适算法标准是什么？<br />
+    ① 客户检测指标需求（准确率和召回率）越高越好<br />
+    ② 客户对时延的需求，选择推理时间越短越好<br />
+    ③ 方便部署（算子支持tensorrt、openvino，nncl等等推理框架）<br />
+    ④ 基于什么硬件部署？嵌入式、主机、服务器  </li>
+<li>小目标检测，发论文可以参考：  <a href="https://zhuanlan.zhihu.com/p/656916355">https://zhuanlan.zhihu.com/p/656916355</a></li>
+</ol>
+<p>小图小目标推荐论文：<a href="https://arxiv.org/pdf/2209.13351">Super-Yolo</a></p>
+<h3 id="35">3.5 对比度低目标检测算法<a class="headerlink" href="#35" title="Permanent link">&para;</a></h3>
+<ol>
+<li>什么样的工业场景适合低对比度目标检测算法？<br />
+    ① 待检测物体和背景几乎一致，像素是渐变，并且变化范围很小，对比度很差<br />
+    ② 待检测对象与其背景之间的高度内在相似性  </li>
+<li>解决方案？<ol>
+<li>针对场景1可以尝试使用传统的增强算法做预处理，之后再送到深度学习检测算法中训练模型；  <ul>
+<li>受限对比度阈值</li>
+<li>直方图均衡化</li>
+<li>gamma增强</li>
+<li>log增强</li>
+<li>卷积增强</li>
+<li>...</li>
+</ul>
+</li>
+<li>针对场景2可以尝试使用基于深度学习的伪装目标检测算法</li>
+</ol>
+</li>
+<li>如何选择合适的算法？<br />
+    低对比度检测算法可以通过传统增强算法然后按深度学习算法，也可以通过深度学习算法端到端的算法，选择合适算法标准是什么？<br />
+    ① 客户检测指标需求（准确率和召回率）越高越好<br />
+    ② 客户对CT的需求，选择推理时间越短越好<br />
+    ③ 方便部署（算子支持tensorrt、openvino、nncf等等推理框架）<br />
+    ④ 基于什么硬件部署？嵌入式、主机、服务器  </li>
+</ol>
+<h3 id="36">3.6 常规语义分割算法<a class="headerlink" href="#36" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>什么样的工业场景适合常规语义分割算法？  </p>
+<ol>
+<li>需要知道缺陷位置信息</li>
+<li>需要知道精细的语义信息（每一个像素所属类别）</li>
+<li>需要精确的计算缺陷面积</li>
+<li>一张图上有一个或者多个目标</li>
+<li>检测缺陷特征明显</li>
+<li>相对于原图尺寸待检测物体的缺陷不能太小</li>
+<li>可以作为整个算法pipeline中的一环</li>
+<li>数据集丰富<br />
+    单一场景下：<br />
+    (1) 在使用预训练权重的条件下，每一类缺陷的数据量要在300+，且每一类数据尽量均衡。<br />
+    (2) 在不使用预训练权重的条件下，每一类的缺陷数据要在500+，且每一类数据量尽量均衡<br />
+    复杂自然场景下：<br />
+    (1) 在使用预训练权重的条件下，每一类缺陷的数据量要在1000+，且每一类数据尽量均衡。<br />
+    (2) 在不使用预训练权重的条件下，每一类的缺陷数据要在2000+，且每一类数据量尽量均衡<br />
+    普通语义分割算法适用80%以上的工业缺陷检测应用场景。  </li>
+</ol>
+</li>
+<li>
+<p>如何选择合适的算法？  <br />
+    语义分割算法从CNN的FCN、SeNet、Unet系列……到现在transformer系列，选择合适算法标准是什么？<br />
+    ① 客户检测指标需求（准确率和召回率）越高越好<br />
+    ② 客户对CT的需求，选择推理时间越短越好<br />
+    ③ 方便部署（算子支持tensorrt、openvino、nncf等等推理框架）<br />
+    ④ 基于什么硬件部署？嵌入式、主机、服务器  </p>
+</li>
+</ol>
+<h3 id="37">3.7 常规实例分割算法<a class="headerlink" href="#37" title="Permanent link">&para;</a></h3>
+<ol>
+<li>语义分割和实例分割的区别和联系：<ol>
+<li>语义分割旨在将图像中的每个像素分配到预定义的语义类别中，对于同一类别的物体，语义分割无法区分它们之间的个体差异。</li>
+<li>实例分割则更进一步，不仅要求对图像进行像素级的语义分割，还需要将属于同一类别的不同个体进行区分。</li>
+</ol>
+</li>
+<li>什么样的工业场景适合常规实例分割算法？<ol>
+<li>需要知道缺陷位置信息</li>
+<li>需要知道精细的语义信息和类别信息</li>
+<li>需要精确的计算缺陷面积</li>
+<li>一张图上有一个或者多个目标</li>
+<li>待检测缺陷特征明显</li>
+<li>相对于原图尺寸待检测物体的缺陷不能太小</li>
+<li>可以作为整个算法pipeline中的一环</li>
+<li>数据集丰富<br />
+    单一场景下：  <ol>
+<li>在使用预训练权重的条件下，每一类缺陷的数据量要在300+，且每一类数据尽量均衡。  </li>
+<li>在不使用预训练权重的条件下，每一类的缺陷数据要在500+，且每一类数据量尽量均衡<br />
+复杂自然场景下：  </li>
+<li>在使用预训练权重的条件下，每一类缺陷的数据量要在1000+，且每一类数据尽量均衡。  </li>
+<li>在不使用预训练权重的条件下，每一类的缺陷数据要在2000+，且每一类数据量尽量均衡<br />
+普通实例分割算法适用80%以上的工业缺陷检测应用场景。</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>如何选择合适的算法？<br />
+    实例分割算法从CNN的mask rcnn、solo、yolo系列……到现在transformer系列，选择合适算法标准是什么？<br />
+    ① 客户检测指标需求（准确率和召回率）越高越好<br />
+    ② 客户对CT的需求，选择推理时间越短越好<br />
+    ③ 方便部署（算子支持tensorrt、openvino、nncf等等推理框架）<br />
+    ⑤ 基于什么硬件部署？嵌入式、主机、服务器  </li>
+</ol>
+<h3 id="38">3.8 异常检测算法<a class="headerlink" href="#38" title="Permanent link">&para;</a></h3>
+<p>异常检测，是一种用于识别不符合预期行为的异常模式的技术，称为异常值。通常为无监督学习问题，其中先验未知异常样本，并且假定大多数训练数据集由“正常”数据组成。</p>
+<p><a class="glightbox" href="17.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="异常检测" src="17.png" /></a>   </p>
+<p><strong>异常检测分哪些算法方向？</strong>  </p>
+<ol>
+<li>基于图像重建的方法：这是最早出现的方法，也非常直观，期待AE自动编码器能够对异常图像重建成正常图像，然后重建图像和正常图像作差，得到定位结果。主要的改进包括网络结构、隐空间和损失函数的改进。该方法的问题在于难以保证异常图像中的异常区域被很好重建为正常，同时图像中的正常区域重建的效果和输入一致，这样两者作差的结果并不能完全代表异常区域。</li>
+<li>基于生成网络的方法：代表的方法就是VAE、GAN和Normalizing Flow (NF)。VAE中引入了类似CAM这种求梯度方式来判断异常位置的方法。GAN主要是通过多个生成器和判别器的设置，来提升生成或重建的图像效果。然而，GAN和VAE都缺乏对概率分布的精确评估和推理，这往往导致VAE中的模糊结果质量不高，GAN训练也面临着如模式崩溃和后置崩溃等挑战。NF能够较好的解决上述问题，同时NF会和后面的基于特征的方法进行结合，也是目前在MVTec AD上取得效果最好的方法。</li>
+<li>基于深度特征建模的方法：主要包括知识蒸馏和特征建模两大类。特别是特征建模，可以细分为很多小类，例如：KNN，高斯建模等。</li>
+<li>基于自监督的方法：主要分为代理任务和对比学习。代理任务包括常见的重建、补全、相对关系预测和属性修护等。</li>
+<li>基于one-class分类的方法：这个方法主要是异常检测AD采用的，如果将图像划分为滑动窗口，所有的AD方法也适用于AL。此外，它也可以与前面4种方法相结合。</li>
+</ol>
+<p><strong>什么样的工业场景适合异常检测分类算法？</strong>  </p>
+<ol>
+<li>不需要知道缺陷位置信息</li>
+<li>不需要知道类别信息，客户只关心OK 或 NG</li>
+<li>几乎没有缺陷数据集或者生产过程中缺陷类型不确定（有监督算法不可用）</li>
+</ol>
+<p><strong>什么样的工业场景适合异常检测分割算法？</strong>  </p>
+<ol>
+<li>需要知道缺陷位置信息</li>
+<li>不需要知道类别信息</li>
+<li>几乎没有缺陷数据集或者生产过程中缺陷类型不确定（有监督算法不可用）</li>
+<li>客户需要知道缺陷的面积大小信息</li>
+<li>如果客户需要知道具体缺陷类别信息，可以作为整体pipeline的一环，检测出缺陷crop之后，做小样本分类</li>
+</ol>
+<p><strong>什么样的工业场景适合异常位置检测算法？</strong>  </p>
+<ol>
+<li>标准位置是固定的，也就是正常的数据前景背景都是固定位置</li>
+<li>不需要知道类别信息，只需要知道位置是否做了改变</li>
+<li>客户需要知道改变的位置信息</li>
+</ol>
+<p><strong>如何选择合适的算法？</strong>  </p>
+<p>① 客户检测指标需求（准确率和召回率）越高越好<br />
+② 客户对CT的需求，选择推理时间越短越好<br />
+③ 方便部署（算子支持tensorrt、openvino、nncf等等推理框架）<br />
+⑤ 基于什么硬件部署？嵌入式、主机、服务器  </p>
+<p><strong>异常分类推荐</strong>：<a href="https://arxiv.org/abs/2008.12577">differnet算法</a><br />
+<strong>异常检测推荐</strong>：<a href="https://arxiv.org/abs/2111.07677">fastflow</a>、<a href="https://arxiv.org/abs/2106.08265">patchcore</a> 算法<br />
+<strong>异常位置改变推荐</strong>：<a href="https://link.springer.com/article/10.1007/s00521-022-08122-3">Change detect 算法</a></p>
+<h2 id="_6">四、算法评估指标<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="41-accuracy">4.1 准确率 (Accuracy)<a class="headerlink" href="#41-accuracy" title="Permanent link">&para;</a></h3>
+<p>准确率的定义是：对于给定的测试集，分类模型正确分类的样本数与总样本数之比。举个例子来讲，有一个简单的二分类模型（暂时叫做Classifier_A），专门用于分类苹果和梨，在某个测试集中，有30个苹果+70个梨，这个二分类模型在对这个测试集进行分类的时候，得出该数据集有40个苹果（包括正确分类的25个苹果和错误分类的15个梨）和60个梨（包括正确分类的55个梨和错误分类的5个苹果）。画成矩阵图为：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>预测类别 1-苹果</th>
+<th>预测类别 2-梨</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>实际类别 1-苹果</td>
+<td>25</td>
+<td>5</td>
+</tr>
+<tr>
+<td>实际类别 2-梨</td>
+<td>15</td>
+<td>55</td>
+</tr>
+</tbody>
+</table>
+<p>从图中可以看出，行表示该测试集中实际的类别，比如苹果类一共有25+5=30个，梨类有15+55=70个。其中被分类模型正确分类的是该表格的对角线所在的数字。在sklearn中，这样一个表格被命名为混淆矩阵（Confusion Matrix），所以，按照准确率的定义，可以计算出该分类模型在测试集上的准确率为：</p>
+<div class="arithmatex">\[
+Accuracy = \frac{25 + 55}{25 + 5 + 55 + 15} \times 100
+\]</div>
+<p>即，该分类模型在测试集上的准确率为80%。</p>
+<p>但是，准确率指标并不总是能够评估一个模型的好坏，比如对于下面的情况，假如有一个数据集，含有98个苹果，2个梨，而分类器（暂时叫做Classifier_B）是一个很差劲的分类器，它把数据集的所有样本都划分为苹果，也就是不管输入什么样的样本，该模型都认为该样本是苹果。那么这个表格会是什么样的了？</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>预测类别 1-苹果</th>
+<th>预测类别 2-梨</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>实际类别 1-苹果</td>
+<td>98</td>
+<td>0</td>
+</tr>
+<tr>
+<td>实际类别 2-梨</td>
+<td>2</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>则该模型的准确率为98%，因为它正确地识别出来了测试集中的98个苹果，只是错误的把2个梨也当做苹果，所以按照准确率的计算公式，该模型有高达98%的准确率。</p>
+<p>可是，这样的模型有意义吗？一个把所有样本都预测为苹果的模型，反而得到了非常高的准确率，那么问题出在哪儿了？只能说准确率不可信。特别是对于这种样品数量偏差比较大的问题，准确率的“准确度”会极大的下降。所以，这时就需要引入其他评估指标评价模型的好坏了。</p>
+<h3 id="42-precision">4.2 精确率 (Precision)<a class="headerlink" href="#42-precision" title="Permanent link">&para;</a></h3>
+<p>精确率的定义是：对于给定测试集的某一个类别，分类模型预测正确的比例，或者说：分类模型预测的正样本中有多少是真正的正样本，其计算公式是：</p>
+<div class="arithmatex">\[
+Precision = \frac{TruePositive}{TruePositive + FalsePositive} = \frac{TP}{TP + FP}
+\]</div>
+<p>所以，根据定义，精确率要区分不同的类别，比如上面我们讨论有两个类别，所以要分类来计算各自的精确率。对于上面提到的Classifier_A和Classifier_B分类模型，我们可以分别计算出其精确率：</p>
+<table>
+<thead>
+<tr>
+<th>精确率计算</th>
+<th>Classifier_A</th>
+<th>Classifier_B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>类别 1-苹果</td>
+<td>25/(25+15)=62.5%</td>
+<td>98/(98+2)=98%</td>
+</tr>
+<tr>
+<td>类别 2-梨</td>
+<td>55/(55+5)=91.7%</td>
+<td>0/(0+0)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-recall">4.3 召回率 (Recall)<a class="headerlink" href="#43-recall" title="Permanent link">&para;</a></h3>
+<p>召回率的定义为：对于给定测试集的某一个类别，样本中的正类有多少被分类模型预测正确，其计算公式为：</p>
+<div class="arithmatex">\[
+Recall = \frac{TruePositive}{TruePositive + FalseNegative} = \frac{TP}{TP + FN}
+\]</div>
+<p>同样的，召回率也要考虑某一个类别，比如，下面我们将苹果作为正类，在Classifier_A模型下得到的表格为：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>预测类别 1-苹果 Positive</th>
+<th>预测类别 2-梨 Negative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>实际类别 1-苹果</td>
+<td>TP=25</td>
+<td>FN=5</td>
+</tr>
+<tr>
+<td>实际类别 2-梨</td>
+<td>FP=15</td>
+<td>TN=55</td>
+</tr>
+</tbody>
+</table>
+<p>计算出上面两个模型对给定测试集的召回率，如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th>召回率计算</th>
+<th>Classifier_A</th>
+<th>Classifier_B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>类别 1-苹果</td>
+<td>25/(25+5)=83.3%</td>
+<td>98/(98+0)=100%</td>
+</tr>
+<tr>
+<td>类别 2-梨</td>
+<td>55/(55+15)=78.6%</td>
+<td>0/(0+2)=0%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="44-confusion-matrix">4.4 混淆矩阵（confusion matrix）<a class="headerlink" href="#44-confusion-matrix" title="Permanent link">&para;</a></h3>
+<p>称为可能性表格或是错误矩阵。它是一种特定的矩阵用来呈现算法性能的可视化效果，通常是监督学习（非监督学习，通常用匹配矩阵：matching matrix）。其每一列代表预测值，每一行代表的是实际的类别，对角线表示正确的预测结果。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>预测类别 1-苹果</th>
+<th>预测类别 2-梨</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>实际类别 1-苹果</td>
+<td>25</td>
+<td>5</td>
+</tr>
+<tr>
+<td>实际类别 2-梨</td>
+<td>15</td>
+<td>55</td>
+</tr>
+</tbody>
+</table>
+<h3 id="45-map">4.5 mAP<a class="headerlink" href="#45-map" title="Permanent link">&para;</a></h3>
+<p>mAP 即 Mean Average Precision 即平均AP值，是对多个验证集个体求平均AP值，作为目标检测或者分割算法中衡量检测精度的指标。</p>
+<p><strong>PR曲线</strong></p>
+<p>以Recall值为横轴，Precision值为纵轴，我们就可以得到PR曲线，PR曲线越往右上角越好。</p>
+<p><a class="glightbox" href="15.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="PR曲线" src="15.png" /></a> </p>
+<p><strong>AP(Average Precision)</strong></p>
+<p>AP就是平均精准度，简单来说就是对PR曲线上的Precision值求均值，对于PR曲线来说，我们使用积分来进行计算。</p>
+<div class="arithmatex">\[
+AP = \int_0^1 p(r)dr
+\]</div>
+<p>在分类任务中，预测的正样本是true positive还是false positive很好确定。<br />
+而在检测任务中，什么叫检测到的结果是true positive还是false positive？这里需要一个评判标准：<br />
+如果检测框与groud-truth框的IOU区域大于某个阈值，我们就可以认为是true positive了<br />
+如果IoU阈值=0.5，则为AP@50，<br />
+如果IoU阈值=0.75，则为AP@75，以此类推</p>
+<p><strong>mAP</strong></p>
+<p>mAP是针对多类来说的<br />
+mAP：多个物体类别的AP的平均<br />
+mAP的对象是所有类的所有图片，衡量的是学出的模型在所有类别上的好坏。<br />
+计算如下所示，其中C为类别数目：</p>
+<div class="arithmatex">\[
+mAP = \frac{\sum_{i=1}^{C} AP_i}{C}
+\]</div>
+<h3 id="46-auc">4.6 AUC<a class="headerlink" href="#46-auc" title="Permanent link">&para;</a></h3>
+<p>定义：AUC(Area under Curve) Roc曲线下面积。</p>
+<p>什么是ROC曲线：接收者操作特征(receiver operating characteristic)，roc曲线上每个点反映着对同一信号刺激的感受性</p>
+<p>横轴：负正率(false positive rate FPR)特异度，划分实例中所有负例占所有负例的比例：(1-Specificity)</p>
+<p>纵轴：真正率(true positive rate TPR)灵敏度，Sensitivity(正类覆盖率)</p>
+<p><strong>针对一个二分类问题，将实例分成正类(positive)或者负类(negative)。但是实际中分类时，会出现四种情况：</strong></p>
+<p>(1) 若一个实例是正类并且被预测为正类，即为真阳性(True Positive TP)<br />
+(2) 若一个实例是正类，但是被预测成为负类，即为假负类(False Negative FN)<br />
+(3) 若一个实例是负类，但是被预测成为正类，即为假正类(False Positive FP)<br />
+(4) 若一个实例是负类，但是被预测成为负类，即为真负类(True Negative TN)</p>
+<p>TP: 正确的肯定数目<br />
+FN: 漏报，没有找到正确匹配的数目</p>
+<p>列表如下，1代表正类，0代表负类：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th>预测</th>
+<th></th>
+<th>合计</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td>1</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td>实际</td>
+<td>1</td>
+<td>True Positive TP</td>
+<td>False Negative FN</td>
+<td>Actual Positive (TP+FN)</td>
+</tr>
+<tr>
+<td></td>
+<td>0</td>
+<td>False Positive FP</td>
+<td>True Negative TN</td>
+<td>Actual Negative (FP+TN)</td>
+</tr>
+<tr>
+<td>合计</td>
+<td></td>
+<td>Predicted Positive (TP+FP)</td>
+<td>Predicted Negative (FN+TN)</td>
+<td>TP+FN+FP+TN</td>
+</tr>
+</tbody>
+</table>
+<p>由上表可得出横、纵轴的计算公式：</p>
+<p>(1) 真正率(True Positive Rate) TPR: TP/(TP+FN)，代表分类器预测的正类中实际正实例占所有正实例的比例。Sensitivity</p>
+<p>(2) 负正率(False Positive Rate) FPR: FP/(FP+TN)，代表分类器预测的正类中实际负实例占所有负实例的比例。1-Specificity</p>
+<p>(3) 真负率(True Negative Rate) TNR: TN/(FP+TN)，代表分类器预测的负类中实际负实例占所有负实例的比例，TNR=1-FPR。Specificity</p>
+<p>假设采用逻辑回归分类器，给出针对每个实例为正类的概率，那么通过设定一个阈值如0.6，概率大于等于0.6的为正类，小于0.6的为负类。对应的就可以算出一组(FPR, TPR)，在平面中得到对应坐标点。随着阈值的逐渐减小，越来越多的实例被划分为正类，但是这些正类中同样也掺杂着真正的负实例，即TPR和FPR会同时增大。阈值最大时，对应坐标点为(0,0)，阈值最小时，对应坐标点(1,1)</p>
+<p><a class="glightbox" href="16.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="ROC曲线" src="16.png" /></a> </p>
+<p>横轴FPR: 1-TNR, 1-Specificity，FPR越大，预测正类中实际负类越多。</p>
+<p>纵轴TPR：Sensitivity(正类覆盖率), TPR越大，预测正类中实际正类越多。</p>
+<p>理想目标：TPR=1，FPR=0，即图中(0,1)点，故ROC曲线越靠拢(0,1)点，越偏离45度对角线越好，Sensitivity、Specificity越大效果越好</p>
+<h2 id="_7">五、新项目如何选择合适算法<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>总的纲领：<br />
+1. 明确客户需求，检测哪些缺陷类型<br />
+    包括缺陷大小、缺陷位置、缺陷色彩信息、缺陷对比度等信息
+2. 明确客户总的时延需求<br />
+    拆解时延包括数据采集时间、数据传输时间、算法运行时间、软件运行时间</p>
+<h3 id="51">5.1 视觉系统基础硬件组成<a class="headerlink" href="#51" title="Permanent link">&para;</a></h3>
+<ol>
+<li>相机(工业相机、监控相机、线扫相机、x光)</li>
+<li>镜头</li>
+<li>光源  </li>
+<li>光源控制器  </li>
+<li>主控计算设备(本地计算、边缘计算、云端计算)。</li>
+</ol>
+<h3 id="52">5.2 成像硬件选择<a class="headerlink" href="#52" title="Permanent link">&para;</a></h3>
+<p>举例说明如何选择成像硬件：  </p>
+<p>假设待检测物体尺寸<code class="language-cbmbas highlight"><span class="mf">200</span><span class="n">mm</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="mf">200</span><span class="n">mm</span></code>,，保证拍摄的稳定性，拍摄视野在<code class="language-cbmbas highlight"><span class="mf">250</span><span class="n">mm</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="mf">250</span><span class="n">mm</span></code>(预留20%~30%的余量), 基于最小待检测缺陷<code class="language-cbmbas highlight"><span class="mf">0.15</span><span class="n">mm</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="mf">0.15</span><span class="n">mm</span></code>,算法能够稳定检测的最小像素尺寸<code class="language-cbmbas highlight"><span class="mf">3</span><span class="n">x3</span></code>, 每个像素负责<code class="language-cbmbas highlight"><span class="mf">0.15</span><span class="o">/</span><span class="mf">3</span><span class="o">=</span><span class="mf">0.05</span><span class="n">mm</span></code>的长度,则图像分辨率在<code class="language-text highlight">(250/0.05) x (250/0.05)</code>=<code class="language-cbmbas highlight"><span class="mf">5000</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="mf">5000</span></code>=2500W像素, 也就是我们选择的相机成像尺寸不能低于2500W, 并且搭配合适的镜头, 理论上分辨率越高缺陷面积越明显, 但是需要考虑检测时延问题。  </p>
+<p>相机和镜头尺寸确定之后, 选择合适的光源和打光角度使得缺陷明显(需要专业打光工程师配合), 能否稳定检出缺陷三分靠算法七分靠成像。</p>
+<h3 id="53">5.3 改善成像质量<a class="headerlink" href="#53" title="Permanent link">&para;</a></h3>
+<p><strong>如何改善成像质量？</strong></p>
+<p>① 白平衡矫正<br />
+② 做平场以及平场矫正<br />
+③ 颜色矫正<br />
+通常一二功能工业相机软件会自带此算法，三需要自己开发  </p>
+<p>颜色矫正（Color Correction）具体做法：<br />
+1. 采集标准色卡图像：在目标光照条件下，用相机拍摄一张包含已知标准颜色的色卡（如X-Rite ColorChecker Classic），获取图像中每个色块的实际RGB值。<br />
+2. 建立颜色映射模型：将图像中测得的RGB值（或RAW值）与色卡对应的标准参考值（如CIE XYZ或sRGB）进行对比，通过数学方法（如3×3 矩阵变换、多项式回归、查表法LUT等）建立从相机原始颜色到目标颜色空间的转换关系。<br />
+3. 应用校正矩阵/模型：将计算出的颜色校正矩阵（Color Correction Matrix, CCM）或查找表应用于后续图像，使输出颜色更接近真实或符合特定标准。<br />
+4. 优化与验证：通过计算校正后图像的平均色差（如ΔE*ab）评估效果，并根据实际需求微调模型（例如加入伽马校正、白点调整等）。  </p>
+<blockquote>
+<p>提示：在工业场景中，若光源和相机固定，可预先标定一次CCM；若环境多变，则需结合白平衡和平场一起动态调整。</p>
+</blockquote>
+<p><strong>如何评估成像质量？</strong>  </p>
+<p>① 色彩还原度的检测：通过拍摄标准色卡（如ColorChecker），对比图像中颜色与标准值的差异，常用ΔE等色差指标衡量。还原度越高，颜色越真实。<br />
+② 图像噪声（成像稳定性）检测：在均匀或暗场条件下采集图像，计算像素值的标准差或信噪比（SNR）。噪声越低，成像越稳定、画质越干净。<br />
+③ 图像清晰度（SFR）：利用边缘或斜边图像计算空间频率响应（SFR）或MTF，反映系统对细节的分辨能力。SFR越高，图像越清晰锐利。<br />
+④ 连续采集稳定性：长时间连续拍摄多帧图像，分析亮度、色彩、噪声等参数的波动情况。稳定性好意味着成像性能一致，适合视频或工业检测等场景。</p>
+<h3 id="54">5.4 综合考虑检测缺陷类型<a class="headerlink" href="#54" title="Permanent link">&para;</a></h3>
+<p>基于前面讲解的内容把缺陷进行归纳分类，合理的量化缺陷类型可以有效提升检测能力，原则上是（类内差异小，类间差异大）</p>
+<h3 id="55">5.5 检测速度的要求<a class="headerlink" href="#55" title="Permanent link">&para;</a></h3>
+<p>影响整体检测速度的条件比较多：</p>
+<ol>
+<li>硬件条件：  <ol>
+<li>相机采集时间</li>
+<li>数据传输(万兆网、千兆网、光纤、无线等等)  </li>
+<li>主控硬件：CPU处理器性能、GPU性能、PCIE传输瓶颈(根据经验大部分条件是cpu性能不够导致的数据瓶颈问题)  </li>
+</ol>
+</li>
+<li>算法条件：<ol>
+<li>分类&gt;目标检测&gt;分割  </li>
+<li>python 部署（pytorch、onnxruntime、tensorrt、openvino）还是c++ 部署（libtorch、onnxruntime、tensorrt、openvino），根据实际需求选择合适的推理框架,选择是否量化加速。  </li>
+<li>满足检测需求条件下，选择轻量化的网络模型(mobilenet、rtmdet等)</li>
+</ol>
+</li>
+</ol>
+<h3 id="56-pepleline">5.6 pepleline多算法组合<a class="headerlink" href="#56-pepleline" title="Permanent link">&para;</a></h3>
+<p>当单一算法不能解决时应该怎么办？pepleline多算法组合</p>
+<p>举例说明，假设需要检测电网绝缘子上是否有磕碰缺陷？</p>
+<p><a class="glightbox" href="06.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="pcb图片用于说明大图切小图" src="06.png" /></a></p>
+<p>首先选择合适的算法做粗定位，找到绝缘子大概位置，crop 绝缘子图像进行二次判断是否有磕碰缺陷，此列是最简单的pipeline多算法组合。</p>
+<h2 id="_8">六、算法部署<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<ol>
+<li>不同语言的部署  <ul>
+<li>python 部署适合快速开发，客户对时间性能要求不高的条件  </li>
+<li>c++ 部署适合要求稳定且检测时间性能比较高的条件。  </li>
+<li>c++ 调用python 部署(某些算子不支持c++调用)  </li>
+<li>python 调用c++部署，算法比较耗时使用c++，其他使用python<br />
+现在很多算法也支持C#部署调用  </li>
+</ul>
+</li>
+<li>不同框架部署  <ul>
+<li>pytorch 原始框架部署最方便快速</li>
+<li>onnxruntime 是通用的部署框架，可以把pytorch、TensorFlow、Caffe 等模型转换成onnx 调用(性能方面一般)</li>
+<li>tensorrt 可以使用在客户对检测延迟比较低并且吞吐量比较大的场景，使用gpu加速推理，在模型量化之后一般速度可以提升5倍以上（相对于pytorch）</li>
+<li>openvino可以使用在客户没有显卡（有英特尔cpu），但是又要求检测速度比较快的条件下  </li>
+</ul>
+</li>
+<li>不同硬件部署<ul>
+<li>GPU端：tensorrt&gt;onnxruntime≈pytorch</li>
+<li>CPU端：openvino（英特尔cpu）&gt;onnxruntime≈pytorch</li>
+<li>嵌入式：<ul>
+<li>nvidia: tensorrt</li>
+<li>手机（arm）: ncnn</li>
+<li>海思：NNIE</li>
+<li>高通：snpe、QNN</li>
+<li>苹果：coreml</li>
+<li>瑞芯微：rknntoolkit2</li>
+<li>Xilinx：Vitis</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="_9">七、总结<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>本文梳理了一位经验丰富的算法工程师对工业视觉缺陷检测项目的系统性总结。从实际项目出发，梳理了缺陷检测的典型应用场景（如半导体、3C电子、新能源等）、核心难点（比如没缺陷数据、缺陷太小、对比度差、大图高精度低延迟等），并针对不同问题给出了数据和算法层面的解决方案。</p>
+<p>文章还详细对比了分类、检测、分割、小样本学习、异常检测等各类算法的适用场景，并强调“能用分类不用检测，能用检测不用分割”的实用原则。</p>
+<p>最后，还覆盖了硬件选型、成像质量优化、评估指标和部署策略，特别提醒“三分靠算法，七分靠成像”。整体非常接地气，适合工业AI项目落地参考。</p>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="最后更新">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="2025年9月27日 11:43:49">2025年9月27日</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="创建日期">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="2025年9月27日 11:43:49">2025年9月27日</span>
+  </span>
+
+    
+    
+    
+  </aside>
+
+
+
+
+
+  <h2 id="__comments">评论</h2>
+  <script src="https://giscus.app/client.js"
+        data-repo="thb1314/thb1314.github.io"
+        data-repo-id="MDEwOlJlcG9zaXRvcnkyNDg0MTE1NTg="
+        data-category="Announcements"
+        data-category-id="DIC_kwDODs51ps4CSAxI"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="0"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="light"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+  </script>
+
+  <!-- Synchronize Giscus theme with palette -->
+  <script>
+    var giscus = document.querySelector("script[src*=giscus]")
+
+    // Set palette on initial load
+    var palette = __md_get("__palette")
+    if (palette && typeof palette.color === "object") {
+      var theme = palette.color.scheme === "slate"
+        ? "transparent_dark"
+        : "light"
+
+      // Instruct Giscus to set theme
+      giscus.setAttribute("data-theme", theme) 
+    }
+
+    // Register event handlers after documented loaded
+    document.addEventListener("DOMContentLoaded", function() {
+      var ref = document.querySelector("[data-md-component=palette]")
+      ref.addEventListener("change", function() {
+        var palette = __md_get("__palette")
+        if (palette && typeof palette.color === "object") {
+          var theme = palette.color.scheme === "slate"
+            ? "transparent_dark"
+            : "light"
+
+          // Instruct Giscus to change theme
+          var frame = document.querySelector(".giscus-frame")
+          frame.contentWindow.postMessage(
+            { giscus: { setConfig: { theme } } },
+            "https://giscus.app"
+          )
+        }
+      })
+    })
+  </script>
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚" >
+        
+          
+          <a href="../../%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/ubuntu%E5%AE%89%E5%8D%93%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" class="md-footer__link md-footer__link--prev" aria-label="上一页: Ubuntu安卓开发环境安装">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                Ubuntu安卓开发环境安装
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../%E8%A1%A8%E9%9D%A2%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%96%B9%E6%B3%95%E8%AE%BA/" class="md-footer__link md-footer__link--next" aria-label="下一页: 视觉类表面缺陷检测项目相关技术总结">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                视觉类表面缺陷检测项目相关技术总结
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/thb1314" target="_blank" rel="noopener" title="Github" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="mailto:haibintian@foxmail.com" target="_blank" rel="noopener" title="email to me" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M64 112c-8.8 0-16 7.2-16 16v22.1l172.5 141.6c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16zM48 212.2V384c0 8.8 7.2 16 16 16h384c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0zM0 128c0-35.3 28.7-64 64-64h384c35.3 0 64 28.7 64 64v256c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.code.select", "content.footnote.tooltips", "navigation.footer"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+        <script src="../../themes/js/mathjax.js"></script>
+      
+        <script src="https://cdn.bootcdn.net/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+      
+        <script src="../../themes/js/social_share.js"></script>
+      
+    
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
+</html>
