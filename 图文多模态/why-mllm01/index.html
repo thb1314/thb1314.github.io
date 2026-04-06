@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../../cuda%E7%9B%B8%E5%85%B3/ROIAlign%E7%AE%97%E5%AD%90%E7%9A%84%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/">
+        <link rel="prev" href="../MLLM_grounding01/">
       
       
-        <link rel="next" href="../matrix_python_cpp/">
+        <link rel="next" href="../../%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8E%A8%E5%AF%BC%E4%B8%80/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>python与C/C++数据交互的陷阱：numpy/torch中的视图 - 海滨的Blog</title>
+        <title>从需求出发：什么业务场景更适合图文多模态大模型？ - 海滨的Blog</title>
       
     
     
@@ -75,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#pythonccnumpytorch" class="md-skip">
+        <a href="#_1" class="md-skip">
           跳转至
         </a>
       
@@ -111,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              python与C/C++数据交互的陷阱：numpy/torch中的视图
+              从需求出发：什么业务场景更适合图文多模态大模型？
             
           </span>
         </div>
@@ -714,20 +714,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
@@ -743,7 +741,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             python&C++
@@ -754,32 +752,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    python与C/C++数据交互的陷阱：numpy/torch中的视图
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/2022%E5%B9%B406%E6%9C%8807%E6%97%A5%2015%E6%97%B650%E5%88%8636%E7%A7%92/" class="md-nav__link">
         
   
   
@@ -790,64 +766,6 @@
   
 
       </a>
-      
-        
-
-  
-
-<nav class="md-nav md-nav--secondary" aria-label="目录">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      前言
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      视图
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#bug" class="md-nav__link">
-    <span class="md-ellipsis">
-      bug复现
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      小结
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -860,7 +778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../matrix_python_cpp/" class="md-nav__link">
+      <a href="../../python%26C%2B%2B/matrix_python_cpp/" class="md-nav__link">
         
   
   
@@ -883,7 +801,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../python%E5%92%8CC%E7%9A%84%E4%BA%A4%E4%BA%92/" class="md-nav__link">
+      <a href="../../python%26C%2B%2B/python%E5%92%8CC%E7%9A%84%E4%BA%A4%E4%BA%92/" class="md-nav__link">
         
   
   
@@ -906,7 +824,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../%E5%B5%8C%E5%85%A5%E5%BC%8Fso%E5%BC%80%E5%8F%91/" class="md-nav__link">
+      <a href="../../python%26C%2B%2B/%E5%B5%8C%E5%85%A5%E5%BC%8Fso%E5%BC%80%E5%8F%91/" class="md-nav__link">
         
   
   
@@ -933,18 +851,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
           <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
@@ -960,7 +880,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             图文多模态
@@ -974,7 +894,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%E5%9B%BE%E6%96%87%E5%A4%9A%E6%A8%A1%E6%80%81/01%E6%95%B0%E6%8D%AE%E9%9B%86%E5%BD%92%E7%BA%B31/" class="md-nav__link">
+      <a href="../01%E6%95%B0%E6%8D%AE%E9%9B%86%E5%BD%92%E7%BA%B31/" class="md-nav__link">
         
   
   
@@ -997,7 +917,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../%E5%9B%BE%E6%96%87%E5%A4%9A%E6%A8%A1%E6%80%81/MLLM_grounding01/" class="md-nav__link">
+      <a href="../MLLM_grounding01/" class="md-nav__link">
         
   
   
@@ -1017,10 +937,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../%E5%9B%BE%E6%96%87%E5%A4%9A%E6%A8%A1%E6%80%81/why-mllm01/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    从需求出发：什么业务场景更适合图文多模态大模型？
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1031,6 +973,157 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      一、前言
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      二、场景1：面向某个大业务场景的统一垂域多模态大模型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、场景1：面向某个大业务场景的统一垂域多模态大模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 适用于统一基座的典型业务属性
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 基座模型的核心价值
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3 模型资产价值
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.4 局限性
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.5 小结
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      三、场景2：上千品类瑕疵细粒度识别
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、场景2：上千品类瑕疵细粒度识别">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 任务特点与差异性
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 全量微调多模态大模型的核心优势
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.3 工程与运维优势
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.4 小结
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      四、总结
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1894,36 +1987,129 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      前言
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
-      视图
+      一、前言
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#bug" class="md-nav__link">
+  <a href="#1" class="md-nav__link">
     <span class="md-ellipsis">
-      bug复现
+      二、场景1：面向某个大业务场景的统一垂域多模态大模型
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="二、场景1：面向某个大业务场景的统一垂域多模态大模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.1 适用于统一基座的典型业务属性
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.2 基座模型的核心价值
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.3 模型资产价值
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.4 局限性
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    <span class="md-ellipsis">
+      2.5 小结
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      三、场景2：上千品类瑕疵细粒度识别
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、场景2：上千品类瑕疵细粒度识别">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1 任务特点与差异性
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2 全量微调多模态大模型的核心优势
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.3 工程与运维优势
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.4 小结
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
-      小结
+      四、总结
     </span>
   </a>
   
@@ -1948,68 +2134,232 @@
   
 
 
-<h1 id="pythonccnumpytorch">python与C/C++数据交互的陷阱：numpy/torch中的视图<a class="headerlink" href="#pythonccnumpytorch" title="Permanent link">&para;</a></h1>
+<h1 id="_1">从需求出发：什么业务场景更适合图文多模态大模型？<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>本文写于2022年6月7日15时50分</p>
+<p>本文写于2025年11月20日晚上十一点</p>
 </blockquote>
-<h2 id="_1">前言<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>最近碰到了一个bug，调试了两天。最后发现是数据存储排列方式的问题，由此忽然想到pytorch或者numpy中tensor(或者ndarray)里面视图的概念。</p>
-<h2 id="_2">视图<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">一、前言<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>“拿着锤子找钉子”的事情无论是在学术圈还是工业界都常有发生，迫于不同形式的考核压力，学术界偏于方法和理论路径依赖，工业界偏于技术、经验和组织惯性路径依赖。  </p>
+<p>我对于计算机视觉中的大模型的认知有三个阶段:</p>
+<ol>
+<li>
+<p>第一个阶段发生在大语言模型刚刚兴起时，chatgpt还没出，“CV大模型”的概念第一次进入到我的大脑，行业数据+MAE（Masked Autoencoders）训练方法被包装为“CV大模型”，某公司售前吹牛十个样本就可以训练出一个完美的高精度分类器，在这个阶段我更多认为是一种商业包装；</p>
+</li>
+<li>
+<p>第二阶段发生在24年负责为某运营商公司做大语言模型后训练阶段，亲身经历了洗数据-&gt;造数据-&gt;训练的训练流程，找遍了开源社区和内部数据只是为了增强某一个方向的能力，完美的跑通了“面多了加水，说多了加面”的和面流程，就差把测试集训进去了，由于项目压力一些冒险的做法都不敢尝试，更多的感受的是无趣，微调进去的私域数据带来的对于私域知识的记忆增幅不大，增益不如RAG，因此我当时的感叹是“垂域大语言模型后训练是一个伪需求”；</p>
+</li>
+<li>
+<p>第三阶段发生在上半年对于多模态大模型的探索上，由于对于纯LLM模型产生的抵触心理，一开始我是不愿意采用多模态大模型来去解决实际问题，相比于传统小模型yolo之类，多模态大模型训练和推理都比较耗资源，不符合我在技术选项上“追求性价比”的观念；直到后面面对一些需求时发现多模态大模型有其独特的价值，此时我开始慢慢接受多模态大模型并开始调研相关工作，随着许多针对特定任务或者特定领域的多模态大模型的发展，我看到了更多的应用可能性和应用价值；</p>
+</li>
+</ol>
+<p>因此，本文写作的目的是想阐述两项多模态大模型的应用场景，并给出在该场景下的优缺点分析。</p>
+<h2 id="1">二、场景1：面向某个大业务场景的统一垂域多模态大模型<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<p>在一个较大的业务场景中，往往同时存在文本、图像、结构化数据、业务知识库、规章制度、操作手册、视觉表格、界面截图等多种形式的信息。传统方案往往是<strong>一堆彼此独立的模型</strong>协作完成：OCR 负责识别文字、分类器负责识别图像类型、检测模型负责找到关键目标、文档解析模型负责解析表格与版面，再由规则或者轻量 NLP 模型完成后续决策逻辑。</p>
+<p>这种“碎片化的模型体系”在过去十年已经成为工业界的标准做法，它的优势是可控、成本低、调试方便，但核心劣势也非常明显：</p>
 <ul>
-<li>视图是数据的一个别称或引用，通过该别称或引用亦便可访问、操作原有数据，但原有数据不会产生拷贝。如果我们对视图进行修改，它会影响到原始数据，物理内存在同一位置。</li>
-<li>副本是一个数据的完整的拷贝，如果我们对副本进行修改，它不会影响到原始数据，物理内存不在同一位置。</li>
+<li>模型之间的边界割裂严重，导致上下游误差传播；</li>
+<li>复杂业务更需要“通才”，而不是“专家模型拼接”；</li>
+<li>多模型链路难以在工程上稳定，一旦发生不可解释的错误，排查成本极高；</li>
+<li>随着业务不断演进，每个子模型都需要重新调参或维护，成本指数级上升。</li>
 </ul>
-<p>视图一般发生在：</p>
+<p>当业务场景够“大”、够“复合”时，统一的多模态大模型基座开始具备真实价值。</p>
+<h3 id="21">2.1 适用于统一基座的典型业务属性<a class="headerlink" href="#21" title="Permanent link">&para;</a></h3>
+<p>适合建立垂域多模态基座的业务通常具备以下四个特征之一：</p>
 <ol>
-<li>numpy的切片操作返回原数据的视图。</li>
-<li>调用 ndarray 的 <code class="language-text highlight">view()</code> 函数产生一个视图。</li>
-<li>调用 <code class="language-text highlight">transpose</code>, <code class="language-gas highlight"><span class="na">.T</span></code></li>
-<li>调用 <code class="language-text highlight">np.split</code></li>
-<li>调用其他不会发生内存copy的函数</li>
+<li>信息形态复杂且高度耦合<br />
+    如通信运维巡检、金融票据审核、制造质检、政务文档处理等，图像、文本、版式结构、业务规则往往同时出现。多模态大模型可以一次性 ingest 并统一建模。</li>
+<li>长链路任务且决策依赖紧密<br />
+    比如工单审核流程，可能涉及“图片判断 → 文本抽取 → 规则匹配 → 结论说明”。小模型流水线容易误差累积，而多模态大模型可一次性串联判断，提供中间步骤解释。</li>
+<li>业务强依赖领域知识<br />
+    如保险理赔、金融风控、质量检查等，业务规则复杂且不断变更。多模态大模型可以通过 SFT 或 RAG 注入知识，实现灵活的软规则学习，而不需要重训多个小模型。</li>
+<li>业务规模稳定且 ROI 可衡量<br />
+    建立大模型基座是高投入行为，适合拥有百万级业务量、长期数据积累和 AI 部署预算的场景。</li>
 </ol>
-<p>特别的，如果对于 contiguous = False 的数据，直接对其<code class="language-gas highlight"><span class="na">.shape</span></code>赋值会报错，调用<code class="language-text highlight">reshape</code>操作会发生copy操作。
-副本一般发生在：</p>
+<h3 id="22">2.2 基座模型的核心价值<a class="headerlink" href="#22" title="Permanent link">&para;</a></h3>
 <ol>
-<li>Python 序列的切片操作，调用deepCopy()函数。</li>
-<li>调用 ndarray 的 copy() 函数产生一个副本。</li>
+<li>
+<p>业务/产品价值</p>
+<ul>
+<li><strong>统一体验与一致性</strong>：同一模型或接口处理检测、分割、识别、描述等任务，前端得到一致输出。</li>
+<li><strong>更快迭代与功能扩展</strong>：新增任务无需额外训练多个小模型，开发速度快。</li>
+<li><strong>更少数据标注需求</strong>：强迁移与少样本学习能力，节省标注成本。</li>
+<li><strong>能力复用，降低重复工作</strong>：内部表征通用，减少特征工程和管道重复构建。</li>
+</ul>
+</li>
+<li>
+<p>工程与运维优势</p>
+<ul>
+<li><strong>简化部署与运维</strong>：只管理少量模型版本，降低 CI/CD、容器和流量切分复杂度。</li>
+<li><strong>统一监控与报警</strong>：指标、日志、漂移检测、数据质量监控集中管理。</li>
+<li><strong>统一权限与合规控制</strong>：数据审计、访问控制集中实现，提高审计效率。</li>
+<li><strong>模型资产价值</strong>：大模型作为长期资产，可持续微调和优化，ROI 高于重复训练小模型。</li>
+</ul>
+</li>
+<li>
+<p>数据效率与性能优势</p>
+<ul>
+<li><strong>预训练能力强</strong>：可用少量垂域数据微调。</li>
+<li><strong>跨模态信息互补</strong>：某模态缺失时仍可推理。</li>
+<li><strong>泛化能力强</strong>：少样本下保持性能，减少标注成本。</li>
+</ul>
+</li>
 </ol>
-<h2 id="bug">bug复现<a class="headerlink" href="#bug" title="Permanent link">&para;</a></h2>
-<p>既然创建视图不会发生内存复制，那对于所有拥有不同视图却拥有相同数据存储地址的ndarray或者tensor来说，指向的空间是一样的，这样python中数据传入c/c++时读取的实际上还是原数据。
-比如针对于tensor A，现在想把A.T利用ctypes或者cython传给c程序，直接传入<code class="language-text highlight">A.T</code>就会产生bug，而且不易查找。</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><a href="#__codelineno-0-1"><span class="linenos" data-linenos=" 1 "></span></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><a href="#__codelineno-0-2"><span class="linenos" data-linenos=" 2 "></span></a><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><a href="#__codelineno-0-3"><span class="linenos" data-linenos=" 3 "></span></a><span class="n">B</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">T</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><a href="#__codelineno-0-4"><span class="linenos" data-linenos=" 4 "></span></a><span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="s1">&#39;testB.npz&#39;</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><a href="#__codelineno-0-5"><span class="linenos" data-linenos=" 5 "></span></a><span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;testB.npz&#39;</span><span class="p">)</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a><a href="#__codelineno-0-6"><span class="linenos" data-linenos=" 6 "></span></a><span class="n">newB</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a><a href="#__codelineno-0-7"><span class="linenos" data-linenos=" 7 "></span></a><span class="nb">print</span><span class="p">(</span><span class="n">newB</span><span class="p">)</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a><a href="#__codelineno-0-8"><span class="linenos" data-linenos=" 8 "></span></a><span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a><a href="#__codelineno-0-9"><span class="linenos" data-linenos=" 9 "></span></a><span class="c1"># 按照内存排列方式查看数据</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a><a href="#__codelineno-0-10"><span class="linenos" data-linenos="10 "></span></a><span class="nb">print</span><span class="p">(</span><span class="n">newB</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">))</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a><a href="#__codelineno-0-11"><span class="linenos" data-linenos="11 "></span></a><span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">))</span>
-</span></code></pre></div>
-<p>正如上面code所示，如果直接看A或者newB，恰好可以看到newB恰好是A的转置，即使反序列化以后也是一样，但是按照内存排列方式打印A和newB就可以看到他们的数据排列是一样的。</p>
+<h3 id="23">2.3 模型资产价值<a class="headerlink" href="#23" title="Permanent link">&para;</a></h3>
+<p>大模型的资产价值主要体现在：</p>
+<ol>
+<li>通用性强，可跨任务迁移：统一特征空间可支撑多下游任务，知识复用率高。</li>
+<li>持续增值特性：可通过微调、蒸馏和优化持续提升能力，资产复利效应显著。</li>
+<li>生态价值：可为不同团队或产品提供特征、embedding、统一 API，形成内部平台化价值。</li>
+<li>节约长期成本：新任务开发、模型集成、维护成本显著下降。</li>
+<li>形成知识壁垒与竞争优势：模型蕴含业务数据特征、行业知识和任务理解，企业独有，难以替代。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>小模型</th>
+<th>大模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>生命周期</td>
+<td>短，单任务用完即弃</td>
+<td>长，可多次微调复用</td>
+</tr>
+<tr>
+<td>可迁移性</td>
+<td>弱，需重新训练</td>
+<td>强，可跨任务迁移</td>
+</tr>
+<tr>
+<td>数据依赖</td>
+<td>每任务独立数据</td>
+<td>可统一语义空间</td>
+</tr>
+<tr>
+<td>成本结构</td>
+<td>低成本、低复用</td>
+<td>高初始成本、高复用</td>
+</tr>
+<tr>
+<td>战略价值</td>
+<td>一次性工具</td>
+<td>长期战略资产</td>
+</tr>
+</tbody>
+</table>
+<h3 id="24">2.4 局限性<a class="headerlink" href="#24" title="Permanent link">&para;</a></h3>
+<p>虽然垂域多模态大模型基座在大公司和大型业务场景中价值显著，但对小公司或初创企业，其适用性受限，主要原因包括：  </p>
+<ol>
+<li>高昂的训练与部署成本  </li>
+<li>数据规模不足  </li>
+<li>工程和运维能力要求高  </li>
+<li>需要长周期投入  </li>
+</ol>
+<p>对小公司而言，采用小模型+轻量多模态微调或者混合级联策略，在成本可控、迭代快速、风险可控的前提下，更符合实际需求。</p>
+<h3 id="25">2.5 小结<a class="headerlink" href="#25" title="Permanent link">&para;</a></h3>
+<p>统一垂域多模态大模型基座不仅能处理复杂多模态任务、减少系统复杂度，还具备少量数据高性能、长期资产价值、工程与运维优势。在“大场景 + 多模态 + 强知识 + 长链路任务 + 数据有限”的业务中，采用基座模型能显著提升 ROI 并降低长期成本，是大中型企业技术战略的重要选择。</p>
+<h2 id="2">三、场景2：上千品类瑕疵细粒度识别<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
+<p>在一些复杂工业视觉任务中，仅靠小模型或 CV 大模型、甚至多模态 RAG，往往无法满足精度需求。典型案例是上千品类瑕疵细粒度识别，每个品类的瑕疵定义不同，小瑕疵满足一定规则不算做异常，任务难度极高。</p>
+<h3 id="31">3.1 任务特点与差异性<a class="headerlink" href="#31" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>场景1（统一基座）</th>
+<th>场景2（上千品类瑕疵识别）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据量</td>
+<td>大规模业务数据</td>
+<td>每品类样本可能不均衡，长尾明显</td>
+</tr>
+<tr>
+<td>类别数量</td>
+<td>数十至百级</td>
+<td>千级类别以上</td>
+</tr>
+<tr>
+<td>任务复杂度</td>
+<td>多模态 + 长链路任务</td>
+<td>多模态 + 细粒度分类 + 规则差异</td>
+</tr>
+<tr>
+<td>规则依赖</td>
+<td>规则辅助，可结合 RAG</td>
+<td>每品类规则高度定制化，不可省略</td>
+</tr>
+<tr>
+<td>可迁移性/微调策略</td>
+<td>可少量微调或任务特定头</td>
+<td>必须全量微调骨干层，捕捉细粒度特征</td>
+</tr>
+<tr>
+<td>精度要求</td>
+<td>高，但允许少量误差</td>
+<td>极高，对小瑕疵敏感</td>
+</tr>
+<tr>
+<td>小模型适用性</td>
+<td>可折中或混合方案</td>
+<td>不可行，单模型精度不足</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
-<p>这里ravel函数的order参数解释如下
-order{‘C’,’F’, ‘A’, ‘K’}, optional
-The elements of a are read using this index order. ‘C’ means to index the elements in row-major, C-style order, with the last axis index changing fastest, back to the first axis index changing slowest. ‘F’ means to index the elements in column-major, Fortran-style order, with the first index changing fastest, and the last index changing slowest. Note that the ‘C’ and ‘F’ options take no account of the memory layout of the underlying array, and only refer to the order of axis indexing. ‘A’ means to read the elements in Fortran-like index order if a is Fortran contiguous in memory, C-like order otherwise. ‘K’ means to read the elements in the order they occur in memory, except for reversing the data when strides are negative. By default, ‘C’ index order is used.
-所以尽管我们的目的是想给C/C++函数传入A的转置，但传入的依然是A。<code class="language-text highlight">A.T</code>仅仅是创建了一个新的视图，并且其数据也不再是<code class="language-text highlight">contiguous</code>，另外打印<code class="language-text highlight">A.T.flags</code>会发现</p>
+<p>与场景1相比，本场景对<strong>精度、类别数量和规则复杂度</strong>的要求极端高，小模型或CV大模型精度完全不够，必须采用<strong>全量微调的多模态大模型</strong>。</p>
 </blockquote>
-<div class="language-ini highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><a href="#__codelineno-1-1"><span class="linenos" data-linenos="1 "></span></a><span class="na">C_CONTIGUOUS</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">False</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a><a href="#__codelineno-1-2"><span class="linenos" data-linenos="2 "></span></a><span class="na">&gt; F_CONTIGUOUS</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">True</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a><a href="#__codelineno-1-3"><span class="linenos" data-linenos="3 "></span></a><span class="na">&gt; OWNDATA</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">False</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a><a href="#__codelineno-1-4"><span class="linenos" data-linenos="4 "></span></a><span class="na">&gt; WRITEABLE</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">True</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5"></a><a href="#__codelineno-1-5"><span class="linenos" data-linenos="5 "></span></a><span class="na">&gt; ALIGNED</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">True</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6"></a><a href="#__codelineno-1-6"><span class="linenos" data-linenos="6 "></span></a><span class="na">&gt; WRITEBACKIFCOPY</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">False</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7"></a><a href="#__codelineno-1-7"><span class="linenos" data-linenos="7 "></span></a><span class="na">&gt; UPDATEIFCOPY</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">False</span>
-</span></code></pre></div>
-<blockquote>
-<p>新的视图变成了列连续。（C代表C语言格式存储,行优先，F代表Fortran 表示列优先）
-那么该如何解决呢？
-实际上解决思路很简单，那就是将按照数据的视图重新复制一遍数据，将其变为<code class="language-text highlight">contiguous</code>的。即传入A的转置时调用<code class="language-text highlight">np.ascontiguous(A.T)</code>即可将其数据copy一边并设置为行优先存储。</p>
-</blockquote>
-<h2 id="_3">小结<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>这个bug实在隐蔽，我对计算图的某个模块一层一层的打印和校对才找到，解决问题后分析原因写下这篇文章避免以后再出错。</p>
+<h3 id="32">3.2 全量微调多模态大模型的核心优势<a class="headerlink" href="#32" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>全局特征学习能力</strong> <br />
+    可在骨干层学习跨品类特征，捕捉细粒度差异与局部瑕疵信息。</li>
+<li><strong>多模态信息融合</strong><br />
+    将文本规则与视觉特征端到端融合，直接理解“哪些瑕疵算异常”，减少人工规则编码。</li>
+<li><strong>大规模类别支持</strong><br />
+    统一模型可覆盖上千品类，同时保持类别区分能力和特征共享能力。</li>
+<li><strong>长尾和少样本适应能力</strong><br />
+    预训练多模态大模型提供丰富先验，即使少样本类别也能保持高精度。</li>
+<li><strong>减少规则编码与维护成本</strong><br />
+    千余品类复杂规则无需手写，模型端到端学习规则映射。</li>
+<li><strong>统一部署与长期迭代价值</strong><br />
+    单模型覆盖所有品类，新增类别或规则仅需微调或增量训练，形成长期可复用的企业模型资产。</li>
+</ol>
+<h3 id="33">3.3 工程与运维优势<a class="headerlink" href="#33" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>统一管理与部署</strong>：单模型覆盖全部类别，减少多模型集成复杂度。</li>
+<li><strong>可持续迭代</strong>：全量微调支持持续优化和知识积累。</li>
+<li><strong>工程资源集中</strong>：训练、监控、模型版本控制和运维可集中管理，提高效率。</li>
+</ul>
+<h3 id="34">3.4 小结<a class="headerlink" href="#34" title="Permanent link">&para;</a></h3>
+<p>对于<strong>上千品类、细粒度、规则复杂的瑕疵识别任务</strong>：</p>
+<ul>
+<li>小模型或仅微调分类头的 CV 大模型以及全量微调CV大模型都无法满足精度要求；</li>
+<li>多模态 RAG 也难以实现端到端细粒度规则映射，因为通用模型本身不具备这种能力</li>
+<li><strong>全量微调的多模态大模型</strong>是唯一可行方案，能够统一学习细粒度特征、融合规则文本、支持长尾类别，并形成长期可迭代的企业模型资产。</li>
+</ul>
+<h2 id="_3">四、总结<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>本文通过两个典型场景分析了图文多模态大模型在实际业务中的应用价值与局限性：</p>
+<ol>
+<li>
+<p>场景1—统一垂域多模态基座  </p>
+<ul>
+<li>适用于<strong>大规模、多模态、长链路、规则复杂但可共享的业务场景</strong>。  </li>
+<li>核心价值在于<strong>简化系统架构、统一能力接口、减少重复工程、提高少量数据下的性能</strong>，同时形成可持续迭代的模型资产。  </li>
+<li>对大中型企业而言，这种基座模型能够显著提升 ROI，但对小公司而言，由于训练成本高、数据规模有限、工程运维要求高，采用轻量化小模型或混合方案更合适。  </li>
+</ul>
+</li>
+<li>
+<p>场景2—上千品类瑕疵细粒度识别  </p>
+<ul>
+<li>面对<strong>极端复杂、规则高度定制化、类别数量庞大、细粒度要求严格</strong>的工业视觉任务，小模型或CV大模型无法满足精度需求，多模态 RAG 也难以胜任。  </li>
+<li>全量微调的多模态大模型在此类场景中具备独特优势：<strong>全局特征学习、跨模态信息融合、长尾适应、规则端到端学习、统一部署和长期迭代能力</strong>，是目前较优的工业方案。  </li>
+</ul>
+</li>
+</ol>
+<p>总体而言，多模态大模型最适合那些任务复杂、信息形态多样、规则和知识密集、需要跨任务统一能力的业务场景。企业在选择模型方案时，应结合业务规模、精度要求、成本与运维能力，在多模态大模型与轻量化小模型方案之间做出平衡，从而实现高性能、低长期成本和可持续迭代的价值最大化。</p>
 
 
 
@@ -2124,7 +2474,7 @@ The elements of a are read using this index order. ‘C’ means to index the el
       <nav class="md-footer__inner md-grid" aria-label="页脚" >
         
           
-          <a href="../../cuda%E7%9B%B8%E5%85%B3/ROIAlign%E7%AE%97%E5%AD%90%E7%9A%84%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" class="md-footer__link md-footer__link--prev" aria-label="上一页: RoiAlign算子的前向传播与反向传播解读">
+          <a href="../MLLM_grounding01/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 增强MLLM的Visual Grounding能力方法调研（一）">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2134,20 +2484,20 @@ The elements of a are read using this index order. ‘C’ means to index the el
                 上一页
               </span>
               <div class="md-ellipsis">
-                RoiAlign算子的前向传播与反向传播解读
+                增强MLLM的Visual Grounding能力方法调研（一）
               </div>
             </div>
           </a>
         
         
           
-          <a href="../matrix_python_cpp/" class="md-footer__link md-footer__link--next" aria-label="下一页: Numpy和Eigen—Python与C++中的矩阵运算库的联系">
+          <a href="../../%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8E%A8%E5%AF%BC%E4%B8%80/" class="md-footer__link md-footer__link--next" aria-label="下一页: 卡尔曼滤波的公式推导和应用举例(一)">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 下一页
               </span>
               <div class="md-ellipsis">
-                Numpy和Eigen—Python与C++中的矩阵运算库的联系
+                卡尔曼滤波的公式推导和应用举例(一)
               </div>
             </div>
             <div class="md-footer__button md-icon">
