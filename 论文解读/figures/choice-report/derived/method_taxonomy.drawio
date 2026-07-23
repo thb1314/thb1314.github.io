@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio" version="30.0.4">
+  <diagram name="方法分类总图">
+    <mxGraphModel dx="1200" dy="1350" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1350" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="超大分辨率图像目标检测：问题约束与方法分类" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=32;fontStyle=1;fontColor=#1f2937;fontFamily=Noto Sans CJK SC;" vertex="1" parent="1">
+          <mxGeometry x="70" y="20" width="1060" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="核心矛盾&#xa;有限算力和显存下，同时保留稀疏小目标的有效像素、场景上下文和可学习监督" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#f5f5f5;strokeColor=#4b5563;strokeWidth=2;fontSize=25;fontStyle=1;fontColor=#111827;fontFamily=Noto Sans CJK SC;" vertex="1" parent="1">
+          <mxGeometry x="50" y="95" width="1100" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="三组约束彼此并列；为保证 A4 可读性而排为三行。每行的两个方法框也彼此并列，不表示处理先后。" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=20;fontColor=#4b5563;fontFamily=Noto Sans CJK SC;" vertex="1" parent="1">
+          <mxGeometry x="65" y="220" width="1070" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="4" value="① 计算域选择&#xa;目标稀疏、局部聚簇，背景计算占比高" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#fff2cc;strokeColor=#b88a00;strokeWidth=2;fontSize=26;fontStyle=1;fontColor=#3f3100;fontFamily=Noto Sans CJK SC;" vertex="1" parent="1">
+          <mxGeometry x="50" y="285" width="1100" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="图像／切片级&#xa;区域选择与放大&#xa;OAN · CZDet · YOLC" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#ffe6cc;strokeColor=#c97700;strokeWidth=2;fontSize=27;fontStyle=1;fontColor=#5a3100;fontFamily=Noto Sans CJK SC;" vertex="1" parent="1">
+          <mxGeometry x="75" y="420" width="500" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="特征／位置级&#xa;稀疏计算&#xa;QueryDet · CEASC · ESOD" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#d5e8d4;strokeColor=#5b9158;strokeWidth=2;fontSize=27;fontStyle=1;fontColor=#234d21;fontFamily=Noto Sans CJK SC;" vertex="1" parent="1">
+          <mxGeometry x="625" y="420" width="500" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="5" value="② 分辨率与上下文&#xa;缩放会丢失细节，过紧的局部处理又会损失场景语义" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#dae8fc;strokeColor=#4f78a8;strokeWidth=2;fontSize=26;fontStyle=1;fontColor=#193a5a;fontFamily=Noto Sans CJK SC;" vertex="1" parent="1">
+          <mxGeometry x="50" y="615" width="1100" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="全局—局部协同&#xa;与超分辨率&#xa;GLSAN · SuperYOLO" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#d5e8d4;strokeColor=#5b9158;strokeWidth=2;fontSize=27;fontStyle=1;fontColor=#234d21;fontFamily=Noto Sans CJK SC;" vertex="1" parent="1">
+          <mxGeometry x="75" y="750" width="500" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="尺度交互、感受野&#xa;与知识迁移&#xa;LSKNet · MSCD" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#e1d5e7;strokeColor=#85619a;strokeWidth=2;fontSize=27;fontStyle=1;fontColor=#452957;fontFamily=Noto Sans CJK SC;" vertex="1" parent="1">
+          <mxGeometry x="625" y="750" width="500" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="6" value="③ 监督与分类&#xa;微小／旋转目标的正样本不足，类间相似与类内变化并存" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#f8cecc;strokeColor=#a64b47;strokeWidth=2;fontSize=26;fontStyle=1;fontColor=#5f211e;fontFamily=Noto Sans CJK SC;" vertex="1" parent="1">
+          <mxGeometry x="50" y="945" width="1100" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="动态先验与&#xa;粗到细标签分配&#xa;DCFL" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#e1d5e7;strokeColor=#85619a;strokeWidth=2;fontSize=27;fontStyle=1;fontColor=#452957;fontFamily=Noto Sans CJK SC;" vertex="1" parent="1">
+          <mxGeometry x="75" y="1080" width="500" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="前景打包与&#xa;多代理分类&#xa;UFPMP-Det" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#ffe6cc;strokeColor=#c97700;strokeWidth=2;fontSize=27;fontStyle=1;fontColor=#5a3100;fontFamily=Noto Sans CJK SC;" vertex="1" parent="1">
+          <mxGeometry x="625" y="1080" width="500" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="分类依据是“主要改动位于哪里”；实际系统可以跨组组合。" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#f9fafb;strokeColor=#9ca3af;dashed=1;strokeWidth=1;fontSize=20;fontColor=#4b5563;fontFamily=Noto Sans CJK SC;" vertex="1" parent="1">
+          <mxGeometry x="100" y="1260" width="1000" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#b88a00;strokeWidth=2;endArrow=block;endFill=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="4" target="7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#b88a00;strokeWidth=2;endArrow=block;endFill=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="4" target="8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4f78a8;strokeWidth=2;endArrow=block;endFill=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="5" target="9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4f78a8;strokeWidth=2;endArrow=block;endFill=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="5" target="10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="24" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#a64b47;strokeWidth=2;endArrow=block;endFill=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="6" target="11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="25" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#a64b47;strokeWidth=2;endArrow=block;endFill=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="6" target="12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

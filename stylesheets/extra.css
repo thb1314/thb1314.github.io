@@ -1,0 +1,16 @@
+/* Keep long secondary tables of contents usable without hiding headings. */
+@media screen and (min-width: 60em) {
+  .md-sidebar--secondary .md-sidebar__scrollwrap {
+    max-height: calc(100vh - var(--md-header-height, 2.4rem) - 1rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+/* Ensure the lazily loaded Giscus iframe fits the article column. */
+.md-typeset .giscus,
+.md-typeset .giscus-frame {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+}
