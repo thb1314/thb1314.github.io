@@ -8,7 +8,7 @@ window.MathJax = {
     "HTML-CSS": { fonts: ["TeX"], linebreaks: { automatic: true } },
     options: {
       ignoreHtmlClass: ".*|",
-      processHtmlClass: "arithmatex"
+      processHtmlClass: "arithmatex|md-ellipsis"
     },
     svg: {
         fontCache: 'global'
