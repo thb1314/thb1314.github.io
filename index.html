@@ -17,17 +17,20 @@
         
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="assets/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
-        <title>海滨的Blog</title>
+        <title>首页 - 海滨的Blog</title>
       
     
     
       <link rel="stylesheet" href="assets/stylesheets/main.ec1eaa64.min.css">
       
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
       
 
 
@@ -36,18 +39,10 @@
       
     
     
-      
-        
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
     
       <link rel="stylesheet" href="stylesheets/extra.css">
-    
-      <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/css/share.min.css">
     
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -55,6 +50,17 @@
 
     
     
+
+<meta name="description" content="海滨的技术博客：计算机视觉论文解读、模型部署与轻量化、OCR 实战、多模态大模型。">
+<style>
+  /* 首页隐藏 social-share 挂载的分享按钮（不拦截脚本，零破坏） */
+  .hb-home ~ .social-share,
+  .hb-home .social-share,
+  article .social-share {
+    display: none !important;
+  }
+</style>
+
   <link href="assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
             html.glightbox-open { overflow: initial; height: 100%; }
             .gslide-title { margin-top: 0px; user-select: text; }
@@ -68,18 +74,20 @@
         </style></head>
   
   
-    <body dir="ltr">
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
-      
-        
-        <a href="#index" class="md-skip">
-          跳转至
-        </a>
       
     </div>
     <div data-md-component="announce">
@@ -95,8 +103,7 @@
   <nav class="md-header__inner md-grid" aria-label="页眉">
     <a href="." title="海滨的Blog" class="md-header__button md-logo" aria-label="海滨的Blog" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+  <img src="assets/logo-v2-96.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -113,12 +120,38 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Index
+              首页
             
           </span>
         </div>
       </div>
     </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="切换到深色模式" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="切换到浅色模式" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
     
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
@@ -173,28 +206,12 @@
       
     
     
-      <div class="md-header__source">
-        <a href="https://github.com/thb1314" title="前往仓库" class="md-source" data-md-component="source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M202.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M496 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"></path></svg>
-  </div>
-  <div class="md-source__repository">
-    Github
-  </div>
-</a>
-      </div>
-    
   </nav>
   
 </header>
     
     <div class="md-container" data-md-component="container">
       
-      
-        
-          
-        
       
       <main class="md-main" data-md-component="main">
         <div class="md-main__inner md-grid">
@@ -212,24 +229,11 @@
   <label class="md-nav__title" for="__drawer">
     <a href="." title="海滨的Blog" class="md-nav__button md-logo" aria-label="海滨的Blog" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+  <img src="assets/logo-v2-96.png" alt="logo">
 
     </a>
     海滨的Blog
   </label>
-  
-    <div class="md-nav__source">
-      <a href="https://github.com/thb1314" title="前往仓库" class="md-source" data-md-component="source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M202.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M496 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"></path></svg>
-  </div>
-  <div class="md-source__repository">
-    Github
-  </div>
-</a>
-    </div>
   
   <ul class="md-nav__list" data-md-scrollfix="">
     
@@ -246,26 +250,6 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Index
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
       
       <a href="." class="md-nav__link md-nav__link--active">
         
@@ -274,7 +258,7 @@
   <span class="md-ellipsis">
     
   
-    Index
+    首页
   
 
     
@@ -283,38 +267,6 @@
   
 
       </a>
-      
-        
-
-  
-
-<nav class="md-nav md-nav--secondary" aria-label="目录">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        个人简介
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -327,6 +279,20 @@
   
   
     
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -550,6 +516,20 @@
   
     
     
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
     
     
     
@@ -772,6 +752,14 @@
   
     
     
+      
+        
+      
+        
+      
+        
+      
+    
     
     
     
@@ -909,6 +897,16 @@
   
   
     
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1076,6 +1074,14 @@
   
     
     
+      
+        
+      
+        
+      
+        
+      
+    
     
     
     
@@ -1214,6 +1220,14 @@
   
     
     
+      
+        
+      
+        
+      
+        
+      
+    
     
     
     
@@ -1351,6 +1365,20 @@
   
   
     
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1510,6 +1538,34 @@
   
   
     <li class="md-nav__item">
+      <a href="%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/gptq_derivation_tutorial/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPTQ 从零推导：4-bit 权重量化为什么能“量化一列，补偿一列”
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/%E5%AF%B9%E5%9F%BA%E4%BA%8EKL%E6%95%A3%E5%BA%A6%E7%A1%AE%E5%AE%9A%E9%87%8F%E5%8C%96%E5%8F%82%E6%95%B0%E6%96%B9%E6%B3%95%E7%9A%84%E5%8E%9F%E7%90%86%E6%80%A7%E8%A7%A3%E8%AF%BB/" class="md-nav__link">
         
   
@@ -1545,6 +1601,24 @@
   
   
     
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1824,6 +1898,20 @@
   
     
     
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
     
     
     
@@ -2046,6 +2134,12 @@
   
     
     
+      
+        
+      
+        
+      
+    
     
     
     
@@ -2155,6 +2249,12 @@
   
   
     
+    
+      
+        
+      
+        
+      
     
     
     
@@ -2277,27 +2377,6 @@
   
   
   
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        个人简介
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
   
 </nav>
                   </div>
@@ -2310,30 +2389,140 @@
               
               <article class="md-content__inner md-typeset">
                 
-                  
 
+<div class="hb-home">
 
-  
-  
+  <!-- Hero -->
+  <section class="hb-hero">
+    <div class="hb-hero-main">
+      <span class="hb-hero-tag">👋 CV 算法工程师 · 工业视觉</span>
+      <h1>记录 <span class="hb-hl">计算机视觉</span><br>从论文到落地的每一步</h1>
+      <p>海滨，CV 算法工程师。研究领域涵盖基础视觉（分类 / 分割 / 检测 / 时序动作定位）、视觉文本多模态大模型、模型轻量化与部署加速，AI嵌入式部署，目前专注于计算机视觉在工业领域（工业SOP行为分析、表面缺陷检测）的应用研究。</p>
+      <div class="hb-actions">
+        <a class="hb-btn hb-btn-primary" href="#hb-posts" id="hb-start">开始阅读</a>
+        <a class="hb-btn hb-btn-ghost" href="https://github.com/thb1314" target="_blank" rel="noopener">GitHub</a>
+        <a class="hb-btn hb-btn-ghost" href="mailto:haibintian@foxmail.com">联系我</a>
+      </div>
+    </div>
+    <div class="hb-hero-card">
+      <h3>站点概览</h3>
+      <div class="hb-stat"><span class="hb-stat-num">49</span><span class="hb-stat-label">篇技术文章</span></div>
+      <div class="hb-stat"><span class="hb-stat-num">11</span><span class="hb-stat-label">个专栏方向</span></div>
+      <div class="hb-stat"><span class="hb-stat-num">1,696+</span><span class="hb-stat-label">天持续更新</span></div>
+    </div>
+  </section>
 
+  <!-- 最新文章 -->
+  <section class="hb-sec" id="hb-posts">
+    <div class="hb-sec-head"><h2>最新文章</h2><span class="hb-en">Recent</span></div>
+    <div class="hb-post-list">
+      
+      <a class="hb-post" href="%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/gptq_derivation_tutorial/">
+        <div class="hb-post-date"><span class="hb-day">07</span>2026.08</div>
+        <div class="hb-post-body">
+          <h3>GPTQ 从零推导：4-bit 权重量化为什么能“量化一列，补偿一列”</h3>
+          <div class="hb-post-meta">模型轻量化 · ⏱ 102 分钟</div>
+        </div>
+        
+      </a>
+      
+      <a class="hb-post" href="%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/wasserstein-object-detection-part1_real/">
+        <div class="hb-post-date"><span class="hb-day">28</span>2026.07</div>
+        <div class="hb-post-body">
+          <h3>二维Gaussian分布Wasserstein 距离的推导以及其在目标检测中的应用</h3>
+          <div class="hb-post-meta">论文解读 · ⏱ 80 分钟</div>
+        </div>
+        
+      </a>
+      
+      <a class="hb-post" href="%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/ultra_high_resolution_object_detection_report/">
+        <div class="hb-post-date"><span class="hb-day">24</span>2026.07</div>
+        <div class="hb-post-body">
+          <h3>超大分辨率图像下的目标检测问题研究</h3>
+          <div class="hb-post-meta">论文解读 · ⏱ 128 分钟</div>
+        </div>
+        
+      </a>
+      
+      <a class="hb-post" href="OCR%E7%9B%B8%E5%85%B3/360%C2%B0%E6%97%8B%E8%BD%AC%E6%96%87%E5%AD%97%E5%8C%BA%E5%9F%9F%E6%A3%80%E6%B5%8B%E5%AE%9E%E6%88%984%EF%BC%9A%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%B8%8E%E6%97%8B%E8%BD%AC%E6%A1%86%E4%BB%A3%E7%A0%81%E8%A7%A3%E5%AF%86/">
+        <div class="hb-post-date"><span class="hb-day">22</span>2026.04</div>
+        <div class="hb-post-body">
+          <h3>360°旋转文字区域检测实战4：损失函数与旋转框代码解密</h3>
+          <div class="hb-post-meta">OCR相关 · ⏱ 11 分钟</div>
+        </div>
+        
+      </a>
+      
+      <a class="hb-post" href="OCR%E7%9B%B8%E5%85%B3/360%C2%B0%E6%97%8B%E8%BD%AC%E6%96%87%E5%AD%97%E5%8C%BA%E5%9F%9F%E6%A3%80%E6%B5%8B%E5%AE%9E%E6%88%983%EF%BC%9A%E7%AE%97%E6%B3%95%E8%B0%83%E4%BC%98%E4%B8%8E%E5%B7%A5%E4%B8%9A%E7%BA%A7%E5%8A%A0%E9%80%9F%E7%A7%98%E7%B1%8D/">
+        <div class="hb-post-date"><span class="hb-day">21</span>2026.04</div>
+        <div class="hb-post-body">
+          <h3>360°旋转文字区域检测实战3：算法调优与工业级加速秘籍</h3>
+          <div class="hb-post-meta">OCR相关 · ⏱ 4 分钟</div>
+        </div>
+        
+      </a>
+      
+      <a class="hb-post" href="%E5%9B%BE%E6%96%87%E5%A4%9A%E6%A8%A1%E6%80%81/why-mllm01/">
+        <div class="hb-post-date"><span class="hb-day">21</span>2025.11</div>
+        <div class="hb-post-body">
+          <h3>从需求出发：什么业务场景更适合图文多模态大模型？</h3>
+          <div class="hb-post-meta">图文多模态 · ⏱ 10 分钟</div>
+        </div>
+        
+      </a>
+      
+      <a class="hb-post" href="%E5%9B%BE%E6%96%87%E5%A4%9A%E6%A8%A1%E6%80%81/MLLM_grounding01/">
+        <div class="hb-post-date"><span class="hb-day">01</span>2025.10</div>
+        <div class="hb-post-body">
+          <h3>增强MLLM的Visual Grounding能力方法调研（一）</h3>
+          <div class="hb-post-meta">图文多模态 · ⏱ 36 分钟</div>
+        </div>
+        
+      </a>
+      
+      <a class="hb-post" href="%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E5%B7%A5%E4%B8%9A%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/">
+        <div class="hb-post-date"><span class="hb-day">27</span>2025.09</div>
+        <div class="hb-post-body">
+          <h3>工业缺陷检测项目经验总结</h3>
+          <div class="hb-post-meta">项目总结 · ⏱ 38 分钟</div>
+        </div>
+        
+      </a>
+      
+    </div>
+  </section>
 
-<h1 id="index">Index<a class="headerlink" href="#index" title="Permanent link">¶</a></h1>
-<h2 id="_1">个人简介<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
-<p>海滨，CV算法工程师，研究领域包括基础视觉领域（图像分类/分割/检测，视频分类/时序动作定位等）、视觉文本多模态大模型、模型轻量化部署加速等，目前主要从事计算机视觉在工业领域应用研究的相关工作。</p>
-<p>项目合作与交流请联系 Email: <a href="mailto:haibintian@foxmail.com">haibintian@foxmail.com</a></p>
+  <!-- 关于博主 -->
+  <section class="hb-sec" id="hb-about">
+    <div class="hb-sec-head"><h2>关于博主</h2><span class="hb-en">About</span></div>
+    <div class="hb-about">
+      <div class="hb-about-item">
+        <h3>🔬 研究方向</h3>
+        <p>基础视觉（分类 / 分割 / 检测 / 时序动作定位）、视觉文本多模态大模型、模型轻量化与部署加速、AI嵌入式部署。</p>
+      </div>
+      <div class="hb-about-item">
+        <h3>🏭 当前工作</h3>
+        <p>计算机视觉在工业领域的应用研究，专注缺陷检测、工业SOP行为分析等落地场景的全链路方案。</p>
+      </div>
+      <div class="hb-about-item">
+        <h3>✉️ 合作交流</h3>
+        <p>项目合作与技术交流欢迎联系 <a href="mailto:haibintian@foxmail.com">haibintian@foxmail.com</a></p>
+      </div>
+    </div>
+  </section>
 
+  <!-- 页脚 -->
+  <footer class="hb-footer">
+    <div class="hb-footer-links">
+      <a href="https://github.com/thb1314" target="_blank" rel="noopener">GitHub</a>·
+      <a href="mailto:haibintian@foxmail.com">Email</a>·
+      <a href="sitemap.xml">Sitemap</a>
+    </div>
+    <div class="hb-footer-copy">© 2026 海滨 · 基于 MkDocs Material 构建</div>
+  </footer>
 
+</div>
 
-
-
-
-
-
-
-
-
-
-                
               </article>
             </div>
           
@@ -2342,64 +2531,6 @@
         </div>
         
       </main>
-      
-        <footer class="md-footer">
-  
-    
-      
-      <nav class="md-footer__inner md-grid" aria-label="页脚">
-        
-        
-          
-          <a href="DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" class="md-footer__link md-footer__link--next" aria-label="下一页: Pytorch下的多卡间变量同步操作">
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                下一页
-              </span>
-              <div class="md-ellipsis">
-                Pytorch下的多卡间变量同步操作
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
-            </div>
-          </a>
-        
-      </nav>
-    
-  
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-copyright">
-  
-  
-</div>
-      
-        
-<div class="md-social">
-  
-    
-    
-    
-    
-    <a href="https://github.com/thb1314" target="_blank" rel="noopener" title="Github" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
-    </a>
-  
-    
-    
-    
-    
-    <a href="mailto:haibintian@foxmail.com" target="_blank" rel="noopener" title="email to me" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M61.4 64C27.5 64 0 91.5 0 125.4c0 .9 0 1.7.1 2.6H0v256c0 35.3 28.7 64 64 64h384c35.3 0 64-28.7 64-64V128h-.1c0-.9.1-1.7.1-2.6 0-33.9-27.5-61.4-61.4-61.4zM464 192.3V384c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192.3l154.8 117.4c31.4 23.9 74.9 23.9 106.4 0zM48 125.4c0-7.4 6-13.4 13.4-13.4h389.2c7.4 0 13.4 6 13.4 13.4 0 4.2-2 8.2-5.3 10.7L280.2 271.5c-14.3 10.8-34.1 10.8-48.4 0L53.3 136.1c-3.3-2.5-5.3-6.5-5.3-10.7"></path></svg>
-    </a>
-  
-</div>
-      
-    </div>
-  </div>
-</footer>
       
     </div>
     <div class="md-dialog" data-md-component="dialog">
@@ -2410,18 +2541,12 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.code.select", "content.footnote.tooltips", "navigation.footer"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.code.select", "content.footnote.tooltips", "navigation.footer", "navigation.indexes"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
     
     
       <script src="assets/javascripts/bundle.d7400e89.min.js"></script>
       
-        <script src="themes/js/mathjax-nav.js"></script>
-      
-        <script src="https://cdn.bootcdn.net/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
-      
-        <script src="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
-      
-        <script src="themes/js/social_share.js"></script>
+        <script src="themes/js/hb_blog.js"></script>
       
     
   
