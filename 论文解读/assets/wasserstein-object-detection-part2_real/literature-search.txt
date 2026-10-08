@@ -1,0 +1,161 @@
+# Wasserstein 距离与目标检测：扩展文献检索台账
+
+检索日期：2026-07-18（Asia/Shanghai）
+
+## 1. 检索问题与边界
+
+本次检索回答的不是“哪些检测论文在任意位置提到过 Wasserstein”，而是三个有边界的问题：
+
+1. 哪些工作直接把 Wasserstein 或相邻的 Gaussian 分布距离用于边界框表示、相似度、回归 loss、
+   标签分配或 NMS？
+2. GWD、NWD、EWD 前后有哪些关键替代方案或后续修正？
+3. Wasserstein/最优传输在目标检测中还有哪些不同用途，不能和框回归混为一谈？
+
+这是一个**主题相关文献地图**，不是数据库中所有命中项的系统综述。检索优先覆盖方法源头、直接
+后续和能改变数学理解的反例；大量只把 NWD 加到某个 YOLO 变体中的应用论文不逐篇列入核心阅读。
+
+## 2. 使用的检索能力
+
+按本机
+`/media/thb/data/code/128adazoom/.agents/skills/paper-lookup/SKILL.md` 的流程执行：
+
+- arXiv：CS/CV 预印本关键词检索与精确 arXiv 元数据；
+- OpenAlex：跨预印本和正式出版物扩展覆盖，并读取种子论文引用链；
+- Semantic Scholar：原计划用于引用和推荐，但无 API key 的共享池连续两次返回 HTTP 429，按
+  skill 规则停止重试，改用 OpenAlex；失败响应保存在 `work/literature/raw/`。
+
+所有标题、摘要和作者字段均视为不可信第三方数据，只抽取书目信息，没有执行响应文本中的任何内容。
+
+## 3. 可复现查询与返回规模
+
+### 3.1 arXiv API
+
+端点：`https://export.arxiv.org/api/query`。请求串行发送，相邻请求至少按 API 约定分开处理；
+`start=0`、`sortBy=relevance`、`sortOrder=descending`。
+
+| 查询式（URL 解码后） | `max_results` | API 总数 | 本地取得 |
+|---|---:|---:|---:|
+| `all:"Wasserstein" AND all:"object detection"` | 100 | 25 | 25 |
+| `all:"Gaussian" AND all:"oriented object detection"` | 100 | 11 | 11 |
+| `cat:cs.CV AND all:"Gaussian" AND all:"bounding box"` | 100 | 104 | 100 |
+| `cat:cs.CV AND all:"optimal transport" AND all:"object detection"` | 100 | 20 | 20 |
+
+第三个查询只取相关性排序的前 100/104 条，因此不能把剩余 4 条未取结果解释为“不存在”。该查询
+还命中 Gaussian splatting、定位不确定性等大量同词异义工作，必须人工按摘要和方法对象筛选。
+
+### 3.2 OpenAlex API
+
+端点：`https://api.openalex.org/works`，没有配置 `OPENALEX_API_KEY`，使用公开额度。
+
+| 用途 | 参数摘要 | API 总数 | 本地取得 |
+|---|---|---:|---:|
+| 主题扩展 1 | `search=Wasserstein distance object detection bounding box regression` | 1,737 | 前 100 |
+| 主题扩展 2 | `search=Gaussian distribution rotated oriented object detection loss` | 12,848 | 前 100 |
+| 三篇种子解析 | 三个 arXiv DOI 的 OR 过滤 | 4 | 4 |
+| 种子引用链，高被引排序 | `filter=cites:<4 个 OpenAlex work id>` | 488 | 前 100 |
+| 种子引用链，日期倒序 | 同上 | 488 | 前 100 |
+
+三篇种子解析返回 4 条，是因为 GWD 在 OpenAlex 中有两个 work 记录且 DOI 相同；这不是两篇不同
+论文。两页引用样本按 OpenAlex ID 合并后共有 197 条。OpenAlex 主题搜索的词义噪声很大，返回总数
+不能用作“相关论文数量”。
+
+### 3.3 Semantic Scholar API
+
+端点：`https://api.semanticscholar.org/graph/v1/paper/search`；查询
+`Wasserstein distance object detection bounding box regression`，`limit=100`。初次调用和一次短暂
+等待后的重试均为 HTTP 429：
+
+```json
+{"message":"Too Many Requests...","code":"429"}
+```
+
+因此本次没有 Semantic Scholar 结果。若以后需要完整的引用上下文和推荐，应先配置 `S2_API_KEY`，
+而不是反复请求共享池。
+
+## 4. 去重与分级规则
+
+去重键依次为：规范化 DOI、arXiv 主 ID（去掉版本号）、规范化标题。预印本的正式发表版本若只是
+同一工作，合并记录；内容明显扩展的版本单列并注明关系。引用数只用于帮助发现，不作为论文质量排序。
+
+分级如下：
+
+- **A：核心框距离/损失**。直接决定框到分布的映射，或直接定义定位距离、相似度、loss。
+- **B：紧邻替代方案**。使用相同 Gaussian 表示但换成 KLD、Hellinger、Gaussian product、
+  Bhattacharyya 等，能帮助判断 WD 的优缺点。
+- **C：最优传输的其他检测用途**。作用于域适配或标签分配，不是框间 Gaussian W2。
+- **D：下游应用**。把 NWD/GWD 作为已有模块嵌入具体检测器；只在讨论工程迁移时抽样引用。
+
+## 5. 核心阅读地图
+
+### 5.1 A 级：直接围绕 WD 或边界框分布距离
+
+| 年份 | 工作 | 标识 | 与主线的关系 |
+|---:|---|---|---|
+| 2021 | Rethinking Rotated Object Detection with Gaussian Wasserstein Distance Loss | arXiv:2101.11952 | GWD：旋转框编码成二维 Gaussian，以 $W_2$ 构造回归 loss |
+| 2021 | A Normalized Gaussian Wasserstein Distance for Tiny Object Detection | arXiv:2110.13389 | NWD：水平框的 $W_2$ 退化为四维欧氏距离，用于分配、NMS 和 loss |
+| 2022 | Detecting tiny objects in aerial images: A normalized Wasserstein distance and a new benchmark | arXiv:2206.13996 | NWD 的期刊扩展；加入 ranking-based assignment 和 AI-TOD-v2 |
+| 2022 | G-Rep: Gaussian Representation for Arbitrary-Oriented Object Detection | arXiv:2205.11796 | 把 Gaussian 表示推广到 OBB、四边形和点集，并比较多种 Gaussian metric |
+| 2023 | Edge Wasserstein Distance Loss for Oriented Object Detection | arXiv:2312.07048 | EWD：从整框 Gaussian 改为边缘支撑分布，针对正方形角度退化 |
+| 2025 | GauCho: Gaussian Distributions with Cholesky Decomposition for Oriented Object Detection | arXiv:2502.01565 | 直接回归 Cholesky 参数，处理 OBB 头本身的角度边界问题 |
+| 2025 | Gaussian Combined Distance: A Generic Metric for Object Detection | arXiv:2510.27649 | 明确批评固定 $C$ 的 WD 非严格尺度不变，提出联合中心/形状的 GCD |
+
+### 5.2 B 级：相同表示、不同距离或 IoU 近似
+
+| 年份 | 工作 | 标识 | 为什么必须一起读 |
+|---:|---|---|---|
+| 2021/2024 | Gaussian Bounding Boxes and Probabilistic IoU | arXiv:2106.06072 | 用 Hellinger/Bhattacharyya 系数构造 ProbIoU，说明 Gaussian 表示不必绑定 WD |
+| 2021 | Learning High-Precision Bounding Box ... via KLD | arXiv:2106.01883 | KLD 具有方向性和尺度归一性质，突出长宽比对角度梯度的调节 |
+| 2022 | The KFIoU Loss for Rotated Object Detection | arXiv:2201.12558 | 用 Gaussian product/Kalman 形式近似 SkewIoU，减少 GWD 后处理超参数依赖 |
+| 2022 | Detecting Rotated Objects as Gaussian Distributions and Its 3-D Generalization | arXiv:2209.10839 | Gaussian/KLD 路线的 2D、3D 扩展总结 |
+| 2022 | MKIoU Loss | arXiv:2206.15109 | 指出 Gaussian 表示对正方形丢角度，并额外加入 Gaussian Angle Loss |
+| 2022 | Polygon-to-Polygon Distance Loss | DOI:10.1609/aaai.v36i3.20214 | 直接比较多边形几何，代表不依赖 Gaussian 椭圆的旋转框损失 |
+| 2023/2024 | Linear Gaussian Bounding Box Representation | arXiv:2311.05410 | 从表示头入手提高直接 Gaussian 回归的数值稳定性 |
+| 2024 | Structure Tensor Representation for Robust Oriented Object Detection | arXiv:2411.10497 | 在 Gaussian 与角度编码之间提供张量表示，保留方向信息 |
+| 2025 | Anisotropic Gaussian Bounding Box and Bhattacharyya Distance | arXiv:2510.16445 | 继续处理 square-like 角度信息与 Bhattacharyya 距离 |
+
+### 5.3 C 级：同属 OT/WD，但不是框回归
+
+| 年份 | 工作 | 标识 | WD/OT 用在哪里 |
+|---:|---|---|---|
+| 2019 | Wasserstein Distance Based Domain Adaptation for Object Detection | arXiv:1909.08675 | 对齐源域和目标域的高维特征分布 |
+| 2021 | OTA: Optimal Transport Assignment for Object Detection | arXiv:2103.14259 | 把 ground truth 到 anchors 的全局标签分配写成运输计划 |
+| 2023 | Unbalanced Optimal Transport: A Unified Framework for Object Detection | arXiv:2307.02402 | 用非平衡 OT 统一多种预测与真值匹配策略 |
+
+这些工作和 NWD/GWD 共用“运输”语言，但运输对象不同：前者运输特征质量或匹配供需，后者运输二维
+Gaussian 上的概率质量。正文不会用 OTA 来证明 Gaussian $W_2$ 的框距离公式。
+
+## 6. 本阶段采用的阅读优先级
+
+1. 三篇用户指定论文及其 LaTeX 源，确定原始公式与实际 loss。
+2. Givens--Shortt、Dowson--Landau 等 Gaussian $W_2$ 数学来源，独立补全证明。
+3. KLD、ProbIoU、KFIoU，建立“同一 Gaussian 表示不等于同一 loss”的比较基线。
+4. NWD 期刊扩展和 GCD，校准“尺度不敏感/尺度不变”的说法。
+5. EWD、MKIoU、Structure Tensor、GauCho，追踪正方形角度退化问题的后续处理。
+6. OTA/UOT/域适配只作为 WD 在检测中其他应用的边界章节。
+
+## 7. 原始证据位置
+
+API 原始响应保存在 `work/literature/raw/`：4 个 arXiv Atom XML、5 个 OpenAlex JSON 和
+1 个 Semantic Scholar 429 JSON。`work/` 被 `.gitignore` 排除；公开文章只保留本台账中的可复现
+参数和人工核验后的结论。
+
+2026-07-18 又用 arXiv 精确 ID 查询刷新三篇主论文，原始响应为
+`work/literature/raw/arxiv-core-refresh-20260718.xml`。返回的最新版本分别是 GWD
+`2101.11952v4`、NWD `2110.13389v2`、EWD `2312.07048v1`。逐式校准使用的 PDF 与文本位于
+`work/papers/2101.11952v4.*`、`work/papers/2110.13389v2.*`、`work/papers/2312.07048v1.*`。
+
+## 8. 最终进入逐式推导的扩展论文
+
+检索命中不等于正文引用。经过全文公式核验，第二篇教程实际详细推导了以下扩展链：
+
+- 距离替代：KLD、Bhattacharyya/Hellinger/ProbIoU；
+- Gaussian product：KFIoU、MKIoU 与 Gaussian Angle Loss；
+- 表示推广：G-Rep 点集 MLE、二维/三维 Gaussian、LGBB、Structure Tensor、GauCho、
+  anisotropic GBB；
+- 微小目标后续：NWD-RKA、GCD；
+- 非 Gaussian 对照：Polygon-to-Polygon Loss；
+- OT 的其他检测用途：特征域适配、OTA、UOT。
+
+正文对 KFIoU 最大值、G-Rep MLE、GauCho 参数界、GCD 三角不等式反例、P2P 面积性质以及
+OTA/UOT Sinkhorn 更新都给出独立推导。仅重复套用 NWD/GWD 而没有改变数学对象的下游应用论文
+仍不逐篇展开。

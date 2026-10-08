@@ -1,0 +1,6347 @@
+<!DOCTYPE html><html lang="zh" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="海滨">
+      
+      
+        <link rel="canonical" href="https://www.hbblog.cn/%E8%AE%BA%E6%96%87%E8%A7%A3%E8%AF%BB/wasserstein-object-detection-part2_real/">
+      
+      
+        <link rel="prev" href="../wasserstein-object-detection-part1_real/">
+      
+      
+        <link rel="next" href="../../%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/ffmpeg%20GPU%E5%8A%A0%E9%80%9F%E7%89%88%E6%9C%AC%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Wasserstein 距离与目标检测（二）：Gaussian 框距离、表示方法与相关损失 - 海滨的Blog</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wasserstein-gaussian" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="海滨的Blog" class="md-header__button md-logo" aria-label="海滨的Blog" data-md-component="logo">
+      
+  <img src="../../assets/logo-v2-96.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            海滨的Blog
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Wasserstein 距离与目标检测（二）：Gaussian 框距离、表示方法与相关损失
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="切换到深色模式" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到深色模式" for="__palette_1" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="切换到浅色模式" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到浅色模式" for="__palette_0" hidden="">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="海滨的Blog" class="md-nav__button md-logo" aria-label="海滨的Blog" data-md-component="logo">
+      
+  <img src="../../assets/logo-v2-96.png" alt="logo">
+
+    </a>
+    海滨的Blog
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix="">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2">
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DL框架原理与技巧
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DL框架原理与技巧
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2021%E5%B9%B412%E6%9C%8826%E6%97%A5%2015%E6%97%B630%E5%88%8611%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pytorch下的多卡间变量同步操作
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8807%E6%97%A5%2020%E6%97%B633%E5%88%8650%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    自动微分autograd原理-简单demo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B403%E6%9C%8811%E6%97%A5%2015%E6%97%B614%E5%88%8655%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TensorFlow中ckpt、frozen model、keras、onnx之间涉及的转换
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/2022%E5%B9%B404%E6%9C%8801%E6%97%A5%2023%E6%97%B630%E5%88%8626%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    再谈自动微分：自动微分中的前向模式与反向模式
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/distributed_ema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    分布式训练场景下ModelEMA的优化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../DL%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8A%80%E5%B7%A7/gray_image_pretrained_on_imagenet/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    灰度图分类采用Imagenet预训练时卷积核压缩Trick
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OCR相关
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    OCR相关
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/2022%E5%B9%B403%E6%9C%8829%E6%97%A5%2022%E6%97%B651%E5%88%8611%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pytorch中CTC Loss源码解析
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/360%C2%B0%E6%97%8B%E8%BD%AC%E6%96%87%E5%AD%97%E5%8C%BA%E5%9F%9F%E6%A3%80%E6%B5%8B%E5%AE%9E%E6%88%981%EF%BC%9A%E5%85%A8%E6%99%AF%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E8%90%BD%E5%9C%B0%E6%80%9D%E8%B7%AF/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    360°旋转文字区域检测实战1：全景架构设计与落地思路
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/360%C2%B0%E6%97%8B%E8%BD%AC%E6%96%87%E5%AD%97%E5%8C%BA%E5%9F%9F%E6%A3%80%E6%B5%8B%E5%AE%9E%E6%88%982%EF%BC%9A%E9%AB%98%E6%95%88%E6%A0%87%E6%B3%A8%E5%B7%A5%E5%85%B7%E4%B8%8E%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%E6%8C%87%E5%8D%97/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    360°旋转文字区域检测实战2：高效标注工具与团队协作指南
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/360%C2%B0%E6%97%8B%E8%BD%AC%E6%96%87%E5%AD%97%E5%8C%BA%E5%9F%9F%E6%A3%80%E6%B5%8B%E5%AE%9E%E6%88%983%EF%BC%9A%E7%AE%97%E6%B3%95%E8%B0%83%E4%BC%98%E4%B8%8E%E5%B7%A5%E4%B8%9A%E7%BA%A7%E5%8A%A0%E9%80%9F%E7%A7%98%E7%B1%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    360°旋转文字区域检测实战3：算法调优与工业级加速秘籍
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/360%C2%B0%E6%97%8B%E8%BD%AC%E6%96%87%E5%AD%97%E5%8C%BA%E5%9F%9F%E6%A3%80%E6%B5%8B%E5%AE%9E%E6%88%984%EF%BC%9A%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E4%B8%8E%E6%97%8B%E8%BD%AC%E6%A1%86%E4%BB%A3%E7%A0%81%E8%A7%A3%E5%AF%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    360°旋转文字区域检测实战4：损失函数与旋转框代码解密
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../OCR%E7%9B%B8%E5%85%B3/%E4%BB%BB%E6%84%8F%E5%87%B8%E5%9B%9B%E8%BE%B9%E5%BD%A2iou%E7%9A%84%E8%AE%A1%E7%AE%97/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    凸四边形IoU的计算
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cuda相关
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Cuda相关
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B406%E6%9C%8812%E6%97%A5%2021%E6%97%B613%E5%88%8644%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    cublas中矩阵乘及其广播机制的实现与单元测试
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cuda%E7%9B%B8%E5%85%B3/2022%E5%B9%B407%E6%9C%8823%E6%97%A5%2023%E6%97%B617%E5%88%8614%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    cuDNN API的使用与测试-以二维卷积+Relu激活函数为例
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cuda%E7%9B%B8%E5%85%B3/ROIAlign%E7%AE%97%E5%AD%90%E7%9A%84%E5%89%8D%E5%90%91%E4%BC%A0%E6%92%AD%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RoiAlign算子的前向传播与反向传播解读
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    python&amp;C++
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    python&amp;C++
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/2022%E5%B9%B406%E6%9C%8807%E6%97%A5%2015%E6%97%B650%E5%88%8636%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    python与C/C++数据交互的陷阱：numpy/torch中的视图
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/build_agent_from_scratch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    从0到1设计一个简易版AgentLoop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/matrix_python_cpp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Numpy和Eigen—Python与C++中的矩阵运算库的联系
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/python%E5%92%8CC%E7%9A%84%E4%BA%A4%E4%BA%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    一文总结Python和C/C++的交互方式
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python%26C%2B%2B/%E5%B5%8C%E5%85%A5%E5%BC%8Fso%E5%BC%80%E5%8F%91/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    嵌入式开发采用so动态加载摆脱buildroot依赖
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6">
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    图文多模态
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    图文多模态
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%9B%BE%E6%96%87%E5%A4%9A%E6%A8%A1%E6%80%81/01%E6%95%B0%E6%8D%AE%E9%9B%86%E5%BD%92%E7%BA%B31/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    图文多模态数据集归纳（一）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%9B%BE%E6%96%87%E5%A4%9A%E6%A8%A1%E6%80%81/MLLM_grounding01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    增强MLLM的Visual Grounding能力方法调研（一）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E5%9B%BE%E6%96%87%E5%A4%9A%E6%A8%A1%E6%80%81/why-mllm01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    从需求出发：什么业务场景更适合图文多模态大模型？
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7">
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    数学原理与控制理论
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    数学原理与控制理论
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8E%A8%E5%AF%BC%E4%B8%80/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    卡尔曼滤波的公式推导和应用举例(一)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8E%A8%E5%AF%BC%E4%B8%89/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    卡尔曼滤波的公式推导和应用举例(三)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%90%86%E8%AE%BA/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E7%9A%84%E4%BB%8B%E7%BB%8D%E5%92%8C%E6%8E%A8%E5%AF%BC%E4%BA%8C/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    卡尔曼滤波的公式推导和应用举例(二)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8">
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    模型轻量化
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    模型轻量化
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2021%E5%B9%B412%E6%9C%8825%E6%97%A5%2016%E6%97%B604%E5%88%8649%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network Slimming-神经网络剪枝的精细控制实现
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B401%E6%9C%8817%E6%97%A5%2010%E6%97%B647%E5%88%8629%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    模型压缩框架nncf模型量化中QAT量化参数的梯度推导
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8805%E6%97%A5%2016%E6%97%B630%E5%88%8647%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    对模型量化框架mqbench添加openvino推理格式支持
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/2022%E5%B9%B402%E6%9C%8821%E6%97%A5%2012%E6%97%B619%E5%88%8614%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    一文总结TensorRT下两种量化方式QAT和PTQ的部署
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/gptq_derivation_tutorial/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPTQ 从零推导：4-bit 权重量化为什么能“量化一列，补偿一列”
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E8%BD%BB%E9%87%8F%E5%8C%96/%E5%AF%B9%E5%9F%BA%E4%BA%8EKL%E6%95%A3%E5%BA%A6%E7%A1%AE%E5%AE%9A%E9%87%8F%E5%8C%96%E5%8F%82%E6%95%B0%E6%96%B9%E6%B3%95%E7%9A%84%E5%8E%9F%E7%90%86%E6%80%A7%E8%A7%A3%E8%AF%BB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    对基于KL散度确定量化参数方法的原理性解读
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9">
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    模型部署
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    模型部署
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2021%E5%B9%B412%E6%9C%8816%E6%97%A5%2014%E6%97%B626%E5%88%8600%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FasterCNNN+ROIAlign+FPN在TensorRT上的部署的解决方案
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8806%E6%97%A5%2022%E6%97%B621%E5%88%8616%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    生产者消费者模式在多batch推理下的应用(延时队列)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B404%E6%9C%8811%E6%97%A5%2023%E6%97%B612%E5%88%8655%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pytorch导出onnx的原则-以SwinTransformer和DETR在trt8.0.3.4部署为例
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B405%E6%9C%8828%E6%97%A5%2017%E6%97%B623%E5%88%8651%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    计算图的优化-以onnx表示形式为例
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/2022%E5%B9%B408%E6%9C%8802%E6%97%A5%2023%E6%97%B628%E5%88%8628%E7%A7%92/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TensorRT Plugin的实现、调试与验证：以实现Layernorm为例
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/20230114%E5%8D%95%E6%9C%BA%E5%A4%9A%E5%8D%A1%E8%AE%A1%E7%AE%97%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    对单机多卡AI模型推理场景下计算资源分配问题的思考
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/maskrcnn-tensorrt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基于mmdet的maskrcnn在TensorRT上的端到端部署与精度对齐
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/mmyolo_tensorrt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Yolo系列模型的部署、精度对齐与int8量化加速
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked="">
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    论文解读
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    论文解读
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TOOD/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TOOD论文和源码解读：目标检测中定位和分类任务一致性问题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../convnext/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    关于ConvNext若干细节的解读与讨论
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nanodet-plus-explain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nanodet-Plus 从数据集、模型搭建到训练全流程解读
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../swin_transformer_relative_pos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    对Swin Transformer中的相对位置编码与attention mask的理解
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ultra_high_resolution_object_detection_report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    超大分辨率图像下的目标检测问题研究
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../wasserstein-object-detection-part1_real/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    二维Gaussian分布Wasserstein 距离的推导以及其在目标检测中的应用
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wasserstein 距离与目标检测（二）：Gaussian 框距离、表示方法与相关损失
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wasserstein 距离与目标检测（二）：Gaussian 框距离、表示方法与相关损失
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前言
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        零、方法概览
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="零、方法概览">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0.1 阅读前先认识计算链上的对象
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#02" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0.2 本文反复使用的矩阵记号
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gaussian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、先固定共同表示：同一个框至少有两种 Gaussian 映射
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一、先固定共同表示：同一个框至少有两种 Gaussian 映射">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 几何等密度椭圆映射：\(1/4\)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-112" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 均匀矩形的二阶矩映射：\(1/12\)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-s" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 一个统一参数 \(s\)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 不可能性定理：整框二阶矩无法恢复正方形角度
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kld-gaussian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、KLD：同一 Gaussian 表示，换成有方向散度
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、KLD：同一 Gaussian 表示，换成有方向散度">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 定义与方向
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-d-gaussian-kld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 \(d\) 维 Gaussian KLD：逐项积分
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-kld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 为什么 KLD 非负
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 旋转框标量展开
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 梯度耦合：不是五个独立误差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 严格的共同仿射不变性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#27-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.7 从散度到论文 loss
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bhattacharyyahellinger-probiou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、Bhattacharyya、Hellinger 与 ProbIoU：从积分完整推导
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、Bhattacharyya、Hellinger 与 ProbIoU：从积分完整推导">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 三个量的定义
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-gaussian-bhattacharyya" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 两个 Gaussian 的 Bhattacharyya 积分
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2 两个 Gaussian 的 Bhattacharyya 积分">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#321" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.1 行列式项
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#322" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.2 均值项
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#323" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.3 合并
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-probiou-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 两种 ProbIoU loss 及其精确关系
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 水平框的显式式子
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 仿射不变性证明
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#36-iou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.6 它与真实 IoU 的关系边界
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kfiougaussian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、KFIoU：Gaussian 乘积为什么像“交集”，又为什么不是真交集
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="四、KFIoU：Gaussian 乘积为什么像“交集”，又为什么不是真交集">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 从两个密度的乘积推导交集协方差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 从协方差恢复框体积
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-kfiou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 KFIoU 上界的完整证明
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mkiou-kfiou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        五、MKIoU：调制 KFIoU，并给正方形补回角度
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="五、MKIoU：调制 KFIoU，并给正方形补回角度">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-kfiou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 从 KFIoU 的标量展开到调制式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-gaussian-angle-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Gaussian Angle Loss 的周期和梯度
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#g-rep-mle-gaussian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        六、G-Rep：任意点集如何通过 MLE 压缩成 Gaussian
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="六、G-Rep：任意点集如何通过 MLE 压缩成 Gaussian">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 均值和协方差的最大似然推导
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 二阶矩压缩不是可逆表示
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nwd-rka" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        七、从 NWD 到 RKA，以及二维公式怎样扩到三维
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="七、从 NWD 到 RKA，以及二维公式怎样扩到三维">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-rka" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 RKA 改的是标签分配，不是距离
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-gaussian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 二维/三维 Gaussian 框的统一式
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gaussian_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        八、换距离还不够：直接修改 Gaussian 表示与检测头
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="八、换距离还不够：直接修改 Gaussian 表示与检测头">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-lgbb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 LGBB：把正定矩阵换成线性坐标
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-structure-tensor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Structure Tensor：如何从三个矩阵元素解码角度
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-gauchocholesky" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 GauCho：Cholesky 参数为什么始终给出正定矩阵
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#84" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4 人工各向异性表示能做什么，不能声称什么
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gcd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        九、GCD：严格尺度不变，但不是数学度量
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="九、GCD：严格尺度不变，但不是数学度量">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 可以严格证明的三个性质
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 三角不等式反例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#93" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 一般仿射不变性论证的矩阵问题
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#p2p-gaussian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        十、P2P：不经 Gaussian，直接度量凸多边形
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="十、P2P：不经 Gaussian，直接度量凸多边形">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#101" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 点到边的三角形面积
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#102-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 从顶点到对称多边形 loss
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        十一、总结：把全部方法放回同一坐标系
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="十一、总结：把全部方法放回同一坐标系">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#111" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.1 数学对象与性质总表
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#112" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.2 面向检测任务的选择结论
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考文献
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11">
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    软件安装
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    软件安装
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/ffmpeg%20GPU%E5%8A%A0%E9%80%9F%E7%89%88%E6%9C%AC%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FFMPEG Cuda版本编译安装方法
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/ubuntu%E5%AE%89%E5%8D%93%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ubuntu安卓开发环境安装
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12">
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    项目总结
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    项目总结
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E5%B7%A5%E4%B8%9A%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工业缺陷检测项目经验总结
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E8%A1%A8%E9%9D%A2%E7%BC%BA%E9%99%B7%E6%A3%80%E6%B5%8B%E9%A1%B9%E7%9B%AE%E7%9A%84%E6%96%B9%E6%B3%95%E8%AE%BA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    视觉类表面缺陷检测项目相关技术总结
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        前言
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        零、方法概览
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="零、方法概览">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0.1 阅读前先认识计算链上的对象
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#02" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0.2 本文反复使用的矩阵记号
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gaussian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、先固定共同表示：同一个框至少有两种 Gaussian 映射
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一、先固定共同表示：同一个框至少有两种 Gaussian 映射">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 几何等密度椭圆映射：\(1/4\)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-112" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 均匀矩形的二阶矩映射：\(1/12\)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-s" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 一个统一参数 \(s\)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 不可能性定理：整框二阶矩无法恢复正方形角度
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kld-gaussian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、KLD：同一 Gaussian 表示，换成有方向散度
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、KLD：同一 Gaussian 表示，换成有方向散度">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 定义与方向
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-d-gaussian-kld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 \(d\) 维 Gaussian KLD：逐项积分
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-kld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 为什么 KLD 非负
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 旋转框标量展开
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 梯度耦合：不是五个独立误差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 严格的共同仿射不变性
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#27-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.7 从散度到论文 loss
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bhattacharyyahellinger-probiou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、Bhattacharyya、Hellinger 与 ProbIoU：从积分完整推导
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、Bhattacharyya、Hellinger 与 ProbIoU：从积分完整推导">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 三个量的定义
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-gaussian-bhattacharyya" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 两个 Gaussian 的 Bhattacharyya 积分
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2 两个 Gaussian 的 Bhattacharyya 积分">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#321" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.1 行列式项
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#322" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.2 均值项
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#323" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.3 合并
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-probiou-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 两种 ProbIoU loss 及其精确关系
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 水平框的显式式子
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 仿射不变性证明
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#36-iou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.6 它与真实 IoU 的关系边界
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kfiougaussian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、KFIoU：Gaussian 乘积为什么像“交集”，又为什么不是真交集
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="四、KFIoU：Gaussian 乘积为什么像“交集”，又为什么不是真交集">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 从两个密度的乘积推导交集协方差
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 从协方差恢复框体积
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-kfiou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 KFIoU 上界的完整证明
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mkiou-kfiou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        五、MKIoU：调制 KFIoU，并给正方形补回角度
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="五、MKIoU：调制 KFIoU，并给正方形补回角度">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-kfiou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 从 KFIoU 的标量展开到调制式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-gaussian-angle-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Gaussian Angle Loss 的周期和梯度
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#g-rep-mle-gaussian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        六、G-Rep：任意点集如何通过 MLE 压缩成 Gaussian
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="六、G-Rep：任意点集如何通过 MLE 压缩成 Gaussian">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 均值和协方差的最大似然推导
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 二阶矩压缩不是可逆表示
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nwd-rka" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        七、从 NWD 到 RKA，以及二维公式怎样扩到三维
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="七、从 NWD 到 RKA，以及二维公式怎样扩到三维">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-rka" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 RKA 改的是标签分配，不是距离
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-gaussian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 二维/三维 Gaussian 框的统一式
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gaussian_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        八、换距离还不够：直接修改 Gaussian 表示与检测头
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="八、换距离还不够：直接修改 Gaussian 表示与检测头">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-lgbb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 LGBB：把正定矩阵换成线性坐标
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-structure-tensor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Structure Tensor：如何从三个矩阵元素解码角度
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-gauchocholesky" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 GauCho：Cholesky 参数为什么始终给出正定矩阵
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#84" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4 人工各向异性表示能做什么，不能声称什么
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gcd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        九、GCD：严格尺度不变，但不是数学度量
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="九、GCD：严格尺度不变，但不是数学度量">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 可以严格证明的三个性质
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 三角不等式反例
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#93" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 一般仿射不变性论证的矩阵问题
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#p2p-gaussian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        十、P2P：不经 Gaussian，直接度量凸多边形
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="十、P2P：不经 Gaussian，直接度量凸多边形">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#101" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 点到边的三角形面积
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#102-loss" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 从顶点到对称多边形 loss
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        十一、总结：把全部方法放回同一坐标系
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="十一、总结：把全部方法放回同一坐标系">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#111" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.1 数学对象与性质总表
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#112" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.2 面向检测任务的选择结论
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参考文献
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="wasserstein-gaussian">Wasserstein 距离与目标检测（二）：Gaussian 框距离、表示方法与相关损失<a class="headerlink" href="#wasserstein-gaussian" title="Permanent link">¶</a></h1><span class="hb-rt hb-rt--article" title="预计阅读时长">⏱ 约 67 分钟</span>
+<blockquote>
+<p>本文整理于2026年10月08日，由AI和本人共同完成，本人负责把推导详细顺了一遍</p>
+</blockquote>
+<h2 id="_1">前言<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
+<p>本文接续<a href="../wasserstein-object-detection-part1_real/">第一篇：二维 Gaussian 分布 Wasserstein 距离的推导及其在目标检测中的应用</a>。第一篇从耦合定义出发，完整证明了 Gaussian 的二阶
+Wasserstein 距离，并逐步解释 GWD、NWD 和 EWD <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。本篇把问题推进一步：如果仍把框编码成
+Gaussian，但把比较方式换成 KLD、Bhattacharyya/Hellinger 或 Gaussian product，会得到什么？
+如果问题来自表示而非距离，又应该怎样修改检测头？如果不经过 Gaussian 编码，能否直接比较
+多边形几何？下文围绕这些问题，逐步串起距离、表示与最终损失之间的关系。</p>
+<p>记号与第一篇一致：均值只写作 <span class="arithmatex">\(\mu\)</span>，协方差写作 <span class="arithmatex">\(\Sigma\)</span>；预测与真值分别使用下标 <span class="arithmatex">\(p,g\)</span>；
+一般的两个分布使用下标 <span class="arithmatex">\(1,2\)</span>。因此下文对论文公式做了等价改写，不机械保留原文中的 <span class="arithmatex">\(m\)</span>、<span class="arithmatex">\(t\)</span>
+或含混的 <span class="arithmatex">\(W\)</span>。这只统一表示，不改变被引用方法的数学内容。</p>
+<h2 id="_2">零、方法概览<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<p>一个定位损失至少有四层：</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/wasserstein-object-detection-part2_real/method-layer-pipeline.drawio.png" data-desc-position="bottom"><img decoding="async" alt="图 0-1：定位损失的四层计算链。先把框参数映射为几何表示，再定义比较基础量，最后通过后处理得到相似度或训练 loss。图为本文绘制。" src="../assets/wasserstein-object-detection-part2_real/method-layer-pipeline.drawio.png"></a></p>
+<p>GWD、NWD 和 EWD 分别位于这条链的不同位置 <sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。扩展论文也不能只按名称比较：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>表示层</th>
+<th>基础量</th>
+<th>最终用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GWD <sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>整框 Gaussian</td>
+<td>精确 Gaussian <span class="arithmatex">\(W_2^2\)</span></td>
+<td>OBB 回归</td>
+</tr>
+<tr>
+<td>NWD/NWD-RKA <sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref5:9"><a class="footnote-ref" href="#fn:9">9</a></sup></td>
+<td>水平框 Gaussian</td>
+<td>精确 <span class="arithmatex">\(W_2\)</span></td>
+<td>相似度、回归、分配、NMS</td>
+</tr>
+<tr>
+<td>EWD <sup id="fnref5:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+<td>四条边的支撑分布</td>
+<td>受边对应约束的运输代理</td>
+<td>OBB 回归</td>
+</tr>
+<tr>
+<td>KLD <sup id="fnref7:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+<td>整框 Gaussian</td>
+<td>有方向的 KL 散度</td>
+<td>OBB 回归</td>
+</tr>
+<tr>
+<td>ProbIoU <sup id="fnref7:5"><a class="footnote-ref" href="#fn:5">5</a></sup></td>
+<td>区域二阶矩 Gaussian</td>
+<td>Bhattacharyya/Hellinger</td>
+<td>有界相似度与回归</td>
+</tr>
+<tr>
+<td>KFIoU <sup id="fnref7:6"><a class="footnote-ref" href="#fn:6">6</a></sup></td>
+<td>整框 Gaussian</td>
+<td>Gaussian product 的体积代理</td>
+<td>近似 SkewIoU</td>
+</tr>
+<tr>
+<td>MKIoU <sup id="fnref6:7"><a class="footnote-ref" href="#fn:7">7</a></sup></td>
+<td>同 KFIoU，外加角度项</td>
+<td>调制后的 KFIoU</td>
+<td>OBB 回归</td>
+</tr>
+<tr>
+<td>G-Rep <sup id="fnref3:8"><a class="footnote-ref" href="#fn:8">8</a></sup></td>
+<td>任意点集的 MLE Gaussian</td>
+<td>KLD、BD 或 WD</td>
+<td>QBB/点集回归与分配</td>
+</tr>
+<tr>
+<td>LGBB/GauCho <sup id="fnref2:11"><a class="footnote-ref" href="#fn:11">11</a></sup><sup id="fnref5:13"><a class="footnote-ref" href="#fn:13">13</a></sup></td>
+<td>直接回归矩阵坐标</td>
+<td>可搭配多种 Gaussian loss</td>
+<td>改造检测头</td>
+</tr>
+<tr>
+<td>Structure Tensor <sup id="fnref7:12"><a class="footnote-ref" href="#fn:12">12</a></sup></td>
+<td>人工各向异性张量</td>
+<td>元素级 <span class="arithmatex">\(L_1\)</span></td>
+<td>单独的角度分支</td>
+</tr>
+<tr>
+<td>GCD <sup id="fnref3:14"><a class="footnote-ref" href="#fn:14">14</a></sup></td>
+<td>水平框 Gaussian 参数</td>
+<td>对称、相对归一的代理</td>
+<td>微小水平框相似度</td>
+</tr>
+<tr>
+<td>P2P <sup id="fnref4:15"><a class="footnote-ref" href="#fn:15">15</a></sup></td>
+<td>凸多边形</td>
+<td>三角形面积和</td>
+<td>直接几何回归</td>
+</tr>
+</tbody>
+</table>
+<p>因此，“使用 Gaussian”不等于“使用 Wasserstein”。同一个 Gaussian 表示可以搭配不同的
+比较基础量；把某个相似度用于标签分配，也不等于重新定义了框之间的距离。</p>
+<h3 id="01">0.1 阅读前先认识计算链上的对象<a class="headerlink" href="#01" title="Permanent link">¶</a></h3>
+<p>先用一个具体场景理解上表。图像里有一个人工标注框，检测器也输出了一个预测框。训练时，我们先把网络输出解码成中心、宽高和角度，再比较预测与标注；损失越大，表示这一对框在选定标准下偏差越大。这里的 <strong>GT（ground truth）</strong> 就是真值标注；<strong>HBB</strong> 是水平框；<strong>OBB</strong> 是允许旋转的矩形框；<strong>QBB</strong> 是用四个顶点表示的四边形框，未必是矩形。<strong>Anchor</strong> 是预先设置的参考框，后文统称需要判断“归哪个真值负责”的框为候选框。并非所有检测器都使用 anchor。</p>
+<p>因此，图 0-1 可以不用看图就读成：</p>
+<div class="arithmatex">\[
+\text{框参数}\longrightarrow\text{几何或概率编码}
+\longrightarrow\text{比较基础量}\longrightarrow\text{相似度或训练损失}.
+\tag{0.1}
+\]</div>
+<p>例如，NWD 先把框变成 Gaussian，再算 <span class="arithmatex">\(W_2\)</span>，最后算 <span class="arithmatex">\(\exp(-W_2/C)\)</span>。最后这个数越大越相似，
+而回归时通常希望“越差损失越大”，所以还要取 <span class="arithmatex">\(1-\exp(-W_2/C)\)</span>。相似度、距离与损失虽然可能
+能相互换算，但不是同一个数学对象。标签分配则更早一步：决定哪些预测框参与哪一个真值的回归。
+第 7.1 节的 NWD-RKA 讨论的就是这个问题，而非又定义一个定位损失。</p>
+<h3 id="02">0.2 本文反复使用的矩阵记号<a class="headerlink" href="#02" title="Permanent link">¶</a></h3>
+<p>二维 Gaussian 写成 <span class="arithmatex">\(\mathcal N(\mu,\Sigma)\)</span>。均值 <span class="arithmatex">\(\mu\)</span> 是两个中心坐标，协方差
+<span class="arithmatex">\(\Sigma\)</span> 是一个对称的 <span class="arithmatex">\(2\times2\)</span> 矩阵：对角线描述沿两个坐标轴的离散程度，非对角线描述两个
+坐标怎样共同变化。对框来说，它是我们<strong>主动选择的形状编码</strong>，不意味着网络估计了定位不确定性。</p>
+<p>后文几种记号可以先用二维情形记住：</p>
+<div class="arithmatex">\[
+\Sigma=\begin{bmatrix}a&amp;c\\c&amp;b\end{bmatrix},\qquad
+\operatorname{Tr}(\Sigma)=a+b,\qquad
+\det\Sigma=ab-c^2.
+\tag{0.2}
+\]</div>
+<p><span class="arithmatex">\(\operatorname{Tr}\)</span> 称为迹，是对角线元素之和；<span class="arithmatex">\(\det\)</span> 是行列式，有时也写作 <span class="arithmatex">\(|\Sigma|\)</span>，
+此处不是逐元素取绝对值。<span class="arithmatex">\(\Sigma\succ0\)</span> 表示正定，即任何非零向量 <span class="arithmatex">\(z\)</span> 都满足
+<span class="arithmatex">\(z^\top\Sigma z&gt;0\)</span>；二维时等价于 <span class="arithmatex">\(a&gt;0,ab-c^2&gt;0\)</span>。这个条件保证 Gaussian 在任何方向都有正的
+宽度，也保证逆矩阵和后面的对数行列式有意义。<span class="arithmatex">\(I\)</span> 表示单位矩阵，<span class="arithmatex">\(\top\)</span> 表示转置。</p>
+<p>把坐标轴转到椭圆主轴后，协方差成为对角矩阵；对角线上两个数就是特征值，平方根才是两个方向的
+标准差。若坐标单位是像素，<span class="arithmatex">\(\mu\)</span>、标准差和 <span class="arithmatex">\(W_2\)</span> 的单位是像素，协方差元素和 <span class="arithmatex">\(W_2^2\)</span> 的单位是
+像素平方。<span class="arithmatex">\(\Sigma^{-1}\)</span> 则负责除去尺度：<span class="arithmatex">\(z^\top\Sigma^{-1}z\)</span> 是无量纲的加权平方误差。</p>
+<p>本文 <span class="arithmatex">\(\log\)</span> 均为自然对数，<span class="arithmatex">\(\exp\)</span> 是它的反函数。对数中的密度比、行列式比等最终应是无量纲量。
+对单个有单位的行列式分别取对数，只是合并对数比的代数写法；不要把其中一项单独当作具有坐标
+无关含义的损失。矩阵乘法的次序也必须保留，通常 <span class="arithmatex">\(AB\ne BA\)</span>。</p>
+<h2 id="gaussian">一、先固定共同表示：同一个框至少有两种 Gaussian 映射<a class="headerlink" href="#gaussian" title="Permanent link">¶</a></h2>
+<h3 id="11-14">1.1 几何等密度椭圆映射：<span class="arithmatex">\(1/4\)</span><a class="headerlink" href="#11-14" title="Permanent link">¶</a></h3>
+<p>从这一章开始，先不讨论谁的损失更好，而是固定“同一个框到底变成什么分布”。否则，两篇论文的结果可能只是编码不同，并非比较公式不同。设框的局部坐标轴沿着两条边，先在局部坐标中规定 Gaussian 的宽度，再旋转和平移到图像坐标。</p>
+<p>设旋转框</p>
+<div class="arithmatex">\[
+B=(c_x,c_y,w,h,\theta),\qquad w,h&gt;0,
+\]</div>
+<p>旋转矩阵为</p>
+<div class="arithmatex">\[
+R_\theta=
+\begin{bmatrix}
+\cos\theta&amp;-\sin\theta\\
+\sin\theta&amp;\cos\theta
+\end{bmatrix}.
+\tag{1.1}
+\]</div>
+<p>GWD、KLD、KFIoU 等旋转检测工作常采用下面的映射；NWD 使用其 <span class="arithmatex">\(\theta=0\)</span> 的水平框情形：</p>
+<div class="arithmatex">\[
+\mu=\begin{bmatrix}c_x\\c_y\end{bmatrix},\qquad
+\Sigma_{1/4}
+=R_\theta
+\begin{bmatrix}w^2/4&amp;0\\0&amp;h^2/4\end{bmatrix}
+R_\theta^\top.
+\tag{1.2}
+\]</div>
+<p>这里先取局部随机向量 <span class="arithmatex">\(Z\)</span>，令其均值为 0、协方差为
+<span class="arithmatex">\(D=\operatorname{diag}(w^2/4,h^2/4)\)</span>，再令 <span class="arithmatex">\(X=\mu+R_\theta Z\)</span>。根据协方差的定义，</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\operatorname{Cov}(X)
+&amp;=\mathbb E[(X-\mu)(X-\mu)^\top]\\
+&amp;=\mathbb E[R_\theta ZZ^\top R_\theta^\top]
+=R_\theta\mathbb E[ZZ^\top]R_\theta^\top
+=R_\theta D R_\theta^\top.
+\end{aligned}
+\tag{1.2a}
+\]</div>
+<p>这解释了式 (1.2) 为什么在对角矩阵左右各放一个旋转因子。式中的 <span class="arithmatex">\(w/2,h/2\)</span> 是沿<strong>框的主轴</strong>的
+标准差；框旋转后，它们一般不再等于图像 <span class="arithmatex">\(x,y\)</span> 坐标方向的标准差。</p>
+<p>因为 <span class="arithmatex">\(\Sigma_{1/4}\)</span> 的两个标准差是 <span class="arithmatex">\(w/2\)</span> 与 <span class="arithmatex">\(h/2\)</span>，Mahalanobis 等值线</p>
+<div class="arithmatex">\[
+(x-\mu)^\top\Sigma_{1/4}^{-1}(x-\mu)=1
+\]</div>
+<p>恰好具有半轴 <span class="arithmatex">\(w/2,h/2\)</span>。这是<strong>几何编码约定</strong>，不是说矩形内部像素真的按 Gaussian 采样
+<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup><sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>。</p>
+<h3 id="12-112">1.2 均匀矩形的二阶矩映射：<span class="arithmatex">\(1/12\)</span><a class="headerlink" href="#12-112" title="Permanent link">¶</a></h3>
+<p>ProbIoU 的出发点不同：先把矩形区域上的均匀分布压缩成具有相同均值、协方差的 Gaussian <sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。
+在一维上令</p>
+<div class="arithmatex">\[
+X\sim\operatorname{Unif}[-w/2,w/2].
+\]</div>
+<p>其均值为</p>
+<div class="arithmatex">\[
+\mathbb E[X]
+=\frac1w\int_{-w/2}^{w/2}x\,\mathrm dx=0,
+\tag{1.3}
+\]</div>
+<p>方差为</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\operatorname{Var}(X)
+&amp;=\mathbb E[X^2]
+=\frac1w\int_{-w/2}^{w/2}x^2\,\mathrm dx\\
+&amp;=\frac1w\left[\frac{x^3}{3}\right]_{-w/2}^{w/2}
+=\frac1w\frac{2(w/2)^3}{3}
+=\frac{w^2}{12}.
+\end{aligned}
+\tag{1.4}
+\]</div>
+<p>矩形局部坐标的两个分量独立，故其协方差为</p>
+<div class="arithmatex">\[
+\Sigma_{1/12}
+=R_\theta
+\begin{bmatrix}w^2/12&amp;0\\0&amp;h^2/12\end{bmatrix}
+R_\theta^\top.
+\tag{1.5}
+\]</div>
+<p><strong>校正：改变协方差的公共倍数，不等于共同缩放坐标。</strong> 式 (1.2) 与式 (1.5) 的协方差相差
+因子 <span class="arithmatex">\(3\)</span>，但它们的中心不变。对 KLD 和 Bhattacharyya 距离，公共因子只在形状比较项中抵消，
+在中心误差项中并不抵消。两框同中心时整个量才不受这一公共协方差因子影响。</p>
+<p>为了看清区别，暂写 <span class="arithmatex">\(\Sigma_i=sS_i\)</span>，其中 <span class="arithmatex">\(S_i\)</span> 固定。第 2、3 章将分别推出</p>
+<div class="arithmatex">\[
+\begin{aligned}
+D_{\rm KL}(P\|G)
+&amp;=\underbrace{\frac12\left[
+\operatorname{Tr}(S_g^{-1}S_p)-d+
+\log\frac{\det S_g}{\det S_p}\right]}_{\text{形状项，与 }s\text{ 无关}}
++\frac1{2s}\Delta\mu^\top S_g^{-1}\Delta\mu,\\
+D_B(P,G)
+&amp;=\underbrace{\frac12\log\frac{\det\bar S}
+{\sqrt{\det S_p\det S_g}}}_{\text{形状项，与 }s\text{ 无关}}
++\frac1{8s}\Delta\mu^\top\bar S^{-1}\Delta\mu,
+\qquad \bar S=\frac{S_p+S_g}{2}.
+\end{aligned}
+\tag{1.5a}
+\]</div>
+<p>这里 <span class="arithmatex">\(\Delta\mu=\mu_p-\mu_g\)</span>，<span class="arithmatex">\(d=2\)</span>。暂时不需要记住整个公式，只需看到中心项前面还留着
+<span class="arithmatex">\(1/s\)</span>：将 <span class="arithmatex">\(s\)</span> 从 <span class="arithmatex">\(1/4\)</span> 改为 <span class="arithmatex">\(1/12\)</span>，相同中心误差受到的惩罚变为原来的三倍。</p>
+<p>例如，两个 <span class="arithmatex">\(2\times2\)</span> 水平框的中心分别为 <span class="arithmatex">\((0,0)\)</span> 和 <span class="arithmatex">\((1,0)\)</span>。用 <span class="arithmatex">\(1/4\)</span> 映射时，两协方差都是
+<span class="arithmatex">\(I\)</span>，得到 <span class="arithmatex">\(D_{\rm KL}=1/2,D_B=1/8\)</span>；用 <span class="arithmatex">\(1/12\)</span> 映射时，两协方差都是 <span class="arithmatex">\(I/3\)</span>，得到
+<span class="arithmatex">\(D_{\rm KL}=3/2,D_B=3/8\)</span>。这是一组无需矩阵运算就能核查的反例。</p>
+<p>真正的共同坐标缩放是 <span class="arithmatex">\(\mu_i\mapsto a\mu_i\)</span>、<span class="arithmatex">\(\Sigma_i\mapsto a^2\Sigma_i\)</span>，中心误差也同时
+缩放，此时 KLD、Bhattacharyya 距离才保持不变。<span class="arithmatex">\(W_2\)</span> 则变为原来的 <span class="arithmatex">\(|a|\)</span> 倍。单独改变编码中的
+<span class="arithmatex">\(s\)</span> 一般也会改变 <span class="arithmatex">\(W_2\)</span> 的形状项，但并非所有例子都会改变：上面两框只有平移，<span class="arithmatex">\(W_2=1\)</span>，与
+<span class="arithmatex">\(s\)</span> 无关。实现时不能混用两种映射后仍声称得到了同一论文公式。</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../assets/wasserstein-object-detection-part2_real/gaussian-mapping-conventions.png" data-desc-position="bottom"><img loading="lazy" decoding="async" alt="图 1-1：同一个矩形的两种 Gaussian 映射。左侧 \(1/4\) 映射的一个标准差椭圆触及矩形边界；右侧 \(1/12\) 来自均匀矩形的真实二阶矩，一个标准差椭圆更小。图为本文绘制。" src="../assets/wasserstein-object-detection-part2_real/gaussian-mapping-conventions.png"></a></p>
+<h3 id="13-s">1.3 一个统一参数 <span class="arithmatex">\(s\)</span><a class="headerlink" href="#13-s" title="Permanent link">¶</a></h3>
+<p>后文可把二者写成</p>
+<div class="arithmatex">\[
+\Sigma_s
+=R_\theta\operatorname{diag}(s w^2,s h^2)R_\theta^\top,
+\qquad
+s\in\left\{\frac14,\frac1{12}\right\}.
+\tag{1.6}
+\]</div>
+<p>于是</p>
+<div class="arithmatex">\[
+\det\Sigma_s=s^2w^2h^2,
+\qquad
+\Sigma_s^{-1}
+=R_\theta\operatorname{diag}
+\left(\frac1{s w^2},\frac1{s h^2}\right)R_\theta^\top.
+\tag{1.7}
+\]</div>
+<p>这些恒等式会反复用于 KLD、Bhattacharyya 和 Gaussian product 的推导。</p>
+<h3 id="14">1.4 不可能性定理：整框二阶矩无法恢复正方形角度<a class="headerlink" href="#14" title="Permanent link">¶</a></h3>
+<p><strong>定理 1.1（各向同性造成方向不可辨）</strong>。若 <span class="arithmatex">\(w=h=a\)</span>，则任何只依赖
+<span class="arithmatex">\((\mu,\Sigma_s)\)</span> 的函数都不能区分同中心、同尺寸、不同角度的正方形。</p>
+<p><strong>证明。</strong> 此时</p>
+<div class="arithmatex">\[
+\Sigma_s
+=R_\theta(sa^2I)R_\theta^\top
+=sa^2R_\theta R_\theta^\top
+=sa^2I,
+\tag{1.8}
+\]</div>
+<p>与 <span class="arithmatex">\(\theta\)</span> 无关。若两个正方形只有角度不同，则它们的 <span class="arithmatex">\(\mu\)</span> 与 <span class="arithmatex">\(\Sigma_s\)</span> 完全相同。对任意函数
+<span class="arithmatex">\(F(\mu_1,\Sigma_1,\mu_2,\Sigma_2)\)</span>，输入相同必然输出相同，故不可能从输出反推出角度。证毕。</p>
+<p>这个结论与选用 <span class="arithmatex">\(W_2\)</span>、KLD、Hellinger 还是 Gaussian product 无关。MKIoU、EWD、Structure
+Tensor 和 anisotropic GBB 的共同动机，正是绕开式 (1.8) 的信息丢失 <sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup><sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup><sup id="fnref:12"><a class="footnote-ref" href="#fn:12">12</a></sup><sup id="fnref:16"><a class="footnote-ref" href="#fn:16">16</a></sup>。</p>
+<h2 id="kld-gaussian">二、KLD：同一 Gaussian 表示，换成有方向散度<a class="headerlink" href="#kld-gaussian" title="Permanent link">¶</a></h2>
+<h3 id="21">2.1 定义与方向<a class="headerlink" href="#21" title="Permanent link">¶</a></h3>
+<p>上一章固定了 Gaussian 编码，现在只替换“怎么比较”。Wasserstein 的问题是把一个分布搬成另一个要付出多少成本；KLD 换了一个问题：<strong>从 <span class="arithmatex">\(P\)</span> 中经常出现的位置来看，<span class="arithmatex">\(Q\)</span> 对这些位置给出的密度是否也足够大？</strong> 因此它并不需要求运输计划。</p>
+<p>在某个位置，<span class="arithmatex">\(p(x)/q(x)\)</span> 表示两个密度的相对大小；对数把相乘的比例变为可相加的差异。再用 <span class="arithmatex">\(p(x)\)</span> 加权，表示按照 <span class="arithmatex">\(P\)</span> 的出现频率求平均。单个位置的对数比可以为负，但整个平均值非负。</p>
+<p>对密度 <span class="arithmatex">\(p,q\)</span>，Kullback--Leibler 散度定义为 <sup id="fnref:17"><a class="footnote-ref" href="#fn:17">17</a></sup></p>
+<div class="arithmatex">\[
+D_{\mathrm{KL}}(P\|Q)
+=\int p(x)\log\frac{p(x)}{q(x)}\,\mathrm dx
+=\mathbb E_{X\sim P}\left[\log\frac{p(X)}{q(X)}\right].
+\tag{2.1}
+\]</div>
+<p>它一般不对称：<span class="arithmatex">\(D_{\mathrm{KL}}(P\|Q)\ne D_{\mathrm{KL}}(Q\|P)\)</span>，所以数学上称“散度”而非
+“距离”。旋转检测论文分别讨论 prediction-to-target 与 target-to-prediction 两个方向，主设置通常
+选择前者 <sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</p>
+<h3 id="22-d-gaussian-kld">2.2 <span class="arithmatex">\(d\)</span> 维 Gaussian KLD：逐项积分<a class="headerlink" href="#22-d-gaussian-kld" title="Permanent link">¶</a></h3>
+<p>令</p>
+<div class="arithmatex">\[
+P=\mathcal N(\mu_p,\Sigma_p),\qquad
+G=\mathcal N(\mu_g,\Sigma_g),
+\]</div>
+<p>其中协方差正定。<span class="arithmatex">\(d\)</span> 维 Gaussian 密度是</p>
+<div class="arithmatex">\[
+p(x)=\frac{
+\exp[-\frac12(x-\mu_p)^\top\Sigma_p^{-1}(x-\mu_p)]
+}{(2\pi)^{d/2}\det(\Sigma_p)^{1/2}},
+\tag{2.2}
+\]</div>
+<p><span class="arithmatex">\(g(x)\)</span> 同理。先取对数比：</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\log\frac{p(x)}{g(x)}
+={}&amp;\frac12\log\frac{\det\Sigma_g}{\det\Sigma_p}
+-\frac12(x-\mu_p)^\top\Sigma_p^{-1}(x-\mu_p)\\
+&amp;+\frac12(x-\mu_g)^\top\Sigma_g^{-1}(x-\mu_g).
+\end{aligned}
+\tag{2.3}
+\]</div>
+<p>下面对 <span class="arithmatex">\(X\sim P\)</span> 求期望。先解释为什么要改变二次型的写法。</p>
+<p>这里会出现“随机向量的二次型”。先解释为什么要把它改写成迹：<span class="arithmatex">\(z^\top Az\)</span> 是一个标量，而 <span class="arithmatex">\(zz^\top\)</span> 是矩阵，后者的期望恰好能用协方差表示。下面的改写就是把复杂积分交给已经知道的均值和协方差，不是引入一个新的近似。</p>
+<div class="arithmatex">\[
+z^\top A z=\operatorname{Tr}(z^\top A z)
+=\operatorname{Tr}(Azz^\top),
+\tag{2.4}
+\]</div>
+<p>得到</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\mathbb E[(X-\mu_p)^\top\Sigma_p^{-1}(X-\mu_p)]
+&amp;=\operatorname{Tr}\left(
+\Sigma_p^{-1}\mathbb E[(X-\mu_p)(X-\mu_p)^\top]
+\right)\\
+&amp;=\operatorname{Tr}(\Sigma_p^{-1}\Sigma_p)
+=\operatorname{Tr}(I_d)=d.
+\end{aligned}
+\tag{2.5}
+\]</div>
+<p>令 <span class="arithmatex">\(\Delta\mu=\mu_p-\mu_g\)</span>，则</p>
+<div class="arithmatex">\[
+X-\mu_g=(X-\mu_p)+\Delta\mu.
+\]</div>
+<p>展开第三个二次型：</p>
+<div class="arithmatex">\[
+\begin{aligned}
+&amp;(X-\mu_g)^\top\Sigma_g^{-1}(X-\mu_g)\\
+={}&amp;(X-\mu_p)^\top\Sigma_g^{-1}(X-\mu_p)
++2\Delta\mu^\top\Sigma_g^{-1}(X-\mu_p)
++\Delta\mu^\top\Sigma_g^{-1}\Delta\mu.
+\end{aligned}
+\tag{2.6}
+\]</div>
+<p>因为 <span class="arithmatex">\(\mathbb E[X-\mu_p]=0\)</span>，中间交叉项期望为 0；第一项按式 (2.4) 处理：</p>
+<div class="arithmatex">\[
+\mathbb E[(X-\mu_p)^\top\Sigma_g^{-1}(X-\mu_p)]
+=\operatorname{Tr}(\Sigma_g^{-1}\Sigma_p).
+\tag{2.7}
+\]</div>
+<p>将式 (2.5)--(2.7) 代入式 (2.3)：</p>
+<div class="arithmatex">\[
+\boxed{
+D_{\mathrm{KL}}(P\|G)
+=\frac12\left[
+\operatorname{Tr}(\Sigma_g^{-1}\Sigma_p)
++\Delta\mu^\top\Sigma_g^{-1}\Delta\mu
+-d
++\log\frac{\det\Sigma_g}{\det\Sigma_p}
+\right].
+}
+\tag{2.8}
+\]</div>
+<p>二维时 <span class="arithmatex">\(d=2\)</span>，所以论文公式末尾是 <span class="arithmatex">\(-1\)</span>：外层 <span class="arithmatex">\(1/2\)</span> 乘上括号中的 <span class="arithmatex">\(-2\)</span> <sup id="fnref3:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</p>
+<h3 id="23-kld">2.3 为什么 KLD 非负<a class="headerlink" href="#23-kld" title="Permanent link">¶</a></h3>
+<p>非负性不需要 Gaussian 假设。这里先在密度处处为正的情形证明，因而覆盖本文的非退化 Gaussian。
+令 <span class="arithmatex">\(f(u)=u-1-\log u\)</span>。它的导数是 <span class="arithmatex">\(f'(u)=1-1/u\)</span>，在 <span class="arithmatex">\(0&lt;u&lt;1\)</span> 时为负，在 <span class="arithmatex">\(u&gt;1\)</span> 时为正，
+所以 <span class="arithmatex">\(u=1\)</span> 是全局最小点，且 <span class="arithmatex">\(f(1)=0\)</span>。这就得到下面的不等式。</p>
+<p>使用基本不等式</p>
+<div class="arithmatex">\[
+\log u\le u-1,\qquad u&gt;0.
+\tag{2.9}
+\]</div>
+<p>令 <span class="arithmatex">\(u=q(x)/p(x)\)</span>，则</p>
+<div class="arithmatex">\[
+-\log\frac{q(x)}{p(x)}
+\ge 1-\frac{q(x)}{p(x)}.
+\]</div>
+<p>两边乘 <span class="arithmatex">\(p(x)\)</span> 并积分：</p>
+<div class="arithmatex">\[
+\begin{aligned}
+D_{\mathrm{KL}}(P\|Q)
+&amp;=\int p(x)\left[-\log\frac{q(x)}{p(x)}\right]\mathrm dx\\
+&amp;\ge\int[p(x)-q(x)]\,\mathrm dx
+=1-1=0.
+\end{aligned}
+\tag{2.10}
+\]</div>
+<p>式 (2.9) 只在 <span class="arithmatex">\(u=1\)</span> 取等，因此在两密度互相绝对连续时，KLD 为 0 当且仅当 <span class="arithmatex">\(p=q\)</span> 几乎处处。</p>
+<h3 id="24">2.4 旋转框标量展开<a class="headerlink" href="#24" title="Permanent link">¶</a></h3>
+<p>采用式 (1.2)，即</p>
+<div class="arithmatex">\[
+\Sigma_g
+=R_g\operatorname{diag}(w_g^2/4,h_g^2/4)R_g^\top.
+\]</div>
+<p>由于 <span class="arithmatex">\(R_g^{-1}=R_g^\top\)</span>，</p>
+<div class="arithmatex">\[
+\Sigma_g^{-1}
+=R_g\operatorname{diag}(4/w_g^2,4/h_g^2)R_g^\top.
+\tag{2.11}
+\]</div>
+<p>把中心误差旋转到真值框的局部坐标：</p>
+<div class="arithmatex">\[
+R_g^\top\Delta\mu
+=\begin{bmatrix}
+\Delta x\cos\theta_g+\Delta y\sin\theta_g\\
+-\Delta x\sin\theta_g+\Delta y\cos\theta_g
+\end{bmatrix}
+=\begin{bmatrix}\Delta u\\\Delta v\end{bmatrix}.
+\tag{2.12}
+\]</div>
+<p>于是 Mahalanobis 项为</p>
+<div class="arithmatex">\[
+\boxed{
+\Delta\mu^\top\Sigma_g^{-1}\Delta\mu
+=\frac{4\Delta u^2}{w_g^2}+\frac{4\Delta v^2}{h_g^2}.
+}
+\tag{2.13}
+\]</div>
+<p>这说明沿真值长轴和短轴的同样像素偏差会得到不同权重。</p>
+<p>再令</p>
+<div class="arithmatex">\[
+\Delta\theta=\theta_p-\theta_g,\qquad
+Q=R_g^\top R_p=R_{\Delta\theta}.
+\]</div>
+<p>利用迹的循环不变性：</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\operatorname{Tr}(\Sigma_g^{-1}\Sigma_p)
+&amp;=\operatorname{Tr}\left[
+\operatorname{diag}(4/w_g^2,4/h_g^2)
+Q\operatorname{diag}(w_p^2/4,h_p^2/4)Q^\top
+\right].
+\end{aligned}
+\tag{2.14}
+\]</div>
+<p>把“直接相乘”的关键一步展开。令 <span class="arithmatex">\(c=\cos\Delta\theta,t=\sin\Delta\theta\)</span>，先只计算中间
+旋转后的预测协方差的两个对角元素：</p>
+<div class="arithmatex">\[
+\begin{aligned}
+[Q\operatorname{diag}(w_p^2/4,h_p^2/4)Q^\top]_{11}
+&amp;=(w_p^2c^2+h_p^2t^2)/4,\\
+[Q\operatorname{diag}(w_p^2/4,h_p^2/4)Q^\top]_{22}
+&amp;=(w_p^2t^2+h_p^2c^2)/4.
+\end{aligned}
+\tag{2.14a}
+\]</div>
+<p>左边再乘对角矩阵，相当于分别将这两个元素乘以 <span class="arithmatex">\(4/w_g^2\)</span> 和 <span class="arithmatex">\(4/h_g^2\)</span>；求迹就是相加。非对角元素不进入这次求迹，因此不用把四个元素都算出来。</p>
+<p>直接乘开 <span class="arithmatex">\(2\times2\)</span> 矩阵，得到</p>
+<div class="arithmatex">\[
+\boxed{
+\begin{aligned}
+\operatorname{Tr}(\Sigma_g^{-1}\Sigma_p)
+={}&amp;\left(\frac{w_p^2}{w_g^2}+\frac{h_p^2}{h_g^2}\right)
+\cos^2\Delta\theta\\
+&amp;+\left(\frac{h_p^2}{w_g^2}+\frac{w_p^2}{h_g^2}\right)
+\sin^2\Delta\theta.
+\end{aligned}
+}
+\tag{2.15}
+\]</div>
+<p>最后由式 (1.7)：</p>
+<div class="arithmatex">\[
+\log\frac{\det\Sigma_g}{\det\Sigma_p}
+=\log\frac{w_g^2h_g^2}{w_p^2h_p^2}
+=2\log\frac{w_g}{w_p}+2\log\frac{h_g}{h_p}.
+\tag{2.16}
+\]</div>
+<p>将式 (2.13)、(2.15)、(2.16) 逐项代入式 (2.8)，得到无需读者再拼接的标量式 <sup id="fnref4:4"><a class="footnote-ref" href="#fn:4">4</a></sup>：</p>
+<div class="arithmatex">\[
+\boxed{
+\begin{aligned}
+D_{\rm KL}(P\|G)
+={}&amp;2\frac{\Delta u^2}{w_g^2}+2\frac{\Delta v^2}{h_g^2}\\
+&amp;+\frac12\left(\frac{w_p^2}{w_g^2}+\frac{h_p^2}{h_g^2}\right)
+\cos^2\Delta\theta\\
+&amp;+\frac12\left(\frac{h_p^2}{w_g^2}+\frac{w_p^2}{h_g^2}\right)
+\sin^2\Delta\theta
+-1+\log\frac{w_gh_g}{w_ph_p}.
+\end{aligned}}
+\tag{2.16a}
+\]</div>
+<p>最简单的检查是代入完全相同的框：中心项为 0、余弦项为 1、正弦项为 0、对数项为 0，最后<span class="arithmatex">\(1-1=0\)</span>。如果只改变中心，则只剩前两个加权平方误差；如果只旋转预测框，则变化只在中间两项。</p>
+<h3 id="25">2.5 梯度耦合：不是五个独立误差<a class="headerlink" href="#25" title="Permanent link">¶</a></h3>
+<p>“梯度耦合”说的是：某个参数该改多少，会受其他参数影响。对于很细长的真值框，跨过短边的一像素偏差可能很严重，沿长边的一像素偏差则不那么严重。KLD 不是给两个方向使用同一个固定权重，而是由真值框的宽高和方向来确定权重。下面的求导把这一直觉写成可计算的量。</p>
+<p>先看中心。由式 (2.8)：</p>
+<div class="arithmatex">\[
+\nabla_{\mu_p}D_{\mathrm{KL}}(P\|G)
+=\Sigma_g^{-1}(\mu_p-\mu_g).
+\tag{2.17}
+\]</div>
+<p>当 <span class="arithmatex">\(\theta_g=0\)</span> 时，</p>
+<div class="arithmatex">\[
+\nabla_{\mu_p}D_{\mathrm{KL}}
+=\begin{bmatrix}4\Delta x/w_g^2\\4\Delta y/h_g^2\end{bmatrix}.
+\tag{2.18}
+\]</div>
+<p>短边越短，相应方向的中心误差梯度越大。再对网络常回归的 <span class="arithmatex">\(\log w_p,\log h_p\)</span> 求导。
+先令求导变量 <span class="arithmatex">\(z=\log w_p\)</span>，即 <span class="arithmatex">\(w_p=e^z\)</span>，所以
+<span class="arithmatex">\(\partial/\partial z=w_p\,\partial/\partial w_p\)</span>。若改为直接对 <span class="arithmatex">\(w_p\)</span> 求导，结果还要
+除以 <span class="arithmatex">\(w_p\)</span>；两种梯度不能混为一谈。由此得到
+<span class="arithmatex">\(\partial w_p^2/\partial\log w_p=2w_p^2\)</span>，再对式 (2.15)、(2.16) 的相应项求导，得到</p>
+<div class="arithmatex">\[
+\boxed{
+\frac{\partial D_{\mathrm{KL}}}{\partial\log w_p}
+=\frac{w_p^2}{w_g^2}\cos^2\Delta\theta
++\frac{w_p^2}{h_g^2}\sin^2\Delta\theta-1,
+}
+\tag{2.19}
+\]</div>
+<div class="arithmatex">\[
+\boxed{
+\frac{\partial D_{\mathrm{KL}}}{\partial\log h_p}
+=\frac{h_p^2}{h_g^2}\cos^2\Delta\theta
++\frac{h_p^2}{w_g^2}\sin^2\Delta\theta-1.
+}
+\tag{2.20}
+\]</div>
+<p>角度只出现在迹项。利用</p>
+<div class="arithmatex">\[
+\frac{\mathrm d}{\mathrm d\delta}\cos^2\delta=-\sin2\delta,
+\qquad
+\frac{\mathrm d}{\mathrm d\delta}\sin^2\delta=\sin2\delta,
+\]</div>
+<p>有</p>
+<div class="arithmatex">\[
+\boxed{
+\frac{\partial D_{\mathrm{KL}}}{\partial\theta_p}
+=\frac12(w_p^2-h_p^2)
+\left(\frac1{h_g^2}-\frac1{w_g^2}\right)
+\sin(2\Delta\theta).
+}
+\tag{2.21}
+\]</div>
+<p>当预测尺寸已经等于真值尺寸时，令 <span class="arithmatex">\(r=w_g/h_g\)</span>：</p>
+<div class="arithmatex">\[
+\frac{\partial D_{\mathrm{KL}}}{\partial\theta_p}
+=\frac12\left(r-\frac1r\right)^2\sin(2\Delta\theta).
+\tag{2.22}
+\]</div>
+<p>因此长宽比越极端，角度梯度越强；当 <span class="arithmatex">\(r=1\)</span>，角度梯度严格为 0，这再次证明正方形方向退化。
+不同论文有时把 <span class="arithmatex">\(D_{\mathrm{KL}}\)</span> 外的常数 <span class="arithmatex">\(1/2\)</span> 吸收到 loss 权重中，所以会看到不带 <span class="arithmatex">\(1/2\)</span>
+的等价梯度式；比较时必须先统一 KLD 定义。</p>
+<h3 id="26">2.6 严格的共同仿射不变性<a class="headerlink" href="#26" title="Permanent link">¶</a></h3>
+<p>令 <span class="arithmatex">\(M\)</span> 为可逆矩阵，对两个随机向量同时施加</p>
+<div class="arithmatex">\[
+\mu_i'=M\mu_i+b,\qquad \Sigma_i'=M\Sigma_iM^\top.
+\tag{2.23}
+\]</div>
+<p>其中 <span class="arithmatex">\(b\)</span> 是两个分布共同的平移向量。这里的“共同”很重要：同一个 <span class="arithmatex">\(M,b\)</span> 同时作用在两边，
+不是单独改变预测框。相减后 <span class="arithmatex">\(b\)</span> 抵消，故 <span class="arithmatex">\(\Delta\mu'=M\Delta\mu\)</span>。例如坐标单位从像素改成
+另一长度单位，并不应该改变无量纲的 KLD；第 1.2 节只放大协方差、保持中心不动的操作却不是
+这种坐标变换。</p>
+<p>中心项变为</p>
+<div class="arithmatex">\[
+\begin{aligned}
+(M\Delta\mu)^\top(M\Sigma_gM^\top)^{-1}(M\Delta\mu)
+&amp;=\Delta\mu^\top M^\top M^{-\top}\Sigma_g^{-1}M^{-1}M\Delta\mu\\
+&amp;=\Delta\mu^\top\Sigma_g^{-1}\Delta\mu.
+\end{aligned}
+\tag{2.24}
+\]</div>
+<p>迹项为</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\operatorname{Tr}[(M\Sigma_gM^\top)^{-1}(M\Sigma_pM^\top)]
+&amp;=\operatorname{Tr}(M^{-\top}\Sigma_g^{-1}\Sigma_pM^\top)\\
+&amp;=\operatorname{Tr}(\Sigma_g^{-1}\Sigma_p).
+\end{aligned}
+\tag{2.25}
+\]</div>
+<p>行列式比中 <span class="arithmatex">\(\det(M)^2\)</span> 抵消：</p>
+<div class="arithmatex">\[
+\frac{\det(M\Sigma_gM^\top)}{\det(M\Sigma_pM^\top)}
+=\frac{\det(M)^2\det\Sigma_g}{\det(M)^2\det\Sigma_p}.
+\tag{2.26}
+\]</div>
+<p>所以</p>
+<div class="arithmatex">\[
+D_{\mathrm{KL}}(P'\|G')=D_{\mathrm{KL}}(P\|G).
+\tag{2.27}
+\]</div>
+<p>取 <span class="arithmatex">\(M=\alpha I\)</span> 就得到严格共同尺度不变性。与之相对，原始 <span class="arithmatex">\(W_2\)</span> 在共同缩放后乘以
+<span class="arithmatex">\(|\alpha|\)</span>，NWD 只有在归一常数 <span class="arithmatex">\(C\)</span> 同时缩放时才严格不变。</p>
+<p>这里证明的是 <strong>Gaussian 分布被共同仿射变换后的性质</strong>。一般剪切会把矩形变成平行四边形；
+若再拟合一个外接旋转矩形并重新编码，就额外改变了对象，不能直接套用这个不变性结论。</p>
+<h3 id="27-loss">2.7 从散度到论文 loss<a class="headerlink" href="#27-loss" title="Permanent link">¶</a></h3>
+<p>KLD 检测工作采用和 GWD 相似的后处理族 <sup id="fnref5:4"><a class="footnote-ref" href="#fn:4">4</a></sup>：</p>
+<div class="arithmatex">\[
+\mathcal L_{\mathrm{KLD}}
+=1-\frac1{\tau+f(D_{\mathrm{KL}})},
+\qquad \tau\ge1,
+\tag{2.28}
+\]</div>
+<p>其中 <span class="arithmatex">\(f(D)=\sqrt D\)</span> 或 <span class="arithmatex">\(\log(1+D)\)</span>。这是<strong>论文设计</strong>，不是 KLD 的定义。两者都将较大的散度
+压缩，外层分式又使损失有上界。若采用式 (2.28) 且要求完美匹配时损失为 0，应取 <span class="arithmatex">\(\tau=1\)</span>；
+<span class="arithmatex">\(\tau=2\)</span> 时，完美匹配的常数基线是 <span class="arithmatex">\(1/2\)</span>。</p>
+<p><strong>要区分“减去常数基线”和“改变 <span class="arithmatex">\(\tau\)</span>”。</strong> 固定 <span class="arithmatex">\(\tau\)</span> 后减去 <span class="arithmatex">\(1-1/\tau\)</span>，得到</p>
+<div class="arithmatex">\[
+\widetilde{\mathcal L}_{\rm KLD}
+=\frac1\tau-\frac1{\tau+f(D)}.
+\tag{2.29}
+\]</div>
+<p>这个平移不改变梯度，只改变日志中的零点。但把 <span class="arithmatex">\(\tau\)</span> 从 1 改成 2 会改变梯度，因为在可微处</p>
+<div class="arithmatex">\[
+\frac{\partial\mathcal L_{\rm KLD}}{\partial D}
+=\frac{f'(D)}{[\tau+f(D)]^2}.
+\tag{2.30}
+\]</div>
+<p>因此不能把不同 <span class="arithmatex">\(\tau\)</span> 的两个损失仅理解为相差一个常数。若 <span class="arithmatex">\(f(D)=\sqrt D\)</span>，式 (2.30) 先在
+<span class="arithmatex">\(D&gt;0\)</span> 使用，完美匹配处需分析复合函数或明确数值稳定化方式。</p>
+<h2 id="bhattacharyyahellinger-probiou">三、Bhattacharyya、Hellinger 与 ProbIoU：从积分完整推导<a class="headerlink" href="#bhattacharyyahellinger-probiou" title="Permanent link">¶</a></h2>
+<h3 id="31">3.1 三个量的定义<a class="headerlink" href="#31" title="Permanent link">¶</a></h3>
+<p>KLD 有方向性，因此接下来考虑一种对称比较：不再问“由谁来给谁打分”，而是看两个密度在
+相同位置能共同给出多少权重。几何平均 <span class="arithmatex">\(\sqrt{p(x)q(x)}\)</span> 对交换 <span class="arithmatex">\(p,q\)</span> 不变；某一方密度很小，
+这一位置的贡献就很小。将它累加，便得到下面的重合系数。</p>
+<p>对两个密度 <span class="arithmatex">\(p,q\)</span>，Bhattacharyya 系数定义为 <sup id="fnref2:5"><a class="footnote-ref" href="#fn:5">5</a></sup><sup id="fnref:18"><a class="footnote-ref" href="#fn:18">18</a></sup></p>
+<div class="arithmatex">\[
+BC(P,Q)=\int\sqrt{p(x)q(x)}\,\mathrm dx.
+\tag{3.1}
+\]</div>
+<p>它为什么落在 <span class="arithmatex">\([0,1]\)</span>？非负性由被积函数非负得到；再由 Cauchy--Schwarz 不等式，</p>
+<div class="arithmatex">\[
+BC(P,Q)^2
+\le\left(\int p(x)\,\mathrm dx\right)
+\left(\int q(x)\,\mathrm dx\right)=1.
+\tag{3.1a}
+\]</div>
+<p>相同分布给出 <span class="arithmatex">\(BC=1\)</span>。它越接近 1 越相似，不符合“相同对象的距离等于 0”的习惯，因此再通过
+负对数或平方根把它变成差异量。</p>
+<p>Bhattacharyya 距离是</p>
+<div class="arithmatex">\[
+D_B(P,Q)=-\log BC(P,Q),
+\tag{3.2}
+\]</div>
+<p>Hellinger 距离采用本文与 ProbIoU 相同的归一化：</p>
+<div class="arithmatex">\[
+H(P,Q)
+=\frac1{\sqrt2}\|\sqrt p-\sqrt q\|_{L^2}
+=\sqrt{1-BC(P,Q)}.
+\tag{3.3}
+\]</div>
+<p>式 (3.3) 的第二个等号来自</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\frac12\int(\sqrt p-\sqrt q)^2\,\mathrm dx
+&amp;=\frac12\int(p+q-2\sqrt{pq})\,\mathrm dx\\
+&amp;=\frac12(1+1-2BC)=1-BC.
+\end{aligned}
+\tag{3.4}
+\]</div>
+<p>式 (3.3) 中 <span class="arithmatex">\(\|h\|_{L^2}=\sqrt{\int h(x)^2\,\mathrm dx}\)</span>，是把有限维向量的欧氏范数推广到
+函数。<span class="arithmatex">\(H\)</span> 就是两个“平方根密度函数”之间的欧氏型距离，所以具有三角不等式。<span class="arithmatex">\(D_B\)</span> 虽然名字
+中也有“距离”，却一般不是严格的数学度量：取方差均为 1、均值依次为 <span class="arithmatex">\(0,1,2\)</span> 的三个一维
+Gaussian，由后面的式 (3.21) 可得两段 <span class="arithmatex">\(D_B\)</span> 都为 <span class="arithmatex">\(1/8\)</span>，直接跨两段却是 <span class="arithmatex">\(1/2&gt;1/8+1/8\)</span>。
+不要把 Hellinger 的度量性质自动赋给 Bhattacharyya 距离或 ProbIoU 相似度。</p>
+<p>ProbIoU 论文定义 <sup id="fnref3:5"><a class="footnote-ref" href="#fn:5">5</a></sup></p>
+<div class="arithmatex">\[
+\operatorname{ProbIoU}(P,Q)=1-H(P,Q).
+\tag{3.5}
+\]</div>
+<p>它是 Gaussian 区域的有界相似度，不是两个矩形或多边形的精确 IoU。</p>
+<h3 id="32-gaussian-bhattacharyya">3.2 两个 Gaussian 的 Bhattacharyya 积分<a class="headerlink" href="#32-gaussian-bhattacharyya" title="Permanent link">¶</a></h3>
+<p>令</p>
+<div class="arithmatex">\[
+P=\mathcal N(\mu_1,\Sigma_1),\qquad
+Q=\mathcal N(\mu_2,\Sigma_2),
+\]</div>
+<p>且 <span class="arithmatex">\(\Sigma_1,\Sigma_2\)</span> 正定。把密度代入式 (3.1)：</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\sqrt{p(x)q(x)}
+={}&amp;(2\pi)^{-d/2}
+(\det\Sigma_1\det\Sigma_2)^{-1/4}\\
+&amp;\cdot\exp\left\{-\frac14
+\left[(x-\mu_1)^\top\Sigma_1^{-1}(x-\mu_1)
++(x-\mu_2)^\top\Sigma_2^{-1}(x-\mu_2)
+\right]\right\}.
+\end{aligned}
+\tag{3.6}
+\]</div>
+<p>这一段计算只做一件事：把两个 Gaussian 指数之和重新整理成一个 Gaussian 的指数。可以先回忆
+一元配方 <span class="arithmatex">\(ax^2-2bx+c=a(x-b/a)^2+c-b^2/a\)</span>。下面 <span class="arithmatex">\(A,b,c\)</span> 分别扮演二次项、一次项和常数项
+的系数；<span class="arithmatex">\(A\)</span> 是矩阵，<span class="arithmatex">\(b\)</span> 是向量，<span class="arithmatex">\(c\)</span> 是标量。它们只是本节的临时记号，不是额外的检测参数。</p>
+<p>定义</p>
+<div class="arithmatex">\[
+A=\frac12(\Sigma_1^{-1}+\Sigma_2^{-1}),
+\tag{3.7}
+\]</div>
+<div class="arithmatex">\[
+b=\frac12(\Sigma_1^{-1}\mu_1+\Sigma_2^{-1}\mu_2),
+\tag{3.8}
+\]</div>
+<div class="arithmatex">\[
+c=\frac12(\mu_1^\top\Sigma_1^{-1}\mu_1
++\mu_2^\top\Sigma_2^{-1}\mu_2).
+\tag{3.9}
+\]</div>
+<p>则指数中的二次型可写成</p>
+<div class="arithmatex">\[
+-\frac12(x^\top A x-2b^\top x+c).
+\tag{3.10}
+\]</div>
+<p>令 <span class="arithmatex">\(\hat\mu=A^{-1}b\)</span>，完成平方：</p>
+<div class="arithmatex">\[
+x^\top A x-2b^\top x+c
+=(x-\hat\mu)^\top A(x-\hat\mu)+c-b^\top A^{-1}b.
+\tag{3.11}
+\]</div>
+<p>因此</p>
+<div class="arithmatex">\[
+\begin{aligned}
+BC
+={}&amp;(2\pi)^{-d/2}(\det\Sigma_1\det\Sigma_2)^{-1/4}
+\exp\left[-\frac12(c-b^\top A^{-1}b)\right]\\
+&amp;\cdot\int
+\exp\left[-\frac12(x-\hat\mu)^\top A(x-\hat\mu)\right]\mathrm dx.
+\end{aligned}
+\tag{3.12}
+\]</div>
+<p>最后的积分是未归一 Gaussian 积分：</p>
+<div class="arithmatex">\[
+\int e^{-\frac12(x-\hat\mu)^\top A(x-\hat\mu)}\mathrm dx
+=(2\pi)^{d/2}(\det A)^{-1/2}.
+\tag{3.13}
+\]</div>
+<p>式 (3.13) 也可以不用记忆。令 <span class="arithmatex">\(y=A^{1/2}(x-\hat\mu)\)</span>，则二次型变成 <span class="arithmatex">\(y^\top y\)</span>，体积微元
+变成 <span class="arithmatex">\(\mathrm dx=(\det A)^{-1/2}\mathrm dy\)</span>。剩下的积分是 <span class="arithmatex">\(d\)</span> 个一维 Gaussian 积分的乘积，
+每个 <span class="arithmatex">\(\int_{\mathbb R}e^{-y^2/2}\mathrm dy=\sqrt{2\pi}\)</span>，于是得到
+<span class="arithmatex">\((2\pi)^{d/2}(\det A)^{-1/2}\)</span>。这里 <span class="arithmatex">\(A\)</span> 正定，因此主平方根存在且可逆。</p>
+<p>接下来分别化简行列式和均值项。</p>
+<h4 id="321">3.2.1 行列式项<a class="headerlink" href="#321" title="Permanent link">¶</a></h4>
+<p>注意</p>
+<div class="arithmatex">\[
+\Sigma_1^{-1}(\Sigma_1+\Sigma_2)\Sigma_2^{-1}
+=\Sigma_2^{-1}+\Sigma_1^{-1},
+\]</div>
+<p>故</p>
+<div class="arithmatex">\[
+\det A
+=2^{-d}\frac{\det(\Sigma_1+\Sigma_2)}
+{\det\Sigma_1\det\Sigma_2}.
+\tag{3.14}
+\]</div>
+<p>令</p>
+<div class="arithmatex">\[
+\bar\Sigma=\frac{\Sigma_1+\Sigma_2}{2},
+\]</div>
+<p>则 <span class="arithmatex">\(\det\bar\Sigma=2^{-d}\det(\Sigma_1+\Sigma_2)\)</span>，所以</p>
+<div class="arithmatex">\[
+\det A=\frac{\det\bar\Sigma}{\det\Sigma_1\det\Sigma_2}.
+\tag{3.15}
+\]</div>
+<p>式 (3.12) 的全部行列式系数化为</p>
+<div class="arithmatex">\[
+(\det\Sigma_1\det\Sigma_2)^{-1/4}(\det A)^{-1/2}
+=\frac{(\det\Sigma_1\det\Sigma_2)^{1/4}}
+{\det(\bar\Sigma)^{1/2}}.
+\tag{3.16}
+\]</div>
+<h4 id="322">3.2.2 均值项<a class="headerlink" href="#322" title="Permanent link">¶</a></h4>
+<p>积分对共同平移不变，可以令 <span class="arithmatex">\(\mu_2=0,\mu_1=\Delta\mu\)</span>。此时</p>
+<div class="arithmatex">\[
+b=\frac12\Sigma_1^{-1}\Delta\mu,
+\qquad
+c=\frac12\Delta\mu^\top\Sigma_1^{-1}\Delta\mu.
+\]</div>
+<p>又因</p>
+<div class="arithmatex">\[
+A^{-1}=2(\Sigma_1^{-1}+\Sigma_2^{-1})^{-1},
+\]</div>
+<p>有</p>
+<div class="arithmatex">\[
+\begin{aligned}
+c-b^\top A^{-1}b
+=\frac12\Delta\mu^\top
+\left[
+\Sigma_1^{-1}
+-\Sigma_1^{-1}(\Sigma_1^{-1}+\Sigma_2^{-1})^{-1}\Sigma_1^{-1}
+\right]\Delta\mu.
+\end{aligned}
+\tag{3.17}
+\]</div>
+<p>括号内使用 parallel-sum 恒等式</p>
+<div class="arithmatex">\[
+\Sigma_1^{-1}
+-\Sigma_1^{-1}(\Sigma_1^{-1}+\Sigma_2^{-1})^{-1}\Sigma_1^{-1}
+=(\Sigma_1+\Sigma_2)^{-1}.
+\tag{3.18}
+\]</div>
+<p>下面把这个恒等式真正展开，而不是把矩阵因子当成标量交换。记
+<span class="arithmatex">\(S=\Sigma_1+\Sigma_2\)</span>，则</p>
+<div class="arithmatex">\[
+(\Sigma_1S^{-1}\Sigma_2)^{-1}
+=\Sigma_2^{-1}S\Sigma_1^{-1}
+=\Sigma_2^{-1}+\Sigma_1^{-1}.
+\tag{3.18a}
+\]</div>
+<p>因此 <span class="arithmatex">\((\Sigma_1^{-1}+\Sigma_2^{-1})^{-1}=\Sigma_1S^{-1}\Sigma_2\)</span>，再代回左侧：</p>
+<div class="arithmatex">\[
+\begin{aligned}
+&amp;\Sigma_1^{-1}
+-\Sigma_1^{-1}(\Sigma_1^{-1}+\Sigma_2^{-1})^{-1}\Sigma_1^{-1}\\
+&amp;=\Sigma_1^{-1}-S^{-1}\Sigma_2\Sigma_1^{-1}\\
+&amp;=S^{-1}(S-\Sigma_2)\Sigma_1^{-1}
+=S^{-1}\Sigma_1\Sigma_1^{-1}=S^{-1}.
+\end{aligned}
+\tag{3.18b}
+\]</div>
+<p>这里第二行到第三行只是在第一项左边插入 <span class="arithmatex">\(S^{-1}S=I\)</span>。于是</p>
+<div class="arithmatex">\[
+c-b^\top A^{-1}b
+=\frac12\Delta\mu^\top(\Sigma_1+\Sigma_2)^{-1}\Delta\mu
+=\frac14\Delta\mu^\top\bar\Sigma^{-1}\Delta\mu.
+\tag{3.19}
+\]</div>
+<h4 id="323">3.2.3 合并<a class="headerlink" href="#323" title="Permanent link">¶</a></h4>
+<p>把式 (3.16)、(3.19) 代回式 (3.12)：</p>
+<div class="arithmatex">\[
+\boxed{
+BC(P,Q)
+=\frac{(\det\Sigma_1\det\Sigma_2)^{1/4}}
+{\det(\bar\Sigma)^{1/2}}
+\exp\left[-\frac18\Delta\mu^\top\bar\Sigma^{-1}\Delta\mu\right].
+}
+\tag{3.20}
+\]</div>
+<p>取负对数得到</p>
+<div class="arithmatex">\[
+\boxed{
+D_B(P,Q)
+=\frac18\Delta\mu^\top\bar\Sigma^{-1}\Delta\mu
++\frac12\log
+\frac{\det\bar\Sigma}{\sqrt{\det\Sigma_1\det\Sigma_2}}.
+}
+\tag{3.21}
+\]</div>
+<p>这就是 ProbIoU 与 G-Rep 中使用的 Gaussian Bhattacharyya 闭式 <sup id="fnref4:5"><a class="footnote-ref" href="#fn:5">5</a></sup><sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup>。</p>
+<h3 id="33-probiou-loss">3.3 两种 ProbIoU loss 及其精确关系<a class="headerlink" href="#33-probiou-loss" title="Permanent link">¶</a></h3>
+<p>由式 (3.2)--(3.5)：</p>
+<div class="arithmatex">\[
+BC=e^{-D_B},
+\qquad
+H=\sqrt{1-e^{-D_B}},
+\qquad
+\operatorname{ProbIoU}=1-H.
+\tag{3.22}
+\]</div>
+<p>论文给出两种回归量 <sup id="fnref5:5"><a class="footnote-ref" href="#fn:5">5</a></sup>：</p>
+<div class="arithmatex">\[
+\mathcal L_1=H=\sqrt{1-e^{-D_B}},
+\tag{3.23}
+\]</div>
+<div class="arithmatex">\[
+\mathcal L_2=D_B.
+\tag{3.24}
+\]</div>
+<p>二者不是近似关系，而是严格单调变换：</p>
+<div class="arithmatex">\[
+\mathcal L_1^2=1-e^{-\mathcal L_2}
+\quad\Longrightarrow\quad
+\boxed{
+\mathcal L_2=-\log(1-\mathcal L_1^2).
+}
+\tag{3.25}
+\]</div>
+<p>对任一框参数 <span class="arithmatex">\(z\)</span>，链式法则给出</p>
+<div class="arithmatex">\[
+\boxed{
+\frac{\partial\mathcal L_1}{\partial z}
+=\frac{e^{-\mathcal L_2}}
+{2\sqrt{1-e^{-\mathcal L_2}}}
+\frac{\partial\mathcal L_2}{\partial z}.
+}
+\tag{3.26}
+\]</div>
+<p>当 <span class="arithmatex">\(D_B\)</span> 很大时，<span class="arithmatex">\(e^{-D_B}\to0\)</span>，<span class="arithmatex">\(\mathcal L_1\to1\)</span> 且梯度趋近 0，表现为远距离饱和；
+<span class="arithmatex">\(\mathcal L_2=D_B\)</span> 不受这一有界变换压缩。当 <span class="arithmatex">\(D_B\to0\)</span> 时，</p>
+<div class="arithmatex">\[
+1-e^{-D_B}=D_B+O(D_B^2),
+\]</div>
+<p>所以</p>
+<div class="arithmatex">\[
+\mathcal L_1=\sqrt{D_B}+O(D_B^{3/2}).
+\tag{3.27}
+\]</div>
+<p>若 <span class="arithmatex">\(D_B\)</span> 对参数误差是二次量，则 <span class="arithmatex">\(\mathcal L_1\)</span> 局部类似绝对值，<span class="arithmatex">\(\mathcal L_2\)</span> 局部类似平方误差。
+式 (3.26) 的系数单独看会发散，但必须与 <span class="arithmatex">\(\partial D_B/\partial z\to0\)</span> 一起看，不能据此直接断言
+总体梯度发散。</p>
+<h3 id="34">3.4 水平框的显式式子<a class="headerlink" href="#34" title="Permanent link">¶</a></h3>
+<p>对水平框使用式 (1.5)，写</p>
+<div class="arithmatex">\[
+\Sigma_i=\operatorname{diag}(a_i,b_i),
+\qquad
+a_i=w_i^2/12,\quad b_i=h_i^2/12.
+\]</div>
+<p>则</p>
+<div class="arithmatex">\[
+\bar\Sigma^{-1}
+=\operatorname{diag}\left(
+\frac2{a_1+a_2},\frac2{b_1+b_2}
+\right).
+\]</div>
+<p>式 (3.21) 第一项为</p>
+<div class="arithmatex">\[
+\frac14\left[
+\frac{(x_1-x_2)^2}{a_1+a_2}
++\frac{(y_1-y_2)^2}{b_1+b_2}
+\right],
+\tag{3.28}
+\]</div>
+<p>第二项为</p>
+<div class="arithmatex">\[
+\frac12\log[(a_1+a_2)(b_1+b_2)]
+-\frac14\log(a_1a_2b_1b_2)-\log2.
+\tag{3.29}
+\]</div>
+<p>式 (3.29) 中的 <span class="arithmatex">\(-\log2\)</span> 来自 <span class="arithmatex">\(\det\bar\Sigma=((a_1+a_2)(b_1+b_2))/4\)</span>。若把常数吸收到
+一个合并对数中，它不会消失；完美匹配时正是它与其余项共同保证 <span class="arithmatex">\(D_B=0\)</span>。</p>
+<p>把第 1.2 节的两个 <span class="arithmatex">\(2\times2\)</span> 框继续算完。中心相差 <span class="arithmatex">\((1,0)\)</span>，且采用 <span class="arithmatex">\(1/12\)</span> 映射，所以
+<span class="arithmatex">\(a_1=a_2=b_1=b_2=1/3\)</span>。形状完全相同，行列式项为 0，故</p>
+<div class="arithmatex">\[
+\begin{aligned}
+D_B&amp;=\frac14\frac{1^2}{1/3+1/3}=\frac38,\\
+BC&amp;=e^{-3/8}\approx0.687289,\\
+\mathcal L_1=H&amp;=\sqrt{1-e^{-3/8}}\approx0.559205,\\
+\operatorname{ProbIoU}&amp;=1-H\approx0.440795,\qquad
+\mathcal L_2=D_B=0.375.
+\end{aligned}
+\tag{3.29a}
+\]</div>
+<p>这样就从框参数走完了“协方差—基础差异—相似度—损失”整条链。同一对真实矩形的交集面积是
+<span class="arithmatex">\(1\times2=2\)</span>，并集面积是 <span class="arithmatex">\(4+4-2=6\)</span>，真实 IoU 为 <span class="arithmatex">\(1/3\)</span>，不是上面的 ProbIoU。</p>
+<h3 id="35">3.5 仿射不变性证明<a class="headerlink" href="#35" title="Permanent link">¶</a></h3>
+<p>对可逆 <span class="arithmatex">\(M\)</span> 同时施加式 (2.23)。均值项与式 (2.24) 同理保持不变，因为
+<span class="arithmatex">\(\bar\Sigma'=M\bar\Sigma M^\top\)</span>。行列式比为</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\frac{\det\bar\Sigma'}
+{\sqrt{\det\Sigma_1'\det\Sigma_2'}}
+&amp;=\frac{\det(M)^2\det\bar\Sigma}
+{\sqrt{\det(M)^2\det\Sigma_1\cdot
+\det(M)^2\det\Sigma_2}}\\
+&amp;=\frac{\det\bar\Sigma}
+{\sqrt{\det\Sigma_1\det\Sigma_2}}.
+\end{aligned}
+\tag{3.30}
+\]</div>
+<p>因此 <span class="arithmatex">\(D_B\)</span>、<span class="arithmatex">\(BC\)</span>、<span class="arithmatex">\(H\)</span> 和 ProbIoU 都对共同可逆仿射变换不变。这是其无需 NWD 外部像素常数
+<span class="arithmatex">\(C\)</span> 的原因之一。</p>
+<h3 id="36-iou">3.6 它与真实 IoU 的关系边界<a class="headerlink" href="#36-iou" title="Permanent link">¶</a></h3>
+<p>若两个有限区域 <span class="arithmatex">\(\Omega_1,\Omega_2\)</span> 上分别放置均匀离散分布，大小为 <span class="arithmatex">\(N,M\)</span>，则</p>
+<div class="arithmatex">\[
+BC=\frac{|\Omega_1\cap\Omega_2|}{\sqrt{NM}}.
+\tag{3.31}
+\]</div>
+<p>真实 IoU 是</p>
+<div class="arithmatex">\[
+\operatorname{IoU}
+=\frac{|\Omega_1\cap\Omega_2|}{N+M-|\Omega_1\cap\Omega_2|}.
+\tag{3.32}
+\]</div>
+<p>即使 <span class="arithmatex">\(N=M\)</span>，式 (3.31) 也为 <span class="arithmatex">\(I/N\)</span>，式 (3.32) 则为 <span class="arithmatex">\(I/(2N-I)\)</span>；二者不相等。
+ProbIoU 的名字表达的是“类似 IoU 的概率相似度”，不是等式 (3.32) 的概率重写。</p>
+<h2 id="kfiougaussian">四、KFIoU：Gaussian 乘积为什么像“交集”，又为什么不是真交集<a class="headerlink" href="#kfiougaussian" title="Permanent link">¶</a></h2>
+<p>KFIoU 不再比较两个分布有多远，而是把两个 Gaussian 密度相乘，用乘积 Gaussian 的协方差体积
+模拟旋转框交集 <sup id="fnref2:6"><a class="footnote-ref" href="#fn:6">6</a></sup>。这一步与 Kalman 更新有相同代数形式，因而得名 KFIoU；它不是 Kalman
+滤波器在检测器中随时间运行。</p>
+<p>直觉上，乘积在“两边密度都高”的位置才大，因而看起来像取交集。但这里有一个容易漏掉的步骤：
+乘积的总积分通常不是 1，要重新归一化才能成为概率分布。<strong>乘积整体有多大</strong>和<strong>归一化后有多宽</strong>
+是两件事，KFIoU 的体积代理只保留后者。接下来先求后者，再说明这种取舍丢掉了什么。</p>
+<h3 id="41">4.1 从两个密度的乘积推导交集协方差<a class="headerlink" href="#41" title="Permanent link">¶</a></h3>
+<p>令</p>
+<div class="arithmatex">\[
+p_i(x)=\frac{1}{(2\pi)^{d/2}|\Sigma_i|^{1/2}}
+\exp\left[-\frac12(x-\mu_i)^\top\Sigma_i^{-1}(x-\mu_i)\right],
+\qquad i=1,2.
+\tag{4.1}
+\]</div>
+<p>只看与 <span class="arithmatex">\(x\)</span> 有关的指数，定义精度矩阵 <span class="arithmatex">\(\Lambda_i=\Sigma_i^{-1}\)</span>：</p>
+<div class="arithmatex">\[
+\begin{aligned}
+-2\log[p_1(x)p_2(x)]
+={}&amp;(x-\mu_1)^\top\Lambda_1(x-\mu_1)
+ +(x-\mu_2)^\top\Lambda_2(x-\mu_2)+\text{常数}\\
+={}&amp;x^\top(\Lambda_1+\Lambda_2)x
+-2x^\top(\Lambda_1\mu_1+\Lambda_2\mu_2)+\text{常数}.
+\end{aligned}
+\tag{4.2}
+\]</div>
+<p>记</p>
+<div class="arithmatex">\[
+\Lambda_\cap=\Lambda_1+\Lambda_2,
+\qquad
+\mu_\cap=\Lambda_\cap^{-1}(\Lambda_1\mu_1+\Lambda_2\mu_2).
+\tag{4.3}
+\]</div>
+<p>因为</p>
+<div class="arithmatex">\[
+(x-\mu_\cap)^\top\Lambda_\cap(x-\mu_\cap)
+=x^\top\Lambda_\cap x-2x^\top\Lambda_\cap\mu_\cap
++\mu_\cap^\top\Lambda_\cap\mu_\cap,
+\tag{4.4}
+\]</div>
+<p>式 (4.2) 与式 (4.4) 的前两项完全相同，最后一项只进入归一化常数。因此</p>
+<div class="arithmatex">\[
+p_1(x)p_2(x)\propto
+\mathcal N(x;\mu_\cap,\Sigma_\cap),
+\qquad
+\boxed{\Sigma_\cap=(\Sigma_1^{-1}+\Sigma_2^{-1})^{-1}}.
+\tag{4.5}
+\]</div>
+<p>符号 <span class="arithmatex">\(\propto\)</span> 表示两边相差一个与 <span class="arithmatex">\(x\)</span> 无关的正系数，并不是直接相等。完整形式是</p>
+<div class="arithmatex">\[
+\begin{aligned}
+p_1(x)p_2(x)&amp;=Z\,\mathcal N(x;\mu_\cap,\Sigma_\cap),\\
+Z&amp;=\int p_1(x)p_2(x)\,\mathrm dx\\
+&amp;=\frac{\exp[-\frac12(\mu_1-\mu_2)^\top
+(\Sigma_1+\Sigma_2)^{-1}(\mu_1-\mu_2)]}
+{(2\pi)^{d/2}\det(\Sigma_1+\Sigma_2)^{1/2}}.
+\end{aligned}
+\tag{4.5a}
+\]</div>
+<p>它也可以通过与第 3.2 节相同的配方、积分步骤求出。这里 <span class="arithmatex">\(Z\)</span> 会随着中心远离而下降，但
+<span class="arithmatex">\(\Sigma_\cap\)</span> 不随中心改变。故后文若只用 <span class="arithmatex">\(\Sigma_\cap\)</span> 的行列式，乘积中原本存在的位置信息
+就没有进入相似度。另须注意，<span class="arithmatex">\(Z\)</span> 是密度乘积的积分，并不具有 Bhattacharyya 系数的 <span class="arithmatex">\([0,1]\)</span>
+上界，不能直接把二者互换。</p>
+<p>式 (4.5) 还可写成论文所用的 Kalman 形式。先设</p>
+<div class="arithmatex">\[
+K=\Sigma_1(\Sigma_1+\Sigma_2)^{-1}.
+\tag{4.6}
+\]</div>
+<p>要证明</p>
+<div class="arithmatex">\[
+\Sigma_\cap=\Sigma_1-K\Sigma_1,
+\tag{4.7}
+\]</div>
+<p>只需证明右边被 <span class="arithmatex">\((\Sigma_1^{-1}+\Sigma_2^{-1})\)</span> 左乘后得到 <span class="arithmatex">\(I\)</span>。利用
+<span class="arithmatex">\(I-\Sigma_1(\Sigma_1+\Sigma_2)^{-1}=\Sigma_2(\Sigma_1+\Sigma_2)^{-1}\)</span>，有</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\Sigma_1-K\Sigma_1
+&amp;=[I-\Sigma_1(\Sigma_1+\Sigma_2)^{-1}]\Sigma_1\\
+&amp;=\Sigma_2(\Sigma_1+\Sigma_2)^{-1}\Sigma_1,
+\end{aligned}
+\tag{4.8}
+\]</div>
+<p>而</p>
+<div class="arithmatex">\[
+\begin{aligned}
+&amp;(\Sigma_1^{-1}+\Sigma_2^{-1})
+\Sigma_2(\Sigma_1+\Sigma_2)^{-1}\Sigma_1\\
+&amp;=(\Sigma_1^{-1}\Sigma_2+I)(\Sigma_1+\Sigma_2)^{-1}\Sigma_1\\
+&amp;=\Sigma_1^{-1}(\Sigma_1+\Sigma_2)
+(\Sigma_1+\Sigma_2)^{-1}\Sigma_1=I.
+\end{aligned}
+\tag{4.9}
+\]</div>
+<p>这里第二行到第三行应整体结合：
+<span class="arithmatex">\(\Sigma_1^{-1}\Sigma_2+I=\Sigma_1^{-1}(\Sigma_1+\Sigma_2)\)</span>。因此式 (4.7) 成立。
+矩阵通常不交换，不能把这些因子的顺序随意改写。</p>
+<h3 id="42">4.2 从协方差恢复框体积<a class="headerlink" href="#42" title="Permanent link">¶</a></h3>
+<p>在 <span class="arithmatex">\(1/4\)</span> 映射下，<span class="arithmatex">\(d\)</span> 维框的协方差特征值为</p>
+<div class="arithmatex">\[
+\lambda_j=\frac{s_j^2}{4},
+\tag{4.10}
+\]</div>
+<p>其中 <span class="arithmatex">\(s_j\)</span> 是第 <span class="arithmatex">\(j\)</span> 条边长。因此</p>
+<div class="arithmatex">\[
+|\Sigma|^{1/2}
+=\left(\prod_{j=1}^d\frac{s_j^2}{4}\right)^{1/2}
+=\frac{\prod_{j=1}^d s_j}{2^d}.
+\tag{4.11}
+\]</div>
+<p>框的 <span class="arithmatex">\(d\)</span> 维体积为</p>
+<div class="arithmatex">\[
+\boxed{V_B(\Sigma)=2^d|\Sigma|^{1/2}}.
+\tag{4.12}
+\]</div>
+<p>二维时 <span class="arithmatex">\(V_B=4\sqrt{|\Sigma|}=wh\)</span>；三维时 <span class="arithmatex">\(V_B=8\sqrt{|\Sigma|}=whl\)</span>。KFIoU 定义</p>
+<div class="arithmatex">\[
+V_i=V_B(\Sigma_i),\qquad V_\cap=V_B(\Sigma_\cap),
+\tag{4.13}
+\]</div>
+<div class="arithmatex">\[
+\boxed{
+\operatorname{KFIoU}
+=\frac{V_\cap}{V_1+V_2-V_\cap}.
+}
+\tag{4.14}
+\]</div>
+<p>这在形式上复制了 <span class="arithmatex">\(I/(A_1+A_2-I)\)</span>，但 <span class="arithmatex">\(V_\cap\)</span> 不是两个矩形的真实交集面积。尤其式 (4.5)
+与 <span class="arithmatex">\(\mu_1-\mu_2\)</span> 完全无关：把两个框移得任意远，只要形状不变，式 (4.14) 就不变。因此论文另设中心
+损失先拉近中心，再让 KFIoU 负责形状与方向 <sup id="fnref3:6"><a class="footnote-ref" href="#fn:6">6</a></sup>。</p>
+<h3 id="43-kfiou">4.3 KFIoU 上界的完整证明<a class="headerlink" href="#43-kfiou" title="Permanent link">¶</a></h3>
+<p>KFIoU 甚至在两个框完全相同时也不是 1。下面把这个容易被后处理掩盖的事实严格证明出来。</p>
+<p>先看最直观的相同协方差情形：<span class="arithmatex">\(\Sigma_1=\Sigma_2=\Sigma\)</span> 时，精度相加给出
+<span class="arithmatex">\(\Sigma_\cap=\Sigma/2\)</span>。二维面积与 <span class="arithmatex">\(\sqrt{\det\Sigma}\)</span> 成正比，因此代理交集面积只有原面积
+的一半，得到 <span class="arithmatex">\((V/2)/(2V-V/2)=1/3\)</span>。这解释了为什么完美形状匹配也不是 1。</p>
+<p>下面再证明不同协方差不会超过这个值。AM--GM 是“算术平均不小于几何平均”，对正数 <span class="arithmatex">\(x,y\)</span>
+写作 <span class="arithmatex">\(x+y\ge2\sqrt{xy}\)</span>。证明先把矩阵化成正特征值上的乘积，再逐个使用这一标量不等式。</p>
+<p>对正定矩阵 <span class="arithmatex">\(A,B\)</span>，令 <span class="arithmatex">\(C=A^{-1/2}BA^{-1/2}\)</span>，其正特征值为 <span class="arithmatex">\(r_1,\ldots,r_d\)</span>。则</p>
+<div class="arithmatex">\[
+\begin{aligned}
+|A^{-1}+B^{-1}|
+&amp;=|A|^{-1}|I+AB^{-1}|\\
+&amp;=|A|^{-1}\prod_{j=1}^d(1+r_j^{-1}).
+\end{aligned}
+\tag{4.15}
+\]</div>
+<p>由一维 AM--GM，<span class="arithmatex">\(1+r_j^{-1}\ge 2r_j^{-1/2}\)</span>，逐项相乘得到</p>
+<div class="arithmatex">\[
+\begin{aligned}
+|A^{-1}+B^{-1}|
+&amp;\ge |A|^{-1}2^d\prod_{j=1}^dr_j^{-1/2}\\
+&amp;=\frac{2^d}{\sqrt{|A||B|}}.
+\end{aligned}
+\tag{4.16}
+\]</div>
+<p>取倒数再开平方：</p>
+<div class="arithmatex">\[
+|(A^{-1}+B^{-1})^{-1}|^{1/2}
+\le 2^{-d/2}(|A||B|)^{1/4}.
+\tag{4.17}
+\]</div>
+<p>代入式 (4.12)，若 <span class="arithmatex">\(q=\sqrt{V_1V_2}\)</span>，则</p>
+<div class="arithmatex">\[
+V_\cap\le 2^{-d/2}q.
+\tag{4.18}
+\]</div>
+<p>另一方面，标量 AM--GM 给出 <span class="arithmatex">\(V_1+V_2\ge2q\)</span>。函数 <span class="arithmatex">\(z/(a-z)\)</span> 在 <span class="arithmatex">\(0&lt;z&lt;a\)</span> 上随
+<span class="arithmatex">\(z\)</span> 单调增加，所以</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\operatorname{KFIoU}
+&amp;=\frac{V_\cap}{V_1+V_2-V_\cap}\\
+&amp;\le\frac{2^{-d/2}q}{2q-2^{-d/2}q}\\
+&amp;=\boxed{\frac1{2^{d/2+1}-1}}.
+\end{aligned}
+\tag{4.19}
+\]</div>
+<p>等号要求式 (4.16) 与两个 AM--GM 同时取等，恰为 <span class="arithmatex">\(A=B\)</span>。二维最大值是 <span class="arithmatex">\(1/3\)</span>，三维最大值是
+<span class="arithmatex">\(1/(2^{5/2}-1)\)</span>，都不是 1。KFIoU 论文使用单调后处理，例如</p>
+<div class="arithmatex">\[
+\mathcal L_{kf}=e^{1-\operatorname{KFIoU}}-1,
+\tag{4.20}
+\]</div>
+<p>来形成训练项 <sup id="fnref4:6"><a class="footnote-ref" href="#fn:6">6</a></sup>；单调变换不会把式 (4.14) 变成真正的 IoU。</p>
+<h2 id="mkiou-kfiou">五、MKIoU：调制 KFIoU，并给正方形补回角度<a class="headerlink" href="#mkiou-kfiou" title="Permanent link">¶</a></h2>
+<p>MKIoU 直接针对两个缺口：KFIoU 在高重叠区的曲线与 SkewIoU 不够一致，以及整框 Gaussian 对
+正方形角度完全失明 <sup id="fnref2:7"><a class="footnote-ref" href="#fn:7">7</a></sup>。</p>
+<h3 id="51-kfiou">5.1 从 KFIoU 的标量展开到调制式<a class="headerlink" href="#51-kfiou" title="Permanent link">¶</a></h3>
+<p>先说明本节的任务：前一章的 KFIoU 最大只有 <span class="arithmatex">\(1/3\)</span>，能否重新映射到最大值 1，并调节接近最佳
+形状时的惩罚斜率？MKIoU 的调制式就是为此设计的 <sup id="fnref3:7"><a class="footnote-ref" href="#fn:7">7</a></sup>。它仍不含中心差，因此本节先比较形状，
+中心误差留给后面的独立项。</p>
+<p>原论文写出的 <span class="arithmatex">\(A,B\)</span> 不是另两个自由参数，而是两个框面积与代理交集面积的比值。记
+<span class="arithmatex">\(V_p=V_B(\Sigma_p),V_g=V_B(\Sigma_g)\)</span>，由第 4 章的乘积协方差，</p>
+<div class="arithmatex">\[
+\det\Sigma_\cap
+=\frac{\det\Sigma_p\det\Sigma_g}{\det(\Sigma_p+\Sigma_g)}.
+\tag{5.0a}
+\]</div>
+<p>于是定义</p>
+<div class="arithmatex">\[
+\begin{aligned}
+A&amp;=\frac{V_p}{V_\cap}
+=\sqrt{\frac{\det(\Sigma_p+\Sigma_g)}{\det\Sigma_g}},\\
+B&amp;=\frac{V_g}{V_\cap}
+=\sqrt{\frac{\det(\Sigma_p+\Sigma_g)}{\det\Sigma_p}}.
+\end{aligned}
+\tag{5.0b}
+\]</div>
+<p>还可以把它们化成宽高和角度。二维矩阵满足
+<span class="arithmatex">\(\det(I+X)=1+\operatorname{Tr}X+\det X\)</span>；令
+<span class="arithmatex">\(T_{pg}=\operatorname{Tr}(\Sigma_g^{-1}\Sigma_p)\)</span>，<span class="arithmatex">\(T_{gp}\)</span> 则交换两下标，得到</p>
+<div class="arithmatex">\[
+\begin{aligned}
+A^2&amp;=1+T_{pg}+\left(\frac{w_ph_p}{w_gh_g}\right)^2,\\
+B^2&amp;=1+T_{gp}+\left(\frac{w_gh_g}{w_ph_p}\right)^2.
+\end{aligned}
+\tag{5.0c}
+\]</div>
+<p>其中 <span class="arithmatex">\(T_{pg}\)</span> 已在式 (2.15) 完整展开为宽高比、<span class="arithmatex">\(\cos^2\Delta\theta\)</span> 和
+<span class="arithmatex">\(\sin^2\Delta\theta\)</span>，<span class="arithmatex">\(T_{gp}\)</span> 用同式交换预测和真值即可。这就说明原论文的大段根号式从哪里
+来，也避免把 <span class="arithmatex">\(A,B\)</span> 当作未定义的符号。</p>
+<p>将 KFIoU 的分子分母同时除以 <span class="arithmatex">\(V_\cap&gt;0\)</span>，便得到式 (5.2)。再由二维上界
+<span class="arithmatex">\(\operatorname{KFIoU}\le1/3\)</span>，等价得到</p>
+<div class="arithmatex">\[
+A+B\ge4,
+\tag{5.1}
+\]</div>
+<p>并将原 KFIoU 写成</p>
+<div class="arithmatex">\[
+\operatorname{KFIoU}=\frac1{A+B-1}.
+\tag{5.2}
+\]</div>
+<p>调制参数 <span class="arithmatex">\(\alpha&lt;4\)</span> 后定义</p>
+<div class="arithmatex">\[
+\boxed{
+\operatorname{MKIoU}=\frac{4-\alpha}{A+B-\alpha}.
+}
+\tag{5.3}
+\]</div>
+<p>式 (5.1) 立即给出分母至少为 <span class="arithmatex">\(4-\alpha&gt;0\)</span>，因此</p>
+<div class="arithmatex">\[
+0&lt;\operatorname{MKIoU}\le1.
+\tag{5.4}
+\]</div>
+<p>当且仅当两个协方差相同时 <span class="arithmatex">\(A+B=4\)</span>，式 (5.3) 等于 1。这里不要求中心相同，
+也不能区分整框 Gaussian 已经丢掉的正方形角度。因此“相似度等于 1”不能直接解释为原框完全
+重合。若 <span class="arithmatex">\(\alpha=1\)</span>，则</p>
+<div class="arithmatex">\[
+\operatorname{MKIoU}
+=\frac3{A+B-1}=3\operatorname{KFIoU}.
+\tag{5.5}
+\]</div>
+<p>所以 MKIoU 不是从新的概率距离定理推出的量，而是用 <span class="arithmatex">\(\alpha\)</span> 改变高重叠区域斜率的检测设计。</p>
+<p>具体地，令 <span class="arithmatex">\(t=A+B\ge4\)</span>，将形状损失记为 <span class="arithmatex">\(1-\operatorname{MKIoU}\)</span>，则</p>
+<div class="arithmatex">\[
+\frac{\mathrm d(1-\operatorname{MKIoU})}{\mathrm dt}
+=\frac{4-\alpha}{(t-\alpha)^2},\qquad
+\left.\frac{\mathrm d(1-\operatorname{MKIoU})}{\mathrm dt}\right|_{t=4}
+=\frac1{4-\alpha}.
+\tag{5.5a}
+\]</div>
+<p>这就是“调制斜率”的具体含义：<span class="arithmatex">\(\alpha\)</span> 越接近 4，最佳形状附近对 <span class="arithmatex">\(t\)</span> 的变化越敏感。但这里是
+对汇总量 <span class="arithmatex">\(t\)</span> 求导，并不保证每一个原始框参数在所有位置都有非零梯度。</p>
+<h3 id="52-gaussian-angle-loss">5.2 Gaussian Angle Loss 的周期和梯度<a class="headerlink" href="#52-gaussian-angle-loss" title="Permanent link">¶</a></h3>
+<p>重新标定相似度只能改变数值曲线，不能创造已经丢掉的信息。正方形的协方差与角度无关，所以
+MKIoU 还需要额外读入预测角和标注角。这个补偿最好主要用于接近正方形的目标，细长目标已有较强
+的形状方向信号；下面的指数系数就是这样一个随长宽比变化的“开关”。</p>
+<p>设 <span class="arithmatex">\(\Delta\theta=\theta_p-\theta_g\)</span>，目标长宽为 <span class="arithmatex">\(w_g,h_g\)</span>。论文定义 <sup id="fnref4:7"><a class="footnote-ref" href="#fn:7">7</a></sup></p>
+<div class="arithmatex">\[
+\boxed{
+L_{\rm GA}
+=\beta\exp\left[
+4\lambda-\lambda\left(\frac{w_g}{h_g}+\frac{h_g}{w_g}\right)^2
+\right]\sin^2(2\Delta\theta).
+}
+\tag{5.6}
+\]</div>
+<p>这里 <span class="arithmatex">\(\beta\ge0\)</span> 控制角度项的总体权重，<span class="arithmatex">\(\lambda&gt;0\)</span> 控制离开正方形后权重衰减得多快。
+下面关于指数衰减的解释需要 <span class="arithmatex">\(\lambda&gt;0\)</span>；若取 <span class="arithmatex">\(\lambda=0\)</span>，系数恒为 <span class="arithmatex">\(\beta\)</span>，便不再有
+长宽比门控。</p>
+<p>先解释长宽比门控。令 <span class="arithmatex">\(r=w_g/h_g&gt;0\)</span>，则由 AM--GM，</p>
+<div class="arithmatex">\[
+r+\frac1r\ge2
+\quad\Longrightarrow\quad
+4-\left(r+\frac1r\right)^2\le0.
+\tag{5.7}
+\]</div>
+<p>当且仅当 <span class="arithmatex">\(r=1\)</span> 时指数为 0，门控系数达到 <span class="arithmatex">\(\beta\)</span>；<span class="arithmatex">\(r\)</span> 远离 1 时指数迅速变负，角度补偿趋近
+0。再看周期：</p>
+<div class="arithmatex">\[
+\sin^2[2(\Delta\theta+\pi/2)]
+=\sin^2(2\Delta\theta+\pi)
+=\sin^2(2\Delta\theta),
+\tag{5.8}
+\]</div>
+<p>它正好具有正方形的 <span class="arithmatex">\(90^\circ\)</span> 周期。对预测角求导时，指数系数与 <span class="arithmatex">\(\theta_p\)</span> 无关，而且</p>
+<div class="arithmatex">\[
+\frac{\mathrm d}{\mathrm dz}\sin^2z=2\sin z\cos z=\sin2z.
+\tag{5.9}
+\]</div>
+<p>令 <span class="arithmatex">\(z=2\Delta\theta\)</span>，<span class="arithmatex">\(\mathrm dz/\mathrm d\theta_p=2\)</span>，故</p>
+<div class="arithmatex">\[
+\boxed{
+\frac{\partial L_{\rm GA}}{\partial\theta_p}
+=2\beta e^{4\lambda-\lambda(r+1/r)^2}\sin(4\Delta\theta).
+}
+\tag{5.10}
+\]</div>
+<p>MKIoU 论文的导数展示式漏写了 <span class="arithmatex">\(\beta\)</span>；只有取 <span class="arithmatex">\(\beta=1\)</span> 时原展示式才成立。令
+<span class="arithmatex">\(c_{ip},c_{ig}\)</span> 分别表示预测框和真值框在 <span class="arithmatex">\(i\in\{x,y\}\)</span> 方向的中心坐标，最终回归设计为</p>
+<div class="arithmatex">\[
+L_{\rm reg}
+=\sum_{i\in\{x,y\}}L_{\rm smoothL1}(c_{ip},c_{ig})
++(1-\operatorname{MKIoU})+L_{\rm GA}.
+\tag{5.11}
+\]</div>
+<p>这也说明 GA Loss 是显式增加的信息通道：它不能从已经各向同性的 <span class="arithmatex">\(\Sigma\)</span> 中“恢复”角度，而是
+重新使用原始标注角 <span class="arithmatex">\(\theta_g\)</span>。</p>
+<p>还需保留两个边界。其一，在 <span class="arithmatex">\(\Delta\theta=\pi/4\)</span> 时，这个角度项达到最大值，但式 (5.10) 的
+导数仍为 0；“能区分角度”不等于“任何错误角度都有非零梯度”。其二，门控只依赖真值长宽比，
+交换预测和真值后一般会改变权重，所以 <strong>GA 项及 MKIoU+GA 一般不对称</strong>。单独的 MKIoU 才对称。</p>
+<p>式 (5.11) 中 <span class="arithmatex">\(L_{\rm smoothL1}\)</span> 是接近零时用二次误差、偏差较大时用线性误差的函数。例如阈值
+为 1 时，令 <span class="arithmatex">\(e=c_{ip}-c_{ig}\)</span>，它等于 <span class="arithmatex">\(e^2/2\)</span>（<span class="arithmatex">\(|e|&lt;1\)</span>）或 <span class="arithmatex">\(|e|-1/2\)</span>（<span class="arithmatex">\(|e|\ge1\)</span>）。
+这个中心项若直接用像素坐标，并不对共同缩放保持不变。因此 MKIoU 和 GA 的尺度性质不能不加
+条件地扩展到包含中心项的整个回归损失。</p>
+<h2 id="g-rep-mle-gaussian">六、G-Rep：任意点集如何通过 MLE 压缩成 Gaussian<a class="headerlink" href="#g-rep-mle-gaussian" title="Permanent link">¶</a></h2>
+<p>G-Rep 把输入从固定五参数 OBB 推广为点集，因此可以统一表示 OBB、四边形框和点预测 <sup id="fnref2:8"><a class="footnote-ref" href="#fn:8">8</a></sup>。核心
+是对点集拟合 Gaussian，再使用 WD、KLD 或 Bhattacharyya 距离；这一步需要明确压缩掉了什么。</p>
+<h3 id="61">6.1 均值和协方差的最大似然推导<a class="headerlink" href="#61" title="Permanent link">¶</a></h3>
+<p>“最大似然”可以先理解为一个拟合问题：点的位置已经给定，我们改变 Gaussian 的中心和宽度，
+使这些点在该模型下获得尽可能大的联合密度。这里变化的是模型参数，不是这些点。概率密度并非
+单点概率，所以密度大于 1 并不矛盾。</p>
+<p>把预测点当成独立 Gaussian 样本，是为了定义拟合准则；并不声称检测器预测的顶点真由独立随机
+采样产生。得到的 Gaussian 只是对点集的摘要，能留下中心、展开程度和主方向，却可能丢掉边界
+细节。</p>
+<p>给定 <span class="arithmatex">\(N\)</span> 个 <span class="arithmatex">\(d\)</span> 维点 <span class="arithmatex">\(x_1,\ldots,x_N\)</span>，假设它们独立来自
+<span class="arithmatex">\(\mathcal N(\mu,\Sigma)\)</span>。联合似然为</p>
+<div class="arithmatex">\[
+L(\mu,\Sigma)
+=\prod_{i=1}^N
+\frac{1}{(2\pi)^{d/2}|\Sigma|^{1/2}}
+\exp\left[-\frac12(x_i-\mu)^\top\Sigma^{-1}(x_i-\mu)\right].
+\tag{6.1}
+\]</div>
+<p>取对数：</p>
+<div class="arithmatex">\[
+\ell
+=-\frac{Nd}{2}\log(2\pi)-\frac N2\log|\Sigma|
+-\frac12\sum_{i=1}^N(x_i-\mu)^\top\Sigma^{-1}(x_i-\mu).
+\tag{6.2}
+\]</div>
+<p>先固定 <span class="arithmatex">\(\Sigma\)</span> 对 <span class="arithmatex">\(\mu\)</span> 求导。因为对称矩阵 <span class="arithmatex">\(A\)</span> 满足</p>
+<div class="arithmatex">\[
+\frac{\partial}{\partial\mu}(x_i-\mu)^\top A(x_i-\mu)
+=-2A(x_i-\mu),
+\tag{6.3}
+\]</div>
+<p>所以</p>
+<div class="arithmatex">\[
+\frac{\partial\ell}{\partial\mu}
+=\Sigma^{-1}\sum_{i=1}^N(x_i-\mu).
+\tag{6.4}
+\]</div>
+<p>令其为 0，并左乘可逆的 <span class="arithmatex">\(\Sigma\)</span>：</p>
+<div class="arithmatex">\[
+\sum_i x_i-N\mu=0
+\quad\Longrightarrow\quad
+\boxed{\hat\mu=\frac1N\sum_{i=1}^Nx_i}.
+\tag{6.5}
+\]</div>
+<p>再用精度矩阵 <span class="arithmatex">\(\Lambda=\Sigma^{-1}\)</span> 求协方差，这会比直接对逆矩阵求导清楚。令
+<span class="arithmatex">\(r_i=x_i-\hat\mu\)</span>，利用 <span class="arithmatex">\(\log|\Sigma|=-\log|\Lambda|\)</span> 以及
+<span class="arithmatex">\(r_i^\top\Lambda r_i=\operatorname{Tr}(\Lambda r_ir_i^\top)\)</span>，有</p>
+<div class="arithmatex">\[
+\ell(\Lambda)
+=\text{常数}+\frac N2\log|\Lambda|
+-\frac12\operatorname{Tr}\left(
+\Lambda\sum_i r_ir_i^\top
+\right).
+\tag{6.6}
+\]</div>
+<p>为什么换成精度矩阵更方便？在式 (6.6) 中，数据相关的第二项对 <span class="arithmatex">\(\Lambda\)</span> 已经是线性的，唯一的
+非线性项只剩 <span class="arithmatex">\(\log|\Lambda|\)</span>。令 <span class="arithmatex">\(S=\sum_i r_ir_i^\top\)</span>，其中 <span class="arithmatex">\(S\)</span> 在优化 <span class="arithmatex">\(\Lambda\)</span> 时固定。
+对可逆矩阵，行列式微分满足
+<span class="arithmatex">\(\mathrm d|\Lambda|=|\Lambda|\operatorname{Tr}(\Lambda^{-1}\mathrm d\Lambda)\)</span>；再用一元链式
+法则除以 <span class="arithmatex">\(|\Lambda|\)</span>，便得到下面的第一条公式。</p>
+<p>矩阵微分恒等式为</p>
+<div class="arithmatex">\[
+\mathrm d\log|\Lambda|=\operatorname{Tr}(\Lambda^{-1}\mathrm d\Lambda),
+\qquad
+\mathrm d\operatorname{Tr}(\Lambda S)=\operatorname{Tr}(S\,\mathrm d\Lambda).
+\tag{6.7}
+\]</div>
+<p>因此一阶条件是</p>
+<div class="arithmatex">\[
+\frac N2\Lambda^{-1}-\frac12\sum_i r_ir_i^\top=0.
+\tag{6.8}
+\]</div>
+<p>由于 <span class="arithmatex">\(\Lambda^{-1}=\Sigma\)</span>，得到</p>
+<div class="arithmatex">\[
+\boxed{
+\hat\Sigma_{\rm MLE}
+=\frac1N\sum_{i=1}^N(x_i-\hat\mu)(x_i-\hat\mu)^\top.
+}
+\tag{6.9}
+\]</div>
+<p>分母是 <span class="arithmatex">\(N\)</span>，不是无偏样本协方差的 <span class="arithmatex">\(N-1\)</span>：这里优化的是这一组数据的 Gaussian 似然，而非要求
+估计量在重复抽样中无偏。在样本协方差正定的条件下，这个驻点确实是最大值。原因是
+<span class="arithmatex">\(\log\det\Lambda\)</span> 在正定矩阵上严格凹，而式 (6.6) 的另一项为线性项；沿任何非零对称扰动
+<span class="arithmatex">\(H\)</span>，二阶变化包含
+<span class="arithmatex">\(-\operatorname{Tr}(\Lambda^{-1}H\Lambda^{-1}H)&lt;0\)</span>，因此不会把极小点误当极大点。</p>
+<p><strong>满秩条件不能省略。</strong> 中心化后的 <span class="arithmatex">\(N\)</span> 个向量之和为 0，所以
+<span class="arithmatex">\(\operatorname{rank}(\hat\Sigma)\le\min(d,N-1)\)</span>。当 <span class="arithmatex">\(N\le d\)</span> 时一定奇异；即使 <span class="arithmatex">\(N&gt;d\)</span>，
+若所有点仍在一条直线或更低维的仿射子空间里，也可能奇异。只有点集在仿射意义上张成整个
+<span class="arithmatex">\(d\)</span> 维空间，式 (6.9) 才是一个非退化 Gaussian 的合法最大似然协方差。</p>
+<p>退化时式 (6.9) 仍给出正确的<strong>经验二阶矩</strong>，但在“协方差必须正定”的 Gaussian 模型中，
+不存在这样的有限最优解：把没有样本散布的方向的方差不断压到 0，似然会不断增大。实现中的
+<span class="arithmatex">\(\hat\Sigma+\varepsilon I\)</span> 是有意加入的数值正则化，不是原始无约束最大似然解；
+<span class="arithmatex">\(\varepsilon\)</span> 的量纲应与协方差一致。</p>
+<p>采样位置也会决定编码。把矩形的四个顶点作为等权样本，局部横坐标都是 <span class="arithmatex">\(\pm w/2\)</span>，得到方差
+<span class="arithmatex">\(w^2/4\)</span>；若改为矩形内部的均匀分布，则由第 1.2 节得到 <span class="arithmatex">\(w^2/12\)</span>。“同一个矩形拟合 Gaussian”
+并不唯一，必须先说清楚拟合的是哪些点、各点的权重是什么。</p>
+<h3 id="62">6.2 二阶矩压缩不是可逆表示<a class="headerlink" href="#62" title="Permanent link">¶</a></h3>
+<p>考虑两个四点集合</p>
+<div class="arithmatex">\[
+\mathcal A=\{(1,0),(-1,0),(0,1),(0,-1)\},
+\tag{6.10}
+\]</div>
+<div class="arithmatex">\[
+\mathcal B=\left\{
+(a,a),(a,-a),(-a,a),(-a,-a)
+\right\},\qquad a=\frac1{\sqrt2}.
+\tag{6.11}
+\]</div>
+<p>两者因中心对称都有 <span class="arithmatex">\(\hat\mu=0\)</span>。对 <span class="arithmatex">\(\mathcal A\)</span>，</p>
+<div class="arithmatex">\[
+\hat\Sigma_A
+=\frac14\left[
+\begin{bmatrix}1&amp;0\\0&amp;0\end{bmatrix}
++\begin{bmatrix}1&amp;0\\0&amp;0\end{bmatrix}
++\begin{bmatrix}0&amp;0\\0&amp;1\end{bmatrix}
++\begin{bmatrix}0&amp;0\\0&amp;1\end{bmatrix}
+\right]
+=\frac12I.
+\tag{6.12}
+\]</div>
+<p>对 <span class="arithmatex">\(\mathcal B\)</span>，每一点的两个平方坐标都是 <span class="arithmatex">\(a^2=1/2\)</span>，而四个交叉项
+<span class="arithmatex">\(a^2,-a^2,-a^2,a^2\)</span> 相消，故</p>
+<div class="arithmatex">\[
+\hat\Sigma_B=\frac12I.
+\tag{6.13}
+\]</div>
+<p>一个点集位于坐标轴上，另一个位于正方形四角，几何结构明显不同，却得到相同的
+<span class="arithmatex">\((\hat\mu,\hat\Sigma)\)</span>。因此任何 Gaussian 距离都给出 0。G-Rep 的统一性来自二阶矩压缩；其代价是
+高阶形状、点顺序和多模态结构不可恢复。对只需一个整体 OBB 的任务这可能合适，对精确多边形边界则
+应考虑 P2P 等直接几何方法。</p>
+<h2 id="nwd-rka">七、从 NWD 到 RKA，以及二维公式怎样扩到三维<a class="headerlink" href="#nwd-rka" title="Permanent link">¶</a></h2>
+<h3 id="71-rka">7.1 RKA 改的是标签分配，不是距离<a class="headerlink" href="#71-rka" title="Permanent link">¶</a></h3>
+<p>到这里我们一直默认“预测框已经知道自己要逼近哪个真值”。训练中却要先决定这种对应关系。
+特别是微小目标，固定 IoU 阈值可能把几乎所有候选都判为负样本。RKA 的做法不是重写距离，而是
+对每个真值在候选里挑相对最好的若干个，让回归有可用的正样本。</p>
+<p>原始 NWD 给任意水平框与 anchor 一个相似度</p>
+<div class="arithmatex">\[
+S_{ij}
+=\exp\left[
+-\frac1C
+\sqrt{
+(x_i-x_j)^2+(y_i-y_j)^2
++\frac{(w_i-w_j)^2}{4}
++\frac{(h_i-h_j)^2}{4}}
+\right].
+\tag{7.1}
+\]</div>
+<p>NWD 的期刊扩展把它用于 Ranking-based Assignment（RKA）<sup id="fnref:9"><a class="footnote-ref" href="#fn:9">9</a></sup>。对第 <span class="arithmatex">\(g\)</span> 个真值和 <span class="arithmatex">\(M\)</span> 个候选
+anchor，先计算</p>
+<div class="arithmatex">\[
+\boldsymbol s_g=(S_{g1},\ldots,S_{gM}),
+\tag{7.2}
+\]</div>
+<p>再取使分数从大到小排列的置换 <span class="arithmatex">\(\pi_g\)</span>：</p>
+<div class="arithmatex">\[
+S_{g,\pi_g(1)}\ge S_{g,\pi_g(2)}\ge\cdots\ge S_{g,\pi_g(M)}.
+\tag{7.3}
+\]</div>
+<p>正样本集合定义为</p>
+<div class="arithmatex">\[
+\boxed{\mathcal P_g=\{\pi_g(1),\ldots,\pi_g(k)\}.}
+\tag{7.4}
+\]</div>
+<p>这里 <span class="arithmatex">\(1\le k\le M\)</span>，并应为同分候选规定稳定的并列处理规则。与固定阈值 <span class="arithmatex">\(S_{gj}\ge t\)</span> 相比，
+式 (7.4) 为每个真值先选出相同数量 <span class="arithmatex">\(k\)</span> 的正样本候选，避免微小目标因为
+像素离散和极低 IoU 几乎没有正样本。由于指数函数严格单调递减，</p>
+<div class="arithmatex">\[
+S_{ga}&gt;S_{gb}
+\quad\Longleftrightarrow\quad
+W_2(B_g,A_a)&lt;W_2(B_g,A_b),
+\tag{7.5}
+\]</div>
+<p>所以在同一个 <span class="arithmatex">\(C&gt;0\)</span> 下，按 NWD 降序与按原始 <span class="arithmatex">\(W_2\)</span> 升序完全等价；<span class="arithmatex">\(C\)</span> 不改变 top-<span class="arithmatex">\(k\)</span> 排名。
+但 <span class="arithmatex">\(C\)</span> 会改变把相似度直接放进 loss 或阈值判断时的数值。论文实验默认 <span class="arithmatex">\(k=2\)</span>，这是超参数而非
+Wasserstein 理论结论 <sup id="fnref2:9"><a class="footnote-ref" href="#fn:9">9</a></sup>。</p>
+<p>候选同时进入多个 <span class="arithmatex">\(\mathcal P_g\)</span> 时仍需检测框架的冲突消解规则；若每个候选最终只能归一个
+真值，消解后的每个真值不一定还保留恰好 <span class="arithmatex">\(k\)</span> 个正样本。RKA 说明同一个距离可以出现在
+三个位置：回归 loss、标签分配和 NMS；三者的算法角色不能混写。</p>
+<h3 id="72-gaussian">7.2 二维/三维 Gaussian 框的统一式<a class="headerlink" href="#72-gaussian" title="Permanent link">¶</a></h3>
+<p>这一小节切换的是<strong>空间维数</strong>，不是继续改标签分配。二维框有两个主轴，三维框有三个；只要把
+每条主轴的边长变成相应方差，再用合法旋转矩阵转到全局坐标，就能重复同一套 Gaussian 计算。</p>
+<p>二维旋转框使用 <span class="arithmatex">\(R\in SO(2)\)</span>。三维旋转框</p>
+<div class="arithmatex">\[
+B=(\mu,w,h,l,R),\qquad R\in SO(3),
+\tag{7.6}
+\]</div>
+<p>可同样编码为 <sup id="fnref5:6"><a class="footnote-ref" href="#fn:6">6</a></sup><sup id="fnref:10"><a class="footnote-ref" href="#fn:10">10</a></sup></p>
+<div class="arithmatex">\[
+\boxed{
+\Sigma
+=R\operatorname{diag}\left(\frac{w^2}{4},\frac{h^2}{4},\frac{l^2}{4}\right)R^\top.
+}
+\tag{7.7}
+\]</div>
+<p>这里 <span class="arithmatex">\(SO(3)=\{R:R^\top R=I,\det R=1\}\)</span>。正交相似变换保留特征值：</p>
+<div class="arithmatex">\[
+\det(\lambda I-\Sigma)
+=\det[R(\lambda I-D)R^\top]
+=\det(\lambda I-D),
+\tag{7.8}
+\]</div>
+<p>其中 <span class="arithmatex">\(D\)</span> 是式 (7.7) 的对角矩阵，所以 <span class="arithmatex">\(\Sigma\)</span> 的特征向量给方向，特征值平方根的两倍给边长。</p>
+<p>这里“特征向量给方向”需要说明唯一性：特征值互不相同时，主轴方向可确定到符号和排列的
+等价关系；重复特征值对应的子空间内可任意旋转，所以不能从协方差中唯一解出那些方向。
+体积恢复式正是</p>
+<div class="arithmatex">\[
+8\sqrt{\det\Sigma}
+=8\sqrt{\frac{w^2h^2l^2}{4^3}}=whl.
+\tag{7.9}
+\]</div>
+<p>Gaussian <span class="arithmatex">\(W_2\)</span> 的一般闭式不随维数改变：</p>
+<div class="arithmatex">\[
+W_2^2
+=\|\mu_p-\mu_g\|^2
++\operatorname{Tr}\left[
+\Sigma_p+\Sigma_g
+-2(\Sigma_g^{1/2}\Sigma_p\Sigma_g^{1/2})^{1/2}
+\right].
+\tag{7.10}
+\]</div>
+<p>KLD 也只需把二维中的常数 <span class="arithmatex">\(2\)</span> 换成维数 <span class="arithmatex">\(d=3\)</span>：</p>
+<div class="arithmatex">\[
+D_{\rm KL}(P\|G)
+=\frac12\left[
+\operatorname{Tr}(\Sigma_g^{-1}\Sigma_p)
++\Delta\mu^\top\Sigma_g^{-1}\Delta\mu
+-3+\log\frac{|\Sigma_g|}{|\Sigma_p|}
+\right].
+\tag{7.11}
+\]</div>
+<p>真正困难的不是把 <span class="arithmatex">\(2\)</span> 改成 <span class="arithmatex">\(3\)</span>，而是三维旋转表示：Euler 角有奇异性与多重参数化，四元数有
+<span class="arithmatex">\(q\)</span> 与 <span class="arithmatex">\(-q\)</span> 的二对一关系。若检测头先输出一个合法 <span class="arithmatex">\(R\)</span> 或正定 <span class="arithmatex">\(\Sigma\)</span>，式 (7.7)--(7.11) 才能
+直接使用。KFIoU 和后续 2D/3D Gaussian 工作验证了这条扩展路线 <sup id="fnref6:6"><a class="footnote-ref" href="#fn:6">6</a></sup><sup id="fnref2:10"><a class="footnote-ref" href="#fn:10">10</a></sup>，但它仍继承各向同性物体
+方向不可辨的基本限制。</p>
+<h2 id="gaussian_1">八、换距离还不够：直接修改 Gaussian 表示与检测头<a class="headerlink" href="#gaussian_1" title="Permanent link">¶</a></h2>
+<h3 id="81-lgbb">8.1 LGBB：把正定矩阵换成线性坐标<a class="headerlink" href="#81-lgbb" title="Permanent link">¶</a></h3>
+<p>前面的方法大多先让检测头输出宽、高、角度，再把它们转成矩阵。本章反过来问：既然最后要比较
+矩阵，能否直接预测矩阵的三个独立元素？困难在于，任意三个实数不一定构成合法协方差。
+LGBB 尝试让表示更适合回归；GauCho 则从参数化本身保证正定。这是“怎么输出”的问题，不是
+再换一个“怎么比较”的公式。</p>
+<p>写二维对称 Gaussian 矩阵为</p>
+<div class="arithmatex">\[
+G=
+\begin{bmatrix}
+g_1&amp;g_2\\
+g_2&amp;g_3
+\end{bmatrix}.
+\tag{8.1}
+\]</div>
+<p>直接回归 <span class="arithmatex">\((g_1,g_2,g_3)\)</span> 的困难是三个实数并不自动保证 <span class="arithmatex">\(G\succ0\)</span>。LGBB 使用线性变换 <sup id="fnref:11"><a class="footnote-ref" href="#fn:11">11</a></sup></p>
+<div class="arithmatex">\[
+\begin{bmatrix}l_1\\l_2\\l_3\end{bmatrix}
+=
+\begin{bmatrix}
+1/2&amp;0&amp;1/2\\
+1&amp;0&amp;0\\
+1/2&amp;1&amp;1/2
+\end{bmatrix}
+\begin{bmatrix}g_1\\g_2\\g_3\end{bmatrix},
+\tag{8.2}
+\]</div>
+<p>也就是</p>
+<div class="arithmatex">\[
+l_1=\frac{g_1+g_3}{2},\qquad
+l_2=g_1,\qquad
+l_3=\frac{g_1+2g_2+g_3}{2}.
+\tag{8.3}
+\]</div>
+<p>反变换逐步解得</p>
+<div class="arithmatex">\[
+g_1=l_2,
+\tag{8.4}
+\]</div>
+<div class="arithmatex">\[
+g_3=2l_1-g_1=2l_1-l_2,
+\tag{8.5}
+\]</div>
+<div class="arithmatex">\[
+g_2=l_3-\frac{g_1+g_3}{2}=l_3-l_1.
+\tag{8.6}
+\]</div>
+<p>所以</p>
+<div class="arithmatex">\[
+\boxed{
+G=
+\begin{bmatrix}
+l_2&amp;l_3-l_1\\
+l_3-l_1&amp;2l_1-l_2
+\end{bmatrix}.
+}
+\tag{8.7}
+\]</div>
+<p>二维对称矩阵正定当且仅当首个顺序主子式与行列式为正：</p>
+<div class="arithmatex">\[
+l_2&gt;0,\qquad
+\boxed{\det G=l_2(2l_1-l_2)-(l_3-l_1)^2&gt;0.}
+\tag{8.8}
+\]</div>
+<p>论文的训练项把违反行列式约束的部分罚回去：</p>
+<div class="arithmatex">\[
+L
+=\gamma_1L_{\rm reg}^{s}
+-\gamma_2\min\{
+l_2(2l_1-l_2)-(l_3-l_1)^2,0
+\}.
+\tag{8.9}
+\]</div>
+<p><strong>校正：软惩罚不等于正定保证。</strong> 式 (8.2) 只是可逆线性换坐标；式 (8.9) 的额外项只在行列式
+为负时产生正惩罚，鼓励网络向合法区域移动，但并没有施加严格的可行域约束。行列式等于 0 时，
+矩阵已经不可逆，该项却仍为 0；<span class="arithmatex">\(G=-I\)</span> 的行列式为 1，该项也为 0，但它是负定矩阵。</p>
+<p>因此，网络的其他激活或参数化还需保证 <span class="arithmatex">\(l_2&gt;0\)</span>，并妥善处理行列式接近 0 的情形。论文的损失项
+应按其训练设计理解，不能只由这一项就推出“每次输出必然正定”。二维判据要求两个严格不等式
+同时成立，这与“线性变换可以求逆”是两回事。</p>
+<h3 id="82-structure-tensor">8.2 Structure Tensor：如何从三个矩阵元素解码角度<a class="headerlink" href="#82-structure-tensor" title="Permanent link">¶</a></h3>
+<p>方向不一定非要由一个角度数值表示。也可以用一个椭圆状矩阵间接表示：它的长轴指向目标方向，
+矩阵元素随方向连续变化。解码时再从矩阵求回主方向。接下来要回答两个问题：为什么公式里出现
+<span class="arithmatex">\(2\theta\)</span>，以及为什么必须先约定哪一个特征值较大。</p>
+<p>结构张量方法写 <sup id="fnref2:12"><a class="footnote-ref" href="#fn:12">12</a></sup></p>
+<div class="arithmatex">\[
+T=R_\theta
+\begin{bmatrix}\lambda_1&amp;0\\0&amp;\lambda_2\end{bmatrix}
+R_\theta^\top.
+\tag{8.10}
+\]</div>
+<p>展开旋转乘法：</p>
+<div class="arithmatex">\[
+T_{11}=\lambda_1\cos^2\theta+\lambda_2\sin^2\theta,
+\tag{8.11}
+\]</div>
+<div class="arithmatex">\[
+T_{22}=\lambda_1\sin^2\theta+\lambda_2\cos^2\theta,
+\tag{8.12}
+\]</div>
+<div class="arithmatex">\[
+T_{12}=(\lambda_1-\lambda_2)\sin\theta\cos\theta
+=\frac{\lambda_1-\lambda_2}{2}\sin2\theta.
+\tag{8.13}
+\]</div>
+<p>两条对角线相减：</p>
+<div class="arithmatex">\[
+T_{11}-T_{22}
+=(\lambda_1-\lambda_2)(\cos^2\theta-\sin^2\theta)
+=(\lambda_1-\lambda_2)\cos2\theta.
+\tag{8.14}
+\]</div>
+<p>若约定 <span class="arithmatex">\(\lambda_1&gt;\lambda_2\)</span>，将式 (8.13)--(8.14) 看成半径为
+<span class="arithmatex">\(\lambda_1-\lambda_2\)</span>、极角为 <span class="arithmatex">\(2\theta\)</span> 的二维向量，便得到</p>
+<div class="arithmatex">\[
+\boxed{
+\theta=\frac12\operatorname{atan2}(2T_{12},T_{11}-T_{22})
+\pmod{\pi}.
+}
+\tag{8.15}
+\]</div>
+<p><span class="arithmatex">\(\operatorname{atan2}(y,x)\)</span> 同时利用两个坐标的符号来确定象限；只算 <span class="arithmatex">\(\arctan(y/x)\)</span> 会丢失
+象限信息，而且在 <span class="arithmatex">\(x=0\)</span> 时不能直接除。先解出 <span class="arithmatex">\(2\theta\)</span> 再除以 2，意味着最后方向只确定到
+<span class="arithmatex">\(\pi\)</span> 周期，即一条无向轴，而不是带箭头的方向。</p>
+<p><strong>校正：仅写 <span class="arithmatex">\(\lambda_1\\ne\lambda_2\)</span> 不够。</strong> 若实际 <span class="arithmatex">\(\lambda_1&lt;\lambda_2\)</span>，式 (8.15)
+返回的是 <span class="arithmatex">\(\theta+\pi/2\pmod\pi\)</span>，也就是第二条、更长的主轴，而非原定义的第一条轴。解码时
+应先排列特征值并同时排列边长。原论文采用长边约定，正是为了统一这个选择 <sup id="fnref3:12"><a class="footnote-ref" href="#fn:12">12</a></sup>。</p>
+<p>再求边长信息时，不必把特征值公式当成另一个黑箱。展开
+<span class="arithmatex">\(\det(\lambda I-T)=0\)</span>，得到
+<span class="arithmatex">\(\lambda^2-(T_{11}+T_{22})\lambda+T_{11}T_{22}-T_{12}^2=0\)</span>，应用一元二次方程求根公式即可。</p>
+<p>特征值由二次方程得到：</p>
+<div class="arithmatex">\[
+\boxed{
+\lambda_{1,2}
+=\frac{T_{11}+T_{22}}2
+\pm\frac12\sqrt{(T_{11}-T_{22})^2+4T_{12}^2}.
+}
+\tag{8.16}
+\]</div>
+<p>当 <span class="arithmatex">\(\lambda_1=\lambda_2\)</span> 时，式 (8.15) 的两个输入都为 0，角度不可定义，这再次证明第 1.4 节的
+不可能性。常规形状张量取 <span class="arithmatex">\(\lambda_1=w/2,\lambda_2=h/2\)</span>；论文为 square-like 目标人为采用</p>
+<div class="arithmatex">\[
+\lambda_1=w,\qquad \lambda_2=h/2,
+\tag{8.17}
+\]</div>
+<p>把正方形也变成 <span class="arithmatex">\(2:1\)</span> 的各向异性张量，并在 <span class="arithmatex">\(|w-h|\le\varepsilon\)</span> 时按 <span class="arithmatex">\(\pi/2\)</span> 周期归一角度 <sup id="fnref4:12"><a class="footnote-ref" href="#fn:12">12</a></sup>。
+式 (8.17) 保住了方向，但 <span class="arithmatex">\(T\)</span> 不再是原矩形的真实二阶矩或原框等密度椭圆；这是表示设计，
+不是统计估计。</p>
+<h3 id="83-gauchocholesky">8.3 GauCho：Cholesky 参数为什么始终给出正定矩阵<a class="headerlink" href="#83-gauchocholesky" title="Permanent link">¶</a></h3>
+<p>与其预测一个可能非法的对称矩阵后再惩罚，不如预测一个容易保持可逆的三角矩阵，再将它与自身
+转置相乘。这样矩阵的正定性不是训练“学会”的，而是构造本身带来的。下面是二维情形 <sup id="fnref:13"><a class="footnote-ref" href="#fn:13">13</a></sup>。</p>
+<p>GauCho 不让检测头先输出 <span class="arithmatex">\((w,h,\theta)\)</span>，而是直接输出 <sup id="fnref2:13"><a class="footnote-ref" href="#fn:13">13</a></sup></p>
+<div class="arithmatex">\[
+L=
+\begin{bmatrix}
+\alpha&amp;0\\
+\gamma&amp;\beta
+\end{bmatrix},
+\qquad \alpha,\beta&gt;0,\quad\gamma\in\mathbb R.
+\tag{8.18}
+\]</div>
+<p>令</p>
+<div class="arithmatex">\[
+\boxed{
+C=LL^\top
+=\begin{bmatrix}
+\alpha^2&amp;\alpha\gamma\\
+\alpha\gamma&amp;\gamma^2+\beta^2
+\end{bmatrix}.
+}
+\tag{8.19}
+\]</div>
+<p>对任意非零 <span class="arithmatex">\(z\)</span>，</p>
+<div class="arithmatex">\[
+z^\top Cz=z^\top LL^\top z=\|L^\top z\|^2&gt;0,
+\tag{8.20}
+\]</div>
+<p>因为 <span class="arithmatex">\(\alpha\beta\ne0\)</span> 使 <span class="arithmatex">\(L\)</span> 可逆，故 <span class="arithmatex">\(L^\top z\ne0\)</span>。所以 <span class="arithmatex">\(C\succ0\)</span>。反过来，每个正定矩阵都
+有唯一一个正对角线的 Cholesky 因子，因而式 (8.18) 与合法协方差之间是双射。</p>
+<p>二维时还能直接写出反变换：</p>
+<div class="arithmatex">\[
+\alpha=\sqrt{C_{11}},\qquad
+\gamma=\frac{C_{12}}{\alpha},\qquad
+\beta=\sqrt{C_{22}-\gamma^2}
+=\sqrt{\frac{\det C}{C_{11}}}.
+\tag{8.20a}
+\]</div>
+<p>正定性保证两个根号内都为正，并由正号约定排除了多解。工程上可对两个未约束输出使用指数函数，
+或 <span class="arithmatex">\(\operatorname{softplus}(z)=\log(1+e^z)\)</span> 后再加正的小量，使对角线保持正数；这是合法参数化的
+示例，具体模型的激活与尺度仍应以其实现为准。正定不等于数值状况一定良好：一条对角线过小
+仍可能导致矩阵近乎奇异。</p>
+<p>下文给参数界，是为了看懂三角因子的尺度如何由原矩阵的尺度控制。所谓 Rayleigh 商，就是
+<span class="arithmatex">\(z^\top Cz/(z^\top z)\)</span>；把 <span class="arithmatex">\(z\)</span> 展开到特征向量基底后，它是特征值的加权平均，因此落在最小和
+最大特征值之间。取 <span class="arithmatex">\(z=e_1=(1,0)^\top\)</span>，就能得到对 <span class="arithmatex">\(\alpha\)</span> 的界。</p>
+<p>下面补全 GauCho 参数界。设 <span class="arithmatex">\(C\)</span> 的特征值为
+<span class="arithmatex">\(0&lt;\lambda_{\min}\le\lambda_{\max}\)</span>。Rayleigh 商给出</p>
+<div class="arithmatex">\[
+\lambda_{\min}\le e_1^\top Ce_1=\alpha^2\le\lambda_{\max},
+\tag{8.21}
+\]</div>
+<p>于是</p>
+<div class="arithmatex">\[
+\sqrt{\lambda_{\min}}\le\alpha\le\sqrt{\lambda_{\max}}.
+\tag{8.22}
+\]</div>
+<p>又因为</p>
+<div class="arithmatex">\[
+\det C=(\det L)^2=\alpha^2\beta^2
+=\lambda_{\min}\lambda_{\max},
+\tag{8.23}
+\]</div>
+<p>有</p>
+<div class="arithmatex">\[
+\beta^2=\frac{\lambda_{\min}\lambda_{\max}}{\alpha^2}.
+\tag{8.24}
+\]</div>
+<p>把式 (8.21) 的上下界代入分母，得到</p>
+<div class="arithmatex">\[
+\lambda_{\min}\le\beta^2\le\lambda_{\max},
+\qquad
+\sqrt{\lambda_{\min}}\le\beta\le\sqrt{\lambda_{\max}}.
+\tag{8.25}
+\]</div>
+<p>最后证明非对角参数的紧上界。写
+<span class="arithmatex">\(a=\sqrt{\lambda_{\max}},b=\sqrt{\lambda_{\min}}\)</span>，并把 <span class="arithmatex">\(C\)</span> 特征分解为旋转角 <span class="arithmatex">\(\theta\)</span>，则</p>
+<div class="arithmatex">\[
+\alpha^2=a^2\cos^2\theta+b^2\sin^2\theta,
+\tag{8.26}
+\]</div>
+<div class="arithmatex">\[
+\alpha\gamma=C_{12}=(a^2-b^2)\sin\theta\cos\theta.
+\tag{8.27}
+\]</div>
+<p>我们要证明 <span class="arithmatex">\(|\gamma|\le a-b\)</span>。先单独处理 <span class="arithmatex">\(a=b\)</span>：此时式 (8.27) 给出 <span class="arithmatex">\(\gamma=0\)</span>，
+结论成立。以下设 <span class="arithmatex">\(a&gt;b\)</span>。将不等式平方，代入式 (8.26)--(8.27)，再除以正数
+<span class="arithmatex">\((a-b)^2\)</span>，便等价于</p>
+<div class="arithmatex">\[
+(a+b)^2\sin^2\theta\cos^2\theta
+\le a^2\cos^2\theta+b^2\sin^2\theta.
+\tag{8.28}
+\]</div>
+<p>右边减左边恰好是</p>
+<div class="arithmatex">\[
+\begin{aligned}
+&amp;a^2\cos^2\theta+b^2\sin^2\theta
+-(a+b)^2\sin^2\theta\cos^2\theta\\
+&amp;=(a\cos^2\theta-b\sin^2\theta)^2\ge0.
+\end{aligned}
+\tag{8.29}
+\]</div>
+<p>故</p>
+<div class="arithmatex">\[
+\boxed{
+|\gamma|\le\sqrt{\lambda_{\max}}-\sqrt{\lambda_{\min}}.
+}
+\tag{8.30}
+\]</div>
+<p>GauCho 解决的是检测头输出合法协方差和角度边界连续性；它可以搭配 GWD、KLD、ProbIoU 等多种
+loss，本身不是一种新的 WD <sup id="fnref3:13"><a class="footnote-ref" href="#fn:13">13</a></sup>。</p>
+<p>这里的双射是“三角因子与正定矩阵”之间的双射，不是“所有旋转框与正定矩阵”之间的双射。
+正方形不同角度仍可能对应同一个矩阵，换成 Cholesky 参数并不能单独消除第 1.4 节的信息丢失。</p>
+<h3 id="84">8.4 人工各向异性表示能做什么，不能声称什么<a class="headerlink" href="#84" title="Permanent link">¶</a></h3>
+<p>Structure Tensor 与 2025 年 anisotropic GBB 都采用“故意打破各向同性”的思路 <sup id="fnref5:12"><a class="footnote-ref" href="#fn:12">12</a></sup><sup id="fnref2:16"><a class="footnote-ref" href="#fn:16">16</a></sup>。后者
+对 square-like 框使用依赖 <span class="arithmatex">\(4\theta\)</span> 的旋转与长宽扰动，使表示具有 <span class="arithmatex">\(\pi/2\)</span> 周期而不对其他角度
+恒等 <sup id="fnref3:16"><a class="footnote-ref" href="#fn:16">16</a></sup>。抽象写成</p>
+<div class="arithmatex">\[
+\Sigma'(\theta)
+=R_{\phi(\theta)}
+\operatorname{diag}(a(\theta)^2,b(\theta)^2)
+R_{\phi(\theta)}^\top,
+\qquad a(\theta)\ne b(\theta),
+\tag{8.31}
+\]</div>
+<p>两个特征值不同，意味着这个<strong>编码矩阵自身</strong>有可辨的主轴；按大小排列后可用式 (8.15)
+解码。但要进一步辨认原始角 <span class="arithmatex">\(\theta\)</span>，还必须保证整个映射随 <span class="arithmatex">\(\theta\)</span> 变化，并在目标允许的
+周期等价之外不把不同角度映为同一个矩阵。例如，固定两个不相等的特征值却完全不让矩阵随
+<span class="arithmatex">\(\theta\)</span> 变化，就仍然没有角度信息。因此“人为制造各向异性”提供了编码方向的可能性，
+并不单独证明映射可逆，也不保证最终损失在所有错误角度处都有非零梯度。</p>
+<p>但它有两点边界。第一，<span class="arithmatex">\(\Sigma'\)</span> 不再是原矩形均匀分布的协方差，因而 Bhattacharyya 或 WD
+比较的是“设计后的编码”，不是原区域的概率二阶矩。第二，该论文用大量随机三元组未发现反例来
+支持某个后处理 loss 的三角不等式 <sup id="fnref4:16"><a class="footnote-ref" href="#fn:16">16</a></sup>；有限随机检验不是对无限连续空间的数学证明。本文只把其
+当作实验观察，不升级为定理。</p>
+<h2 id="gcd">九、GCD：严格尺度不变，但不是数学度量<a class="headerlink" href="#gcd" title="Permanent link">¶</a></h2>
+<p>先用两个数字理解本章的动机：同样偏移 2 像素，对宽 4 像素的框是半个框宽，对宽 40 像素的框
+只是二十分之一个框宽。NWD 的固定常数统一衡量像素距离；GCD 则想用框自身的宽高衡量相对偏差。
+分别用预测框和真值框的尺度归一，再求平均，就能避免只偏向其中一方。</p>
+<p>GCD 是对 NWD 固定像素常数 <span class="arithmatex">\(C\)</span> 的后续批评：它使用预测框和目标框各自的尺度归一中心误差与形状
+误差，再对两个方向求平均 <sup id="fnref:14"><a class="footnote-ref" href="#fn:14">14</a></sup>。对水平框，论文给出的可直接计算标量式为</p>
+<div class="arithmatex">\[
+\begin{aligned}
+D_{gc}^2
+={}&amp;\frac12\left(
+\frac{\Delta x^2}{w_p^2}
++\frac{\Delta y^2}{h_p^2}\right)
++\frac12\left(
+\frac{(w_p-w_g)^2}{4w_p^2}
++\frac{(h_p-h_g)^2}{4h_p^2}\right)\\
+&amp;+\frac12\left(
+\frac{\Delta x^2}{w_g^2}
++\frac{\Delta y^2}{h_g^2}\right)
++\frac12\left(
+\frac{(w_g-w_p)^2}{4w_g^2}
++\frac{(h_g-h_p)^2}{4h_g^2}\right),
+\end{aligned}
+\tag{9.1}
+\]</div>
+<p>其中 <span class="arithmatex">\(\Delta x=x_p-x_g,\Delta y=y_p-y_g\)</span>。</p>
+<p>可把式 (9.1) 读成“两次打分”：先用预测框的宽高作尺子，计算中心误差和半边长误差；再用真值框
+的宽高作尺子，重复计算；最后平均。分母中的宽高必须严格为正。本文先讨论这个明确的水平框标量
+定义，再单独检验哪些数学性质成立，避免因为名字里有 distance 就默认它是度量。</p>
+<h3 id="91">9.1 可以严格证明的三个性质<a class="headerlink" href="#91" title="Permanent link">¶</a></h3>
+<p>第一，每项都是正数分母上的平方，因此</p>
+<div class="arithmatex">\[
+D_{gc}^2\ge0.
+\tag{9.2}
+\]</div>
+<p>若 <span class="arithmatex">\(D_{gc}^2=0\)</span>，所有平方项均为 0，于是
+<span class="arithmatex">\(x_p=x_g,y_p=y_g,w_p=w_g,h_p=h_g\)</span>；反向显然也成立。故它满足非负性与同一性。</p>
+<p>第二，交换 <span class="arithmatex">\(p,g\)</span> 只会交换式 (9.1) 第一、三项以及第二、四项，所以</p>
+<div class="arithmatex">\[
+D_{gc}^2(B_p,B_g)=D_{gc}^2(B_g,B_p).
+\tag{9.3}
+\]</div>
+<p>第三，对共同的正尺度变换</p>
+<div class="arithmatex">\[
+(x,y,w,h)\longmapsto
+(sx,sy,sw,sh),\qquad s&gt;0,
+\tag{9.4}
+\]</div>
+<p>每个分子与分母都乘 <span class="arithmatex">\(s^2\)</span>。例如</p>
+<div class="arithmatex">\[
+\frac{(s\Delta x)^2}{(sw_p)^2}
+=\frac{\Delta x^2}{w_p^2},
+\qquad
+\frac{(sw_p-sw_g)^2}{4(sw_p)^2}
+=\frac{(w_p-w_g)^2}{4w_p^2}.
+\tag{9.5}
+\]</div>
+<p>故</p>
+<div class="arithmatex">\[
+D_{gc}^2(sB_p,sB_g)=D_{gc}^2(B_p,B_g).
+\tag{9.6}
+\]</div>
+<p>这是严格的共同尺度不变性；NWD 的
+<span class="arithmatex">\(\exp[-W_2(B_p,B_g)/C]\)</span> 在 <span class="arithmatex">\(C\)</span> 固定时没有这个性质。</p>
+<h3 id="92">9.2 三角不等式反例<a class="headerlink" href="#92" title="Permanent link">¶</a></h3>
+<p>“非负、对称、尺度不变”仍不足以成为数学度量。固定中心与高度，只让宽度取正数 <span class="arithmatex">\(a,b\)</span>。式
+(9.1) 退化为</p>
+<div class="arithmatex">\[
+D_{gc}^2(a,b)
+=\frac{(a-b)^2}{8}\left(\frac1{a^2}+\frac1{b^2}\right),
+\tag{9.7}
+\]</div>
+<p>因而若把 <span class="arithmatex">\(d(a,b)=\sqrt{D_{gc}^2(a,b)}\)</span> 当距离，</p>
+<div class="arithmatex">\[
+d(a,b)
+=\frac{|a-b|}{2\sqrt2}
+\sqrt{\frac1{a^2}+\frac1{b^2}}.
+\tag{9.8}
+\]</div>
+<p>取 <span class="arithmatex">\(a=1,b=2,c=4\)</span>：</p>
+<div class="arithmatex">\[
+d(1,2)=d(2,4)=\frac{\sqrt5}{4\sqrt2},
+\tag{9.9}
+\]</div>
+<p>而</p>
+<div class="arithmatex">\[
+d(1,4)=\frac{3\sqrt{17}}{8\sqrt2}.
+\tag{9.10}
+\]</div>
+<p>比较平方前的正数即可：</p>
+<div class="arithmatex">\[
+\frac{3\sqrt{17}}{8\sqrt2}
+&gt;\frac{2\sqrt5}{4\sqrt2}
+\quad\Longleftrightarrow\quad
+3\sqrt{17}&gt;4\sqrt5
+\quad\Longleftrightarrow\quad
+153&gt;80.
+\tag{9.11}
+\]</div>
+<p>所以</p>
+<div class="arithmatex">\[
+\boxed{d(1,4)&gt;d(1,2)+d(2,4),}
+\tag{9.12}
+\]</div>
+<p>违反三角不等式。GCD 可以是有用的检测 dissimilarity，但“metric”若按严格数学定义理解并不
+成立。</p>
+<h3 id="93">9.3 一般仿射不变性论证的矩阵问题<a class="headerlink" href="#93" title="Permanent link">¶</a></h3>
+<p>共同可逆仿射变换下，Gaussian 协方差变成
+<span class="arithmatex">\(\Sigma'=M\Sigma M^\top\)</span>。KLD 和 Bhattacharyya 的不变性可通过逆矩阵与行列式严格证明；但不能
+使用</p>
+<div class="arithmatex">\[
+(M\Sigma M^\top)^{1/2}
+\stackrel{?}=M\Sigma^{1/2}M^\top.
+\tag{9.13}
+\]</div>
+<p>最简单的反例取 <span class="arithmatex">\(\Sigma=I\)</span>、<span class="arithmatex">\(M=\operatorname{diag}(2,1)\)</span>：</p>
+<div class="arithmatex">\[
+(MM^\top)^{1/2}=\operatorname{diag}(2,1),
+\tag{9.14}
+\]</div>
+<p>而</p>
+<div class="arithmatex">\[
+MI^{1/2}M^\top=\operatorname{diag}(4,1).
+\tag{9.15}
+\]</div>
+<p>二者不等。只有额外条件下才能把主平方根这样移出合同变换。因此 GCD 论文一般矩阵式中的仿射证明
+不能直接由式 (9.13) 得到 <sup id="fnref2:14"><a class="footnote-ref" href="#fn:14">14</a></sup>。这不否定已经由标量式严格证明的共同平移与尺度不变性，但必须
+收窄结论范围。</p>
+<h2 id="p2p-gaussian">十、P2P：不经 Gaussian，直接度量凸多边形<a class="headerlink" href="#p2p-gaussian" title="Permanent link">¶</a></h2>
+<p>Polygon-to-Polygon Loss 代表另一条路线：旋转框先转成四个顶点，直接比较两个凸多边形 <sup id="fnref:15"><a class="footnote-ref" href="#fn:15">15</a></sup>。
+令</p>
+<div class="arithmatex">\[
+A^n=(v_A^1,\ldots,v_A^n),\qquad
+B^m=(v_B^1,\ldots,v_B^m),
+\tag{10.1}
+\]</div>
+<p>顶点按同一方向排列，<span class="arithmatex">\(E_B^j=(v_B^j,v_B^{j+1})\)</span>，下标循环。</p>
+<h3 id="101">10.1 点到边的三角形面积<a class="headerlink" href="#101" title="Permanent link">¶</a></h3>
+<p>这里不再压缩成均值和协方差，而是保留每个顶点。点与一条边组成一个三角形，其面积就是“边长
+乘点到边所在直线的距离再除以 2”。对多边形的所有边求和后，点在内部时这些三角形恰好铺满
+多边形；点在外部时，无向面积和会多出一块。这就是下面外部偏离量的几何来源。</p>
+<p>本节要求两个多边形都是<strong>面积为正的凸多边形</strong>，顶点沿边界按同一旋转方向排列。若预测顶点
+自交、无序，或者直接套在非凸多边形上，后面的内外判定证明就不再适用。</p>
+<p>二维向量叉积定义为</p>
+<div class="arithmatex">\[
+u\times v=u_xv_y-u_yv_x.
+\tag{10.2}
+\]</div>
+<p>点 <span class="arithmatex">\(p\)</span> 与边 <span class="arithmatex">\((q_j,q_{j+1})\)</span> 构成的无向三角形面积为</p>
+<div class="arithmatex">\[
+S_\triangle(p,E_B^j)
+=\frac12\left|
+(q_j-p)\times(q_{j+1}-p)
+\right|.
+\tag{10.3}
+\]</div>
+<p>把它对 <span class="arithmatex">\(B\)</span> 的所有边求和：</p>
+<div class="arithmatex">\[
+S_{VP}(p,E_B)
+=\sum_{j=1}^mS_\triangle(p,E_B^j).
+\tag{10.4}
+\]</div>
+<p>为什么这个量能判断点是否在凸多边形内？先去掉绝对值，利用叉积双线性：</p>
+<div class="arithmatex">\[
+\begin{aligned}
+\sum_j(q_j-p)\times(q_{j+1}-p)
+&amp;=\sum_j[q_j\times q_{j+1}-q_j\times p-p\times q_{j+1}]\\
+&amp;=\sum_jq_j\times q_{j+1},
+\end{aligned}
+\tag{10.5}
+\]</div>
+<p>因为两个含 <span class="arithmatex">\(p\)</span> 的循环和相消。右边的一半绝对值正是鞋带公式给出的 <span class="arithmatex">\(S_B\)</span>。若 <span class="arithmatex">\(p\)</span> 在凸多边形
+内部，所有有向三角形符号一致，绝对值不改变总和，所以</p>
+<div class="arithmatex">\[
+S_{VP}(p,E_B)=S_B.
+\tag{10.6}
+\]</div>
+<p>若 <span class="arithmatex">\(p\)</span> 在外部，至少有一条边对应的有向面积符号相反。由严格三角不等式
+<span class="arithmatex">\(\sum|a_j|&gt;|\sum a_j|\)</span>，得到</p>
+<div class="arithmatex">\[
+S_{VP}(p,E_B)&gt;S_B.
+\tag{10.7}
+\]</div>
+<p>因此 <span class="arithmatex">\(S_{VP}-S_B\)</span> 是非负的凸多边形外部偏离量。</p>
+<h3 id="102-loss">10.2 从顶点到对称多边形 loss<a class="headerlink" href="#102-loss" title="Permanent link">¶</a></h3>
+<p>对 <span class="arithmatex">\(A\)</span> 的每个顶点累加：</p>
+<div class="arithmatex">\[
+S_{PP}(A^n,B^m)
+=\sum_{i=1}^nS_{VP}(v_A^i,E_B).
+\tag{10.8}
+\]</div>
+<p>单向平均偏离为</p>
+<div class="arithmatex">\[
+\frac1nS_{PP}(A^n,B^m)-S_B\ge0.
+\tag{10.9}
+\]</div>
+<p>为了避免只检查 <span class="arithmatex">\(A\)</span> 的顶点是否在 <span class="arithmatex">\(B\)</span> 内，再加反方向：</p>
+<div class="arithmatex">\[
+\boxed{
+\begin{aligned}
+d(A^n,B^m)
+={}&amp;\left[\frac1nS_{PP}(A^n,B^m)-S_B\right]\\
+&amp;+\left[\frac1mS_{PP}(B^m,A^n)-S_A\right].
+\end{aligned}
+}
+\tag{10.10}
+\]</div>
+<p>式 (10.10) 显然非负且交换 <span class="arithmatex">\(A,B\)</span> 不变。对相同凸多边形，每个顶点都在另一个多边形边界上，
+所以 <span class="arithmatex">\(d=0\)</span>。论文再用总面积消除共同尺度：</p>
+<div class="arithmatex">\[
+\boxed{
+L'_{\rm P2P}
+=\frac{d(A^4,B^4)}{S_A+S_B}.
+}
+\tag{10.11}
+\]</div>
+<p>共同放大 <span class="arithmatex">\(s\)</span> 倍时，所有三角形和多边形面积都乘 <span class="arithmatex">\(s^2\)</span>，所以式 (10.11) 不变。最终损失为</p>
+<div class="arithmatex">\[
+L_{\rm P2P}
+=\alpha L_c+\beta L_{sp}+\gamma L'_{\rm P2P},
+\tag{10.12}
+\]</div>
+<p>其中另两个项控制中心与形状 <sup id="fnref2:15"><a class="footnote-ref" href="#fn:15">15</a></sup>。式 (10.11) 的尺度不变性针对归一化多边形项，整个
+式 (10.12) 是否尺度不变还取决于 <span class="arithmatex">\(L_c,L_{sp}\)</span> 的定义与坐标归一，不能仅从其中一项推出。</p>
+<p><strong>校正：要区分分段线性函数与它的梯度。</strong> 固定边的两个端点，只让 <span class="arithmatex">\(p\)</span> 变化时，叉积展开后
+是关于 <span class="arithmatex">\(p\)</span> 的仿射函数，取绝对值后是分段仿射函数；其对 <span class="arithmatex">\(p\)</span> 的梯度在每个符号区域内为常数。
+若两个多边形的顶点同时变化，则出现双线性项；再除以可变面积，最终损失一般只是分段光滑，
+并不是统一的“分段线性梯度”。绝对值在符号切换处需要次梯度或实现中选定的求导约定。</p>
+<p>在本节的凸性条件下，式 (10.10) 为 0 还意味着 <span class="arithmatex">\(A\)</span> 的所有顶点在 <span class="arithmatex">\(B\)</span> 中，且反向也成立，
+所以两个凸区域相同。这不要求顶点起始编号相同。P2P 保留顶点几何，能比较正方形旋转后真实
+边界的变化；但它不会把相差 <span class="arithmatex">\(\pi/2\)</span> 的同一个正方形区域视为不同的有向物体。</p>
+<h2 id="_3">十一、总结：把全部方法放回同一坐标系<a class="headerlink" href="#_3" title="Permanent link">¶</a></h2>
+<h3 id="111">11.1 数学对象与性质总表<a class="headerlink" href="#111" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>比较对象</th>
+<th style="text-align: right;">对称</th>
+<th style="text-align: right;">共同尺度不变</th>
+<th style="text-align: right;">正方形角度可辨</th>
+<th style="text-align: right;">是否严格度量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原始 Gaussian <span class="arithmatex">\(W_2\)</span> <sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+<td>两个整框 Gaussian</td>
+<td style="text-align: right;">是</td>
+<td style="text-align: right;">否</td>
+<td style="text-align: right;">否</td>
+<td style="text-align: right;">对分布是；不含后处理</td>
+</tr>
+<tr>
+<td>NWD <sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+<td><span class="arithmatex">\(W_2\)</span> 的指数归一</td>
+<td style="text-align: right;">是</td>
+<td style="text-align: right;">固定 <span class="arithmatex">\(C\)</span> 时否</td>
+<td style="text-align: right;">HBB 不涉及</td>
+<td style="text-align: right;">否，属相似度</td>
+</tr>
+<tr>
+<td>EWD <sup id="fnref6:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+<td>对应边支撑分布</td>
+<td style="text-align: right;">是，含循环最小化后</td>
+<td style="text-align: right;">论文另归一</td>
+<td style="text-align: right;">是，模 <span class="arithmatex">\(\pi/2\)</span></td>
+<td style="text-align: right;">通常不是</td>
+</tr>
+<tr>
+<td>KLD <sup id="fnref8:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+<td>两个整框 Gaussian</td>
+<td style="text-align: right;">否</td>
+<td style="text-align: right;">是</td>
+<td style="text-align: right;">否</td>
+<td style="text-align: right;">否</td>
+</tr>
+<tr>
+<td>ProbIoU <sup id="fnref8:5"><a class="footnote-ref" href="#fn:5">5</a></sup></td>
+<td><span class="arithmatex">\(1-H\)</span> 概率相似度</td>
+<td style="text-align: right;">是</td>
+<td style="text-align: right;">是</td>
+<td style="text-align: right;">否</td>
+<td style="text-align: right;">相似度不是度量；<span class="arithmatex">\(H\)</span> 才是</td>
+</tr>
+<tr>
+<td>KFIoU <sup id="fnref8:6"><a class="footnote-ref" href="#fn:6">6</a></sup></td>
+<td>Gaussian 乘积体积</td>
+<td style="text-align: right;">是</td>
+<td style="text-align: right;">是</td>
+<td style="text-align: right;">否</td>
+<td style="text-align: right;">否</td>
+</tr>
+<tr>
+<td>MKIoU <sup id="fnref7:7"><a class="footnote-ref" href="#fn:7">7</a></sup></td>
+<td>调制后的协方差体积比</td>
+<td style="text-align: right;">是</td>
+<td style="text-align: right;">是</td>
+<td style="text-align: right;">否</td>
+<td style="text-align: right;">否</td>
+</tr>
+<tr>
+<td>MKIoU+GA，不含中心项 <sup id="fnref8:7"><a class="footnote-ref" href="#fn:7">7</a></sup></td>
+<td>调制乘积加目标侧角度门控</td>
+<td style="text-align: right;">一般否</td>
+<td style="text-align: right;">是</td>
+<td style="text-align: right;">是，模 <span class="arithmatex">\(\pi/2\)</span></td>
+<td style="text-align: right;">否</td>
+</tr>
+<tr>
+<td>G-Rep <sup id="fnref4:8"><a class="footnote-ref" href="#fn:8">8</a></sup></td>
+<td>点集的经验矩 Gaussian</td>
+<td style="text-align: right;">取决于所选距离</td>
+<td style="text-align: right;">取决于所选距离</td>
+<td style="text-align: right;">各向同性时否</td>
+<td style="text-align: right;">对点集不是；对分布另看所选距离</td>
+</tr>
+<tr>
+<td>GCD <sup id="fnref4:14"><a class="footnote-ref" href="#fn:14">14</a></sup></td>
+<td>双向相对中心/形状误差</td>
+<td style="text-align: right;">是</td>
+<td style="text-align: right;">是</td>
+<td style="text-align: right;">HBB 不涉及</td>
+<td style="text-align: right;">否，式 (9.12)</td>
+</tr>
+<tr>
+<td>P2P 归一化几何项 <sup id="fnref5:15"><a class="footnote-ref" href="#fn:15">15</a></sup></td>
+<td>两个凸多边形</td>
+<td style="text-align: right;">是</td>
+<td style="text-align: right;">是</td>
+<td style="text-align: right;">是，模 <span class="arithmatex">\(\pi/2\)</span></td>
+<td style="text-align: right;">未证明为度量</td>
+</tr>
+</tbody>
+</table>
+<p>表中的“<span class="arithmatex">\(W_2\)</span> 是度量”只针对 Gaussian 概率分布本身。论文再施加
+<span class="arithmatex">\(1-1/(\tau+f(W_2^2))\)</span> 后，是否保留三角不等式需要另证，不能从原始 <span class="arithmatex">\(W_2\)</span> 自动继承。</p>
+<p>表中每一行都要按“比较对象”一列的范围阅读：<span class="arithmatex">\(W_2^2\)</span> 与 <span class="arithmatex">\(W_2\)</span> 不同，基础量与最终总损失也
+不同。MKIoU+GA 和 P2P 行未把未归一的中心损失包含在内；若加入这些项，需重新检查整体尺度
+性质。对分布的度量经非单射的框或点集编码拉回后，至多先得到允许不同原对象距离为零的
+伪度量，不能直接宣称是原始几何对象上的严格度量。</p>
+<p>“正方形角度可辨”表示能辨认旋转后<strong>区域形状确实不同</strong>的情况。相差 <span class="arithmatex">\(\pi/2\)</span> 的正方形本来
+就是同一个区域；仅凭框几何不能区分它的朝前、朝后等完整语义方向。这些任务需要额外的有向
+标注或信息，不能仅更换框距离。</p>
+<h3 id="112">11.2 面向检测任务的选择结论<a class="headerlink" href="#112" title="Permanent link">¶</a></h3>
+<ol>
+<li><strong>普通水平框，尤其微小目标</strong>：NWD 最简洁，水平闭式就是
+   <span class="arithmatex">\((x,y,w/2,h/2)\)</span> 的欧氏距离；若主要问题是正样本太少，应关注 RKA，而不只是替换回归 loss
+   <sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref3:9"><a class="footnote-ref" href="#fn:9">9</a></sup>。</li>
+<li><strong>细长旋转框</strong>：GWD、KLD、ProbIoU 都能联合耦合长宽与角度。GWD 有像素单位且远处仍有
+   比较信号；KLD/ProbIoU 具有共同 Gaussian 仿射变换下的不变性，但权重与饱和行为不同。
+   原始 <span class="arithmatex">\(W_2^2\)</span> 的形状项不依赖中心距离，最终 GWD 后处理仍可能压缩远处梯度，不能一概说
+   “距离远就一定有很强梯度” <sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref6:4"><a class="footnote-ref" href="#fn:4">4</a></sup><sup id="fnref6:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</li>
+<li><strong>需要辨认正方形旋转后的边界差异</strong>：任何仅依赖整框二阶矩的 loss 都不可能解决。
+   必须增加边、顶点、
+   显式角度项或人工各向异性表示，如 EWD、MKIoU+GA、P2P、Structure Tensor <sup id="fnref4:3"><a class="footnote-ref" href="#fn:3">3</a></sup><sup id="fnref5:7"><a class="footnote-ref" href="#fn:7">7</a></sup><sup id="fnref6:12"><a class="footnote-ref" href="#fn:12">12</a></sup><sup id="fnref3:15"><a class="footnote-ref" href="#fn:15">15</a></sup>。</li>
+<li><strong>圆形或本来无方向的类别</strong>：强行恢复角度可能反而让标注不自洽。GauCho 的 Gaussian/OE
+   观点提醒我们先问“任务是否真的有可观察方向”，再决定是否惩罚各向同性 <sup id="fnref4:13"><a class="footnote-ref" href="#fn:13">13</a></sup>。</li>
+<li><strong>标签分配</strong>：第 7.1 节的 NWD-RKA 用相似度排序选择正样本，改变的是哪些预测参与回归。
+   因此应把分配策略与回归 loss 分开验证，不能把整体检测收益全部归因于距离公式 <sup id="fnref4:9"><a class="footnote-ref" href="#fn:9">9</a></sup>。</li>
+</ol>
+<p>最重要的判断顺序不是先挑一个流行的 loss，而是：</p>
+<div class="arithmatex">\[
+\boxed{
+\text{任务需要保留的信息}
+\longrightarrow
+\text{表示是否可辨}
+\longrightarrow
+\text{基础距离的性质}
+\longrightarrow
+\text{后处理与分配策略}.
+}
+\tag{11.1}
+\]</div>
+<p>若表示层已经把角度压没，后面无论换多少种 Gaussian 距离都无法恢复；若基础距离有量纲，外部归一化就会成为数据集相关超参数；若最终目的其实是分配，单框回归距离的性质也不等于全局匹配的性质。</p>
+<h2 id="_4">参考文献<a class="headerlink" href="#_4" title="Permanent link">¶</a></h2>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn:1">
+<p>Xue Yang, Junchi Yan, Qi Ming, Wentao Wang, Xiaopeng Zhang, and Qi Tian. “Rethinking Rotated Object Detection with Gaussian Wasserstein Distance Loss.” <em>Proceedings of ICML</em>, 2021. <a href="https://arxiv.org/abs/2101.11952v4">arXiv:2101.11952v4</a>.&nbsp;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">↩</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">↩</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">↩</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">↩</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">↩</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">↩</a></p>
+</li>
+<li id="fn:2">
+<p>Jinwang Wang, Chang Xu, Wen Yang, and Lei Yu. “A Normalized Gaussian Wasserstein Distance for Tiny Object Detection.” 2021. <a href="https://arxiv.org/abs/2110.13389v2">arXiv:2110.13389v2</a>.&nbsp;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">↩</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">↩</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">↩</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">↩</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">↩</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">↩</a></p>
+</li>
+<li id="fn:3">
+<p>Yuke Zhu, Yumeng Ruan, Zihua Xiong, and Sheng Guo. “Edge Wasserstein Distance Loss for Oriented Object Detection.” 2023. <a href="https://arxiv.org/html/2312.07048v1">arXiv:2312.07048v1</a>.&nbsp;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">↩</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">↩</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">↩</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 3 in the text">↩</a><a class="footnote-backref" href="#fnref5:3" title="Jump back to footnote 3 in the text">↩</a><a class="footnote-backref" href="#fnref6:3" title="Jump back to footnote 3 in the text">↩</a></p>
+</li>
+<li id="fn:4">
+<p>Xue Yang, Xiaojiang Yang, Jirui Yang, Qi Ming, Wentao Wang, Qi Tian, and Junchi Yan. “Learning High-Precision Bounding Box for Rotated Object Detection via Kullback-Leibler Divergence.” <em>NeurIPS</em>, 2021. <a href="https://arxiv.org/abs/2106.01883">arXiv:2106.01883</a>.&nbsp;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">↩</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">↩</a><a class="footnote-backref" href="#fnref3:4" title="Jump back to footnote 4 in the text">↩</a><a class="footnote-backref" href="#fnref4:4" title="Jump back to footnote 4 in the text">↩</a><a class="footnote-backref" href="#fnref5:4" title="Jump back to footnote 4 in the text">↩</a><a class="footnote-backref" href="#fnref6:4" title="Jump back to footnote 4 in the text">↩</a><a class="footnote-backref" href="#fnref7:4" title="Jump back to footnote 4 in the text">↩</a><a class="footnote-backref" href="#fnref8:4" title="Jump back to footnote 4 in the text">↩</a></p>
+</li>
+<li id="fn:5">
+<p>Jeffri M. Llerena, Luis Felipe Zeni, Lucas N. Kristen, and Claudio Jung. “Gaussian Bounding Boxes and Probabilistic Intersection-over-Union for Object Detection.” <em>IEEE Transactions on Image Processing</em>, 2024. <a href="https://arxiv.org/abs/2106.06072">arXiv:2106.06072</a>.&nbsp;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">↩</a><a class="footnote-backref" href="#fnref2:5" title="Jump back to footnote 5 in the text">↩</a><a class="footnote-backref" href="#fnref3:5" title="Jump back to footnote 5 in the text">↩</a><a class="footnote-backref" href="#fnref4:5" title="Jump back to footnote 5 in the text">↩</a><a class="footnote-backref" href="#fnref5:5" title="Jump back to footnote 5 in the text">↩</a><a class="footnote-backref" href="#fnref6:5" title="Jump back to footnote 5 in the text">↩</a><a class="footnote-backref" href="#fnref7:5" title="Jump back to footnote 5 in the text">↩</a><a class="footnote-backref" href="#fnref8:5" title="Jump back to footnote 5 in the text">↩</a></p>
+</li>
+<li id="fn:6">
+<p>Xue Yang, Yue Zhou, Gefan Zhang, Jirui Yang, Wentao Wang, Junchi Yan, Xiaopeng Zhang, and Qi Tian. “The KFIoU Loss for Rotated Object Detection.” <em>ICLR</em>, 2023. <a href="https://arxiv.org/abs/2201.12558">arXiv:2201.12558</a>.&nbsp;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">↩</a><a class="footnote-backref" href="#fnref2:6" title="Jump back to footnote 6 in the text">↩</a><a class="footnote-backref" href="#fnref3:6" title="Jump back to footnote 6 in the text">↩</a><a class="footnote-backref" href="#fnref4:6" title="Jump back to footnote 6 in the text">↩</a><a class="footnote-backref" href="#fnref5:6" title="Jump back to footnote 6 in the text">↩</a><a class="footnote-backref" href="#fnref6:6" title="Jump back to footnote 6 in the text">↩</a><a class="footnote-backref" href="#fnref7:6" title="Jump back to footnote 6 in the text">↩</a><a class="footnote-backref" href="#fnref8:6" title="Jump back to footnote 6 in the text">↩</a></p>
+</li>
+<li id="fn:7">
+<p>Xinyi Yu, Jiangping Lu, Mi Lin, and Linlin Ou. “MKIoU Loss: Towards Accurate Oriented Object Detection in Aerial Images.” 2022. <a href="https://arxiv.org/abs/2206.15109">arXiv:2206.15109</a>.&nbsp;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">↩</a><a class="footnote-backref" href="#fnref2:7" title="Jump back to footnote 7 in the text">↩</a><a class="footnote-backref" href="#fnref3:7" title="Jump back to footnote 7 in the text">↩</a><a class="footnote-backref" href="#fnref4:7" title="Jump back to footnote 7 in the text">↩</a><a class="footnote-backref" href="#fnref5:7" title="Jump back to footnote 7 in the text">↩</a><a class="footnote-backref" href="#fnref6:7" title="Jump back to footnote 7 in the text">↩</a><a class="footnote-backref" href="#fnref7:7" title="Jump back to footnote 7 in the text">↩</a><a class="footnote-backref" href="#fnref8:7" title="Jump back to footnote 7 in the text">↩</a></p>
+</li>
+<li id="fn:8">
+<p>Liping Hou, Ke Lu, Xue Yang, Yuqiu Li, and Jian Xue. “G-Rep: Gaussian Representation for Arbitrary-Oriented Object Detection.” <em>Remote Sensing</em>, 2023. <a href="https://arxiv.org/abs/2205.11796">arXiv:2205.11796</a>.&nbsp;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 8 in the text">↩</a><a class="footnote-backref" href="#fnref2:8" title="Jump back to footnote 8 in the text">↩</a><a class="footnote-backref" href="#fnref3:8" title="Jump back to footnote 8 in the text">↩</a><a class="footnote-backref" href="#fnref4:8" title="Jump back to footnote 8 in the text">↩</a></p>
+</li>
+<li id="fn:9">
+<p>Chang Xu, Jinwang Wang, Wen Yang, Huai Yu, Lei Yu, and Gui-Song Xia. “Detecting Tiny Objects in Aerial Images: A Normalized Wasserstein Distance and a New Benchmark.” <em>ISPRS Journal of Photogrammetry and Remote Sensing</em>, 2022. <a href="https://arxiv.org/abs/2206.13996">arXiv:2206.13996</a>.&nbsp;<a class="footnote-backref" href="#fnref:9" title="Jump back to footnote 9 in the text">↩</a><a class="footnote-backref" href="#fnref2:9" title="Jump back to footnote 9 in the text">↩</a><a class="footnote-backref" href="#fnref3:9" title="Jump back to footnote 9 in the text">↩</a><a class="footnote-backref" href="#fnref4:9" title="Jump back to footnote 9 in the text">↩</a><a class="footnote-backref" href="#fnref5:9" title="Jump back to footnote 9 in the text">↩</a></p>
+</li>
+<li id="fn:10">
+<p>Xue Yang, Gefan Zhang, Xiaojiang Yang, Yue Zhou, Wentao Wang, Jin Tang, Tao He, and Junchi Yan. “Detecting Rotated Objects as Gaussian Distributions and Its 3-D Generalization.” 2022. <a href="https://arxiv.org/abs/2209.10839">arXiv:2209.10839</a>.&nbsp;<a class="footnote-backref" href="#fnref:10" title="Jump back to footnote 10 in the text">↩</a><a class="footnote-backref" href="#fnref2:10" title="Jump back to footnote 10 in the text">↩</a></p>
+</li>
+<li id="fn:11">
+<p>Zhen Zhou, Yunkai Ma, Junfeng Fan, Zhaoyang Liu, Fengshui Jing, and Min Tan. “Linear Gaussian Bounding Box Representation and Ring-Shaped Rotated Convolution for Oriented Object Detection.” 2023. <a href="https://arxiv.org/abs/2311.05410">arXiv:2311.05410</a>.&nbsp;<a class="footnote-backref" href="#fnref:11" title="Jump back to footnote 11 in the text">↩</a><a class="footnote-backref" href="#fnref2:11" title="Jump back to footnote 11 in the text">↩</a></p>
+</li>
+<li id="fn:12">
+<p>Xavier Bou, Gabriele Facciolo, Rafael Grompone von Gioi, Jean-Michel Morel, and Thibaud Ehret. “Structure Tensor Representation for Robust Oriented Object Detection.” 2024. <a href="https://arxiv.org/abs/2411.10497">arXiv:2411.10497</a>.&nbsp;<a class="footnote-backref" href="#fnref:12" title="Jump back to footnote 12 in the text">↩</a><a class="footnote-backref" href="#fnref2:12" title="Jump back to footnote 12 in the text">↩</a><a class="footnote-backref" href="#fnref3:12" title="Jump back to footnote 12 in the text">↩</a><a class="footnote-backref" href="#fnref4:12" title="Jump back to footnote 12 in the text">↩</a><a class="footnote-backref" href="#fnref5:12" title="Jump back to footnote 12 in the text">↩</a><a class="footnote-backref" href="#fnref6:12" title="Jump back to footnote 12 in the text">↩</a><a class="footnote-backref" href="#fnref7:12" title="Jump back to footnote 12 in the text">↩</a></p>
+</li>
+<li id="fn:13">
+<p>Jeffri Murrugarra-Llerena, Jose Henrique Lima Marques, and Claudio R. Jung. “GauCho: Gaussian Distributions with Cholesky Decomposition for Oriented Object Detection.” <em>CVPR</em>, 2025. <a href="https://arxiv.org/abs/2502.01565">arXiv:2502.01565</a>.&nbsp;<a class="footnote-backref" href="#fnref:13" title="Jump back to footnote 13 in the text">↩</a><a class="footnote-backref" href="#fnref2:13" title="Jump back to footnote 13 in the text">↩</a><a class="footnote-backref" href="#fnref3:13" title="Jump back to footnote 13 in the text">↩</a><a class="footnote-backref" href="#fnref4:13" title="Jump back to footnote 13 in the text">↩</a><a class="footnote-backref" href="#fnref5:13" title="Jump back to footnote 13 in the text">↩</a></p>
+</li>
+<li id="fn:14">
+<p>Ziqian Guan, Xieyi Fu, Pengjun Huang, Hengyuan Zhang, Hubin Du, Yongtao Liu, Yinglin Wang, and Qang Ma. “Gaussian Combined Distance: A Generic Metric for Object Detection.” 2025. <a href="https://arxiv.org/abs/2510.27649">arXiv:2510.27649</a>.&nbsp;<a class="footnote-backref" href="#fnref:14" title="Jump back to footnote 14 in the text">↩</a><a class="footnote-backref" href="#fnref2:14" title="Jump back to footnote 14 in the text">↩</a><a class="footnote-backref" href="#fnref3:14" title="Jump back to footnote 14 in the text">↩</a><a class="footnote-backref" href="#fnref4:14" title="Jump back to footnote 14 in the text">↩</a></p>
+</li>
+<li id="fn:15">
+<p>Yang Yang, Jifeng Chen, Xiaopin Zhong, and Yuanlong Deng. “Polygon-to-Polygon Distance Loss for Rotated Object Detection.” <em>Proceedings of AAAI</em>, 36(3), 2022. <a href="https://doi.org/10.1609/aaai.v36i3.20214">DOI:10.1609/aaai.v36i3.20214</a>.&nbsp;<a class="footnote-backref" href="#fnref:15" title="Jump back to footnote 15 in the text">↩</a><a class="footnote-backref" href="#fnref2:15" title="Jump back to footnote 15 in the text">↩</a><a class="footnote-backref" href="#fnref3:15" title="Jump back to footnote 15 in the text">↩</a><a class="footnote-backref" href="#fnref4:15" title="Jump back to footnote 15 in the text">↩</a><a class="footnote-backref" href="#fnref5:15" title="Jump back to footnote 15 in the text">↩</a></p>
+</li>
+<li id="fn:16">
+<p>Chien Thai, Mai Xuan Trang, Huong Ninh, Hoang Hiep Ly, and Anh Son Le. “Enhancing Rotated Object Detection via Anisotropic Gaussian Bounding Box and Bhattacharyya Distance.” 2025. <a href="https://arxiv.org/abs/2510.16445">arXiv:2510.16445</a>.&nbsp;<a class="footnote-backref" href="#fnref:16" title="Jump back to footnote 16 in the text">↩</a><a class="footnote-backref" href="#fnref2:16" title="Jump back to footnote 16 in the text">↩</a><a class="footnote-backref" href="#fnref3:16" title="Jump back to footnote 16 in the text">↩</a><a class="footnote-backref" href="#fnref4:16" title="Jump back to footnote 16 in the text">↩</a></p>
+</li>
+<li id="fn:17">
+<p>Solomon Kullback and Richard A. Leibler. “On Information and Sufficiency.” <em>The Annals of Mathematical Statistics</em>, 22(1):79--86, 1951. <a href="https://doi.org/10.1214/aoms/1177729694">DOI:10.1214/aoms/1177729694</a>.&nbsp;<a class="footnote-backref" href="#fnref:17" title="Jump back to footnote 17 in the text">↩</a></p>
+</li>
+<li id="fn:18">
+<p>Anil Kumar Bhattacharyya. “On a Measure of Divergence between Two Statistical Populations Defined by Their Probability Distributions.” <em>Bulletin of the Calcutta Mathematical Society</em>, 35:99--109, 1943.&nbsp;<a class="footnote-backref" href="#fnref:18" title="Jump back to footnote 18 in the text">↩</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="最后更新">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
+    </span>
+    2026年10月8日
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="创建日期">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"></path></svg>
+    </span>
+    2026年10月8日
+  </span>
+
+    
+    
+    
+  </aside>
+
+
+
+
+
+  <section class="hb-comments">
+    <h2 id="__comments">评论</h2>
+    <div class="hb-comments-lazy">
+      <button type="button" class="hb-comments-load">加载评论</button>
+      <span>滚动到评论区附近时自动加载</span>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      var section = document.currentScript.previousElementSibling;
+      var slot = section && section.querySelector(".hb-comments-lazy");
+      var button = slot && slot.querySelector(".hb-comments-load");
+      var loaded = false;
+      var observer;
+
+      function theme() {
+        return document.body.getAttribute("data-md-color-scheme") === "slate"
+          ? "transparent_dark"
+          : "light";
+      }
+
+      function loadComments() {
+        if (loaded || !slot) return;
+        loaded = true;
+        if (observer) observer.disconnect();
+        slot.classList.add("is-loading");
+        slot.textContent = "";
+
+        var script = document.createElement("script");
+        script.src = "https://giscus.app/client.js";
+        script.setAttribute("data-repo", "thb1314/thb1314.github.io");
+        script.setAttribute("data-repo-id", "MDEwOlJlcG9zaXRvcnkyNDg0MTE1NTg=");
+        script.setAttribute("data-category", "Announcements");
+        script.setAttribute("data-category-id", "DIC_kwDODs51ps4CSAxI");
+        script.setAttribute("data-mapping", "pathname");
+        script.setAttribute("data-strict", "0");
+        script.setAttribute("data-reactions-enabled", "0");
+        script.setAttribute("data-emit-metadata", "0");
+        script.setAttribute("data-input-position", "top");
+        script.setAttribute("data-theme", theme());
+        script.setAttribute("data-lang", "zh-CN");
+        script.setAttribute("data-loading", "lazy");
+        script.crossOrigin = "anonymous";
+        script.async = true;
+        slot.appendChild(script);
+      }
+
+      if (button) button.addEventListener("click", loadComments);
+      if ("IntersectionObserver" in window && slot) {
+        observer = new IntersectionObserver(function (entries) {
+          if (entries.some(function (entry) { return entry.isIntersecting; })) {
+            loadComments();
+          }
+        }, { rootMargin: "700px 0px" });
+        observer.observe(slot);
+      } else {
+        loadComments();
+      }
+
+      var palette = document.querySelector("[data-md-component=palette]");
+      if (palette) {
+        palette.addEventListener("change", function () {
+          window.setTimeout(function () {
+            var frame = document.querySelector(".giscus-frame");
+            if (frame && frame.contentWindow) {
+              frame.contentWindow.postMessage(
+                { giscus: { setConfig: { theme: theme() } } },
+                "https://giscus.app"
+              );
+            }
+          }, 50);
+        });
+      }
+    })();
+  </script>
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="页脚">
+        
+          
+          <a href="../wasserstein-object-detection-part1_real/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 二维Gaussian分布Wasserstein 距离的推导以及其在目标检测中的应用">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              <div class="md-ellipsis">
+                二维Gaussian分布Wasserstein 距离的推导以及其在目标检测中的应用
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/ffmpeg%20GPU%E5%8A%A0%E9%80%9F%E7%89%88%E6%9C%AC%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95/" class="md-footer__link md-footer__link--next" aria-label="下一页: FFMPEG Cuda版本编译安装方法">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              <div class="md-ellipsis">
+                FFMPEG Cuda版本编译安装方法
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      
+<div class="md-footer-copyright__highlight hb-copyright">
+  <div class="hb-copyright-links">
+    <a href="https://github.com/thb1314" target="_blank" rel="noopener">GitHub</a><span aria-hidden="true">·</span>
+    <a href="mailto:haibintian@foxmail.com">Email</a><span aria-hidden="true">·</span>
+    <a href="../../sitemap.xml">Sitemap</a>
+  </div>
+  <div class="hb-copyright-copy">© 2026 海滨 · 基于 MkDocs Material 构建</div>
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.code.select", "content.footnote.tooltips", "navigation.footer", "navigation.indexes"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../themes/js/hb_blog.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>
